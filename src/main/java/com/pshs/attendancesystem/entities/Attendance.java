@@ -4,7 +4,6 @@ import com.pshs.attendancesystem.Enums;
 import jakarta.persistence.*;
 
 import java.sql.Time;
-import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -25,13 +24,13 @@ public class Attendance {
     private Time time;
 
     @Enumerated(EnumType.STRING)
-    Enums.attendanceStatus attendance_status;
+    Enums.status attendance_status;
 
-    public Enums.attendanceStatus getAttendance_status() {
+    public Enums.status getAttendance_status() {
         return attendance_status;
     }
 
-    public void setAttendance_status(Enums.attendanceStatus attendance_status) {
+    public void setAttendance_status(Enums.status attendance_status) {
         this.attendance_status = attendance_status;
     }
 
