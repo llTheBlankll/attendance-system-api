@@ -17,19 +17,15 @@ public class Section {
     @Column(name = "room")
     private Integer room;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "grade_level", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "grade_level")
     private Gradelevel gradeLevel;
 
     @Column(name = "section_name", nullable = false)
     private String sectionName;
 
-    @OneToOne(mappedBy = "section", cascade = CascadeType.MERGE)
-    private Student student;
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+    @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE)
+    private Set<Student> students = new LinkedHashSet<>();
 
     public String getSectionId() {
         return sectionId;

@@ -15,8 +15,19 @@ public class Gradelevel {
     @Column(name = "grade_name", nullable = false)
     private String gradeName;
 
-    @OneToOne(mappedBy = "gradeLevel", cascade = CascadeType.MERGE)
-    private Student student;
+    @OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class)
+    private Set<Section> sections = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "studentGradeLevel", cascade = CascadeType.MERGE)
+    private Set<Student> students = new LinkedHashSet<>();
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+
+    public void setSections(Set<Section> sections) {
+        this.sections = sections;
+    }
 
     public Integer getId() {
         return id;

@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
+import com.pshs.attendancesystem.Enums;
 import jakarta.persistence.*;
 
 import java.sql.Time;
@@ -9,12 +10,6 @@ import java.util.Date;
 @Entity
 @Table(name = "attendance")
 public class Attendance {
-
-    private enum attendanceStatus {
-        ONTIME,
-        LATE
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -30,14 +25,19 @@ public class Attendance {
     private Time time;
 
     @Enumerated(EnumType.STRING)
-    attendanceStatus attendance_status;
+    Enums.attendanceStatus attendance_status;
 
-    public attendanceStatus getAttendance_status() {
+    public Enums.attendanceStatus getAttendance_status() {
         return attendance_status;
     }
 
-    public void setAttendance_status(attendanceStatus attendance_status) {
+    public void setAttendance_status(Enums.attendanceStatus attendance_status) {
         this.attendance_status = attendance_status;
+    }
+
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public Integer getId() {

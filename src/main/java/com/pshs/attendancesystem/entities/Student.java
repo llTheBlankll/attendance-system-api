@@ -22,16 +22,16 @@ public class Student {
     @Column(name = "last_name")
     private String lastName;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "grade_level")
-    private Gradelevel gradeLevel;
+    private Gradelevel studentGradeLevel;
 
     @Column(name = "sex", length = 6)
     private String sex;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "section_id")
-    private Section section;
+    private Section studentSection;
 
     @Column(name = "guardian_name")
     private String guardianName;
@@ -77,12 +77,12 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public Gradelevel getGradeLevel() {
-        return gradeLevel;
+    public Gradelevel getStudentGradeLevel() {
+        return studentGradeLevel;
     }
 
-    public void setGradeLevel(Gradelevel gradeLevel) {
-        this.gradeLevel = gradeLevel;
+    public void setStudentGradeLevel(Gradelevel studentGradeLevel) {
+        this.studentGradeLevel = studentGradeLevel;
     }
 
     public String getSex() {
@@ -93,12 +93,12 @@ public class Student {
         this.sex = sex;
     }
 
-    public Section getSection() {
-        return section;
+    public Section getStudentSection() {
+        return studentSection;
     }
 
-    public void setSection(Section section) {
-        this.section = section;
+    public void setStudentSection(Section studentSection) {
+        this.studentSection = studentSection;
     }
 
     public String getGuardianName() {
