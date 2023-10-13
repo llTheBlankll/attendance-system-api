@@ -8,7 +8,6 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -47,9 +46,9 @@ public class AttendanceController {
             attendance.setStudent(student.get());
 
             if (flagCeremonyTime.isBefore(earliestTimeToArrive)) {
-                attendance.setAttendance_status(Enums.attendanceStatus.ONTIME);
+                attendance.setAttendance_status(Enums.status.ONTIME);
             } else if (flagCeremonyTime.isAfter(earliestTimeToArrive)) {
-                attendance.setAttendance_status(Enums.attendanceStatus.LATE);
+                attendance.setAttendance_status(Enums.status.LATE);
             } else {
                 // EARLY
             }
