@@ -2,10 +2,14 @@ package com.pshs.attendancesystem.entities;
 
 import jakarta.persistence.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "students")
 public class Student {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lrn", nullable = false)
     private Long id;
 
@@ -18,14 +22,14 @@ public class Student {
     @Column(name = "last_name")
     private String lastName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "grade_level")
     private Gradelevel gradeLevel;
 
     @Column(name = "sex", length = 6)
     private String sex;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "section_id")
     private Section section;
 
@@ -37,6 +41,9 @@ public class Student {
 
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
+
+    @OneToMany(mappedBy = "student")
+    private Set<Attendance> attendances = new LinkedHashSet<>();
 
     public Long getId() {
         return id;
@@ -118,4 +125,11 @@ public class Student {
         this.address = address;
     }
 
+    public Set<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(Set<Attendance> attendances) {
+        this.attendances = attendances;
+    }
 }

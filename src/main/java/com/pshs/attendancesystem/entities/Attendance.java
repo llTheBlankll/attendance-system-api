@@ -13,7 +13,7 @@ public class Attendance {
     private enum attendanceStatus {
         ONTIME,
         LATE
-    };
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,14 +46,6 @@ public class Attendance {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
     }
 
     public Date getDate() {

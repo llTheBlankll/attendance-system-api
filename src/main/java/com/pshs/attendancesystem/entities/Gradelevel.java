@@ -1,9 +1,9 @@
 package com.pshs.attendancesystem.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "gradelevels")
@@ -14,6 +14,9 @@ public class Gradelevel {
 
     @Column(name = "grade_name", nullable = false)
     private String gradeName;
+
+    @OneToOne(mappedBy = "gradeLevel", cascade = CascadeType.MERGE)
+    private Student student;
 
     public Integer getId() {
         return id;

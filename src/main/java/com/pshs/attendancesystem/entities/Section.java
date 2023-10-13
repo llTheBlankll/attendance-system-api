@@ -2,6 +2,9 @@ package com.pshs.attendancesystem.entities;
 
 import jakarta.persistence.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "sections")
 public class Section {
@@ -20,6 +23,13 @@ public class Section {
 
     @Column(name = "section_name", nullable = false)
     private String sectionName;
+
+    @OneToOne(mappedBy = "section", cascade = CascadeType.MERGE)
+    private Student student;
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public String getSectionId() {
         return sectionId;
