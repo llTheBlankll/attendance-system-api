@@ -2,21 +2,43 @@ package com.pshs.attendancesystem.entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.sql.Time;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "attendance")
 public class Attendance {
+
+    private enum attendanceStatus {
+        ONTIME,
+        LATE
+    };
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
+
     @Column(name = "date")
-    private LocalDate date;
-    @Column(name = "\"time\"")
-    private LocalTime time;
+    private Date date;
+    @Column(name = "time")
+    private Time time;
+
+    @Enumerated(EnumType.STRING)
+    attendanceStatus attendance_status;
+
+    public attendanceStatus getAttendance_status() {
+        return attendance_status;
+    }
+
+    public void setAttendance_status(attendanceStatus attendance_status) {
+        this.attendance_status = attendance_status;
+    }
 
     public Integer getId() {
         return id;
@@ -26,26 +48,27 @@ public class Attendance {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    public LocalTime getTime() {
+    public Time getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(Time time) {
         this.time = time;
     }
-
-/*
-    TODO [JPA Buddy] create field to map the 'attendance_status' column
-     Available actions: Define target Java type | Uncomment as is | Remove column mapping
-    @Column(name = "attendance_status", columnDefinition = "status(0, 0)")
-    private Object attendanceStatus;
-*/
 }
