@@ -15,19 +15,8 @@ public class Attendance {
 
     @Column(name = "date")
     private LocalDate date;
-    @Column(name = "time")
+    @Column(name = "\"time\"")
     private LocalTime time;
-
-    @Column(name = "attendance_status", columnDefinition = "status(0, 0)")
-    private String attendanceStatus;
-
-    public String getAttendanceStatus() {
-        return attendanceStatus;
-    }
-
-    public void setAttendanceStatus(String attendanceStatus) {
-        this.attendanceStatus = attendanceStatus;
-    }
 
     public Integer getId() {
         return id;
@@ -53,4 +42,10 @@ public class Attendance {
         this.time = time;
     }
 
+/*
+    TODO [JPA Buddy] create field to map the 'attendance_status' column
+     Available actions: Define target Java type | Uncomment as is | Remove column mapping
+    @Column(name = "attendance_status", columnDefinition = "status(0, 0)")
+    private Object attendanceStatus;
+*/
 }

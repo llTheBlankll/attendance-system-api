@@ -27,7 +27,7 @@ public class Student {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
-    private GradeLevels section;
+    private Section section;
 
     @Column(name = "guardian_name")
     private String guardianName;
@@ -86,11 +86,11 @@ public class Student {
         this.sex = sex;
     }
 
-    public GradeLevels getSection() {
+    public Section getSection() {
         return section;
     }
 
-    public void setSection(GradeLevels section) {
+    public void setSection(Section section) {
         this.section = section;
     }
 
