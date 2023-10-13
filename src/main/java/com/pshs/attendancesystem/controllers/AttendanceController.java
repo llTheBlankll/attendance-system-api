@@ -5,6 +5,8 @@ import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
@@ -21,6 +23,7 @@ public class AttendanceController {
 
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public AttendanceController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.attendanceRepository = attendanceRepository;
@@ -33,12 +36,15 @@ public class AttendanceController {
     }
 
     @PutMapping("/add/{student_lrn}")
-    public void addAttendance(@PathVariable Long student_lrn) {
+    public String addAttendance(@PathVariable Long student_lrn) {
+        // Check for the existence of Student LRN
+        if (!studentRepository.existsById(student_lrn)) {
+            return "Student LRN does not exist";
+        }
+
         LocalTime flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
         LocalTime earliestTimeToArrive = Time.valueOf("4:00:00").toLocalTime();
         Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-
 
         Optional<Student> student = this.studentRepository.findById(student_lrn);
         if (student.isPresent()) {
@@ -57,11 +63,29 @@ public class AttendanceController {
             attendance.setTime(Time.valueOf(LocalTime.now()));
             attendance.setId(attendanceRepository.getNextSeriesId());
             this.attendanceRepository.save(attendance);
+            return "The student is " + attendance.getAttendance_status();
         }
+
+        return "Student does not exist";
     }
 
     @DeleteMapping("/delete")
-    public void deleteAttendance(@RequestBody Attendance attendance) {
+    public String deleteAttendance(@RequestBody Attendance attendance) {
+        if (!this.attendanceRepository.existsById(attendance.getId())) {
+            logger.info("Attendance does not exist");
+        }
+
         this.attendanceRepository.delete(attendance);
+        return "Attendance was deleted";
+    }
+
+    @PostMapping ("/update")
+    public String updateAttendance(@RequestBody Attendance attendance) {
+        if (!this.attendanceRepository.existsById(attendance.getId())) {
+            return "Attendance does not exist";
+        }
+
+        this.attendanceRepository.save(attendance);
+        return "Attendance was updated";
     }
 }

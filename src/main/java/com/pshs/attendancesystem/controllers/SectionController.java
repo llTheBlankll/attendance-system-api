@@ -4,6 +4,8 @@ import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/section")
@@ -21,8 +23,13 @@ public class SectionController {
     }
 
     @GetMapping("/delete/{id}")
-    public void deleteSectionById(@PathVariable String id) {
+    public String deleteSectionById(@PathVariable String id) {
+        if (!this.sectionRepository.existsById(id)) {
+            return "Section does not exists.";
+        }
+
         this.sectionRepository.deleteById(id);
+        return "Section with ID " + id + " was deleted.";
     }
 
     @GetMapping("/delete")
@@ -31,19 +38,30 @@ public class SectionController {
     }
 
     @PutMapping("/add")
-    public void addSection(@RequestBody Section section) {
+    public String addSection(@RequestBody Section section) {
+        if (this.sectionRepository.existsById(section.getSectionId())) {
+            return "Section already exists";
+        }
+
         this.sectionRepository.save(section);
+        return "Section is created.";
     }
 
     @PostMapping("/update")
-    public void updateSection(@RequestBody Section section) {
+    public String updateSection(@RequestBody Section section) {
+        if (!this.sectionRepository.existsById(section.getSectionId())) {
+            return "Section does not exist.";
+        }
+
         this.sectionRepository.save(section);
+        return "Section was updated.";
     }
 
     // SEARCH FUNCTION
 
     @GetMapping("/search/adviser/{adviser}")
     public Iterable<Section> getSectionByAdviser(@PathVariable String adviser) {
+        if (!this.sectionRepository.existsByAdviser(adviser)) return (Iterable<Section>) Collections.emptyIterator();
         return this.sectionRepository.findByAdviser(adviser);
     }
 }

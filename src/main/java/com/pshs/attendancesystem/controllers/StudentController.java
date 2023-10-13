@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.Collections;
 
 @RestController
 @CrossOrigin
@@ -24,25 +25,52 @@ public class StudentController {
     }
 
     @PutMapping("/add")
-    public void addStudent(@RequestBody Student student) {
+    public String addStudent(@RequestBody Student student) {
+        if (!this.studentRepository.existsById(student.getId())) {
+            return "Student does not exist";
+        }
+
         this.studentRepository.save(student);
+        return "Student was added";
     }
 
     @DeleteMapping("/delete")
-    public void deleteStudent(@RequestBody Student student) {
+    public String deleteStudent(@RequestBody Student student) {
+        if (!this.studentRepository.existsById(student.getId())) {
+            return "Student does not exist";
+        }
+
         this.studentRepository.delete(student);
+        return "Student was deleted";
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteStudentById(@PathVariable Long id) {
+    public String deleteStudentById(@PathVariable Long id) {
+        if (!this.studentRepository.existsById(id)) {
+            return "Student does not exist";
+        }
+
         this.studentRepository.deleteById(id);
+        return "Student was deleted";
     }
 
     // SEARCH FUNCTION
 
-    @GetMapping("/search/gradelevel/{gradelevel}")
+    @GetMapping("/search/gradelevel/name/{gradeName}")
+    public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
+        if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
+            return (Iterable<Student>) Collections.emptyIterator();
+        }
 
-    public Iterable<Student> getStudentByGradeLevel(@PathVariable String gradelevel) {
-        return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradelevel);
+        return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
+    }
+
+    @GetMapping("/search/id/{id}")
+    public Student getStudentById(@PathVariable("id") Long id) {
+        if (!this.studentRepository.existsById(id)) {
+            return new Student();
+        }
+
+        return this.studentRepository.findStudentById(id);
     }
 }
