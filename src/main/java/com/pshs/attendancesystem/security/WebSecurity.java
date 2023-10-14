@@ -54,6 +54,8 @@ public class WebSecurity {
                         authorize.requestMatchers("/api/v1/**").hasRole(Privilege.TEACHER.name())
                                 .requestMatchers("/api/v1/**")
                                 .hasRole(Privilege.PRINCIPAL.name())
+                                .requestMatchers("/websocket/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .cors(AbstractHttpConfigurer::disable);
