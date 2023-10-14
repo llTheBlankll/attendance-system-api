@@ -16,9 +16,11 @@ import java.util.stream.Stream;
 public class StudentController {
     private final StudentRepository studentRepository;
     private final ScanRepository scanRepository;
+    private final String salt = "ujsX54enWHyPuAU";
 
     // * MD5 HASHING FUNCTION
     private String HashMD5(String value) {
+        value += salt;
         try {
             // Create an instance of MessageDigest with MD5 algorithm
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -81,7 +83,6 @@ public class StudentController {
         this.studentRepository.save(student);
 
         // Then encode the student's learning resource number with MD5.
-        studentScan.setStudent(student);
         studentScan.setLrn(student.getLrn());
         studentScan.setHashedLrn(HashMD5(student.getLrn().toString()));
 
