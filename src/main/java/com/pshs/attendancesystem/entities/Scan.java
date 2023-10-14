@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Scan {
     @Id
     @Column(name = "lrn", nullable = false)
-    private Long id;
+    private Long lrn;
 
     @MapsId
     @OneToOne(fetch = FetchType.EAGER, optional = false)
@@ -17,12 +17,12 @@ public class Scan {
     @Column(name = "hashed_lrn", length = 128)
     private String hashedLrn;
 
-    public Long getId() {
-        return id;
+    public Long getLrn() {
+        return lrn;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLrn(Long lrn) {
+        this.lrn = lrn;
     }
 
     public Student getStudent() {
