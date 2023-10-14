@@ -2,12 +2,12 @@
 CREATE TABLE GradeLevels(
                             grade_level INT PRIMARY KEY,
                             grade_name VARCHAR(255) NOT NULL
-)
+);
 
 -- @block
     INSERT INTO GradeLevels(grade_level,grade_name)
 VALUES (11,'Grade 11'),
-(12,'Grade 12')
+(12,'Grade 12');
 
 -- @block
 select grade_level, grade_name FROM GradeLevels
@@ -29,7 +29,7 @@ VALUES('MC','Dumaquita',3,12,'Marie Curie'),
       ('DB','Blandeux',2,11,'Diosdado Banatao');
 
 -- @block
-SELECT * FROM sections
+SELECT * FROM sections;
 
 -- @block
 CREATE TABLE Students(
@@ -46,7 +46,7 @@ CREATE TABLE Students(
                          PRIMARY KEY(lrn),
                          FOREIGN KEY (grade_level) REFERENCES GradeLevels(grade_level),
                          FOREIGN KEY (section_id) REFERENCES Sections(section_id)
-)
+);
 
 
 -- @block
@@ -127,6 +127,8 @@ CREATE TABLE Attendance(
                            FOREIGN KEY (student_id) REFERENCES Students(lrn)
 );
 
+CREATE TABLE
+
 -- @block
 ALTER TABLE Attendance
     ALTER COLUMN date SET DEFAULT CURRENT_DATE,
@@ -134,21 +136,29 @@ ALTER COLUMN time SET DEFAULT LOCALTIME;
 -- @block
 SELECT * FROM students
 -- @block
-    INSERT INTO Attendance(student_id,date,time,attendance_status)
+    INSERT INTO Attendance(student_id,date,time,attendance_status);
 VALUES (136815120330,CURRENT_DATE,LOCALTIME,
     CASE
     WHEN LOCALTIME < '07:00:00' THEN status('ONTIME')
     ELSE status('LATE')
-    END)
+    END);
 -- @block
 select * from attendance
                   INNER JOIN students
                              ON students.lrn = attendance.student_id
-WHERE section_id = 'DB'
+WHERE section_id = 'DB';
 -- @block
 SELECT * FROM attendance
                   INNER JOIN students
                              ON students.lrn = attendance.student_id;
+
+-- @block
+CREATE TABLE scan (
+    lrn BIGINT NOT NULL,
+    hashed_lrn CHAR(128),
+    PRIMARY KEY (lrn),
+    FOREIGN KEY (lrn) REFERENCES students (lrn)
+);
 
 -- @block
 -- Change it to character varying.
