@@ -21,14 +21,14 @@ public class Student {
     @Column(name = "last_name")
     private String lastName;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class)
     @JoinColumn(name = "grade_level")
     private Gradelevel studentGradeLevel;
 
     @Column(name = "sex", length = 6)
     private String sex;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Section.class)
     @JoinColumn(name = "section_id")
     private Section studentSection;
 
@@ -41,14 +41,19 @@ public class Student {
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private Set<Attendance> attendances = new LinkedHashSet<>();
 
-    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
-    private Scan scan;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "lrn")
+    private Scan studentScan;
 
-    public void setScan(Scan scan) {
-        this.scan = scan;
+    public Scan getStudentScan() {
+        return studentScan;
+    }
+
+    public void setStudentScan(Scan studentScan) {
+        this.studentScan = studentScan;
     }
 
     public Long getLrn() {

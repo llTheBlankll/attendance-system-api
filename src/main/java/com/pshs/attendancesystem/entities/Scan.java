@@ -9,11 +9,6 @@ public class Scan {
     @Column(name = "lrn", nullable = false)
     private Long lrn;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "lrn", nullable = false)
-    private Student student;
-
     @Column(name = "hashed_lrn", length = 128)
     private String hashedLrn;
 
@@ -23,14 +18,6 @@ public class Scan {
 
     public void setLrn(Long lrn) {
         this.lrn = lrn;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
     }
 
     public String getHashedLrn() {
