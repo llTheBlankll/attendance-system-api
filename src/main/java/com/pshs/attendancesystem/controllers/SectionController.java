@@ -34,7 +34,7 @@ public class SectionController {
         return "Section with ID " + id + " was deleted.";
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
         if (!this.sectionRepository.existsById(section.getSectionId())) {
             return "Section does not exists.";
