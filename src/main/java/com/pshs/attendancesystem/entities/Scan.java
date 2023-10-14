@@ -10,9 +10,9 @@ public class Scan {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "lrn", nullable = false)
-    private Student students;
+    private Student student;
 
     @Column(name = "hashed_lrn", length = 128)
     private String hashedLrn;
@@ -25,12 +25,12 @@ public class Scan {
         this.id = id;
     }
 
-    public Student getStudents() {
-        return students;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setStudents(Student students) {
-        this.students = students;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public String getHashedLrn() {
