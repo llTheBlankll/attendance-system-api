@@ -1,13 +1,9 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 @RestController
@@ -27,8 +23,8 @@ public class StudentController {
 
     @PutMapping("/add")
     public String addStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
-            return "Student does not exist";
+        if (this.studentRepository.existsById(student.getLrn())) {
+            return "Student already exists.";
         }
 
         this.studentRepository.save(student);
@@ -37,7 +33,7 @@ public class StudentController {
 
     @DeleteMapping("/delete")
     public String deleteStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
+        if (!this.studentRepository.existsById(student.getLrn())) {
             return "Student does not exist";
         }
 
@@ -73,12 +69,12 @@ public class StudentController {
             return null;
         }
 
-        return this.studentRepository.findStudentById(id);
+        return this.studentRepository.findStudentByLrn(id);
     }
 
     @PostMapping("/update")
     public String updateStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
+        if (!this.studentRepository.existsById(student.getLrn())) {
             return "Student does not exist.";
         }
 
