@@ -44,6 +44,13 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private Set<Attendance> attendances = new LinkedHashSet<>();
 
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
+    private Scan scan;
+
+    public void setScan(Scan scan) {
+        this.scan = scan;
+    }
+
     public Long getLrn() {
         return lrn;
     }
