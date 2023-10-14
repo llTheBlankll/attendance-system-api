@@ -9,9 +9,8 @@ import java.util.Set;
 @Table(name = "students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lrn", nullable = false)
-    private Long id;
+    private Long lrn;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -45,12 +44,12 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private Set<Attendance> attendances = new LinkedHashSet<>();
 
-    public Long getId() {
-        return id;
+    public Long getLrn() {
+        return lrn;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLrn(Long lrn) {
+        this.lrn = lrn;
     }
 
     public String getFirstName() {

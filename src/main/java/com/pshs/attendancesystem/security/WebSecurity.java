@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +14,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class WebSecurity {
 
     private enum Privilege {
@@ -30,12 +33,12 @@ public class WebSecurity {
 
         manager.createUser(User.withUsername("principal")
                 .password(encoder.encode("1234"))
-                .roles(String.valueOf(Privilege.PRINCIPAL))
+                .roles(Privilege.PRINCIPAL.name())
                 .build());
 
         manager.createUser(User.withUsername("teacher")
                 .password(encoder.encode("1234"))
-                .roles(String.valueOf(Privilege.TEACHER))
+                .roles(Privilege.TEACHER.name())
                 .build());
 
         return manager;
@@ -46,7 +49,14 @@ public class WebSecurity {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize ->
+                        authorize.requestMatchers("/api/v1/**").hasRole(Privilege.TEACHER.name())
+                                .requestMatchers("/api/v1/**")
+                                .hasRole(Privilege.PRINCIPAL.name())
+                                .anyRequest()
+                                .authenticated())
+                .cors(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }

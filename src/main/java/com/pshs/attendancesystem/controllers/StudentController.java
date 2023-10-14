@@ -1,13 +1,9 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 @RestController
@@ -20,24 +16,41 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
+    /**
+     * Retrieves all students.
+     *
+     * @return  an iterable of student objects
+     */
     @GetMapping("/students")
     public Iterable<Student> getAllStudent() {
         return this.studentRepository.findAll();
     }
 
+    /**
+     * Adds a new student to the database.
+     *
+     * @param  student  the student object to be added
+     * @return          a message indicating the success of the operation
+     */
     @PutMapping("/add")
     public String addStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
-            return "Student does not exist";
+        if (this.studentRepository.existsById(student.getLrn())) {
+            return "Student already exists.";
         }
 
         this.studentRepository.save(student);
         return "Student was added";
     }
 
+    /**
+     * Deletes a student from the database.
+     *
+     * @param  student  the student object to be deleted
+     * @return          a string indicating the result of the deletion
+     */
     @DeleteMapping("/delete")
     public String deleteStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
+        if (!this.studentRepository.existsById(student.getLrn())) {
             return "Student does not exist";
         }
 
@@ -45,7 +58,13 @@ public class StudentController {
         return "Student was deleted";
     }
 
-    @DeleteMapping("/delete/{id}")
+    /**
+     * Deletes a student by their ID.
+     *
+     * @param  id  the ID of the student to delete
+     * @return     a message indicating if the student was deleted or if they do not exist
+     */
+    @DeleteMapping("/delete/lrn/{id}")
     public String deleteStudentById(@PathVariable Long id) {
         if (!this.studentRepository.existsById(id)) {
             return "Student does not exist";
@@ -57,28 +76,46 @@ public class StudentController {
 
     // SEARCH FUNCTION
 
+    /**
+     * Retrieves a list of students by grade level.
+     *
+     * @param  gradeName  the name of the grade level to search for
+     * @return            an iterable collection of Student objects
+     */
     @GetMapping("/search/gradelevel/name/{gradeName}")
     public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
         if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
             Stream<Student> empty = Stream.empty();
-            return () -> empty.iterator();
+            return () -> empty.iterator(); // Return empty.
         }
 
         return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
     }
 
-    @GetMapping("/search/id/{id}")
-    public Student getStudentById(@PathVariable("id") Long id) {
-        if (!this.studentRepository.existsById(id)) {
+    /**
+     * Retrieves a student by their unique learning resource number (LRN).
+     *
+     * @param  lrn  the learning resource number of the student
+     * @return      the student with the specified LRN, or null if not found
+     */
+    @GetMapping("/search/lrn/{lrn}")
+    public Student getStudentById(@PathVariable("lrn") Long lrn) {
+        if (!this.studentRepository.existsById(lrn)) {
             return null;
         }
 
-        return this.studentRepository.findStudentById(id);
+        return this.studentRepository.findStudentByLrn(lrn);
     }
 
+    /**
+     * Updates a student in the system.
+     *
+     * @param  student  the student object to be updated
+     * @return          a string indicating the result of the update
+     */
     @PostMapping("/update")
     public String updateStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getId())) {
+        if (!this.studentRepository.existsById(student.getLrn())) {
             return "Student does not exist.";
         }
 

@@ -52,7 +52,7 @@ public class GradeLevelController {
         return "Grade level was deleted";
     }
 
-    @DeleteMapping("/update")
+    @PostMapping("/update")
     public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (gradelevel.getGradeName().isEmpty()) {
             return "Grade level is empty. Fill grade_level value.";
