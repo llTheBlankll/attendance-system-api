@@ -5,14 +5,13 @@ import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -34,27 +33,39 @@ public class AttendanceController {
         return this.attendanceRepository.findAll();
     }
 
-    @PutMapping("/add/{student_lrn}")
-    public String addAttendance(@PathVariable Long student_lrn) {
+    @PutMapping("/add/{studentLrn}")
+    public String addAttendance(@PathVariable Long studentLrn) {
         // Check for the existence of Student LRN
-        if (!studentRepository.existsById(student_lrn)) {
+        if (!studentRepository.existsById(studentLrn)) {
             return "Student LRN does not exist";
         }
+        // Change flag ceremony time if today is monday.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(calendar.getTime());
+        boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+        LocalTime flagCeremonyTime;
 
-        LocalTime flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
-        LocalTime earliestTimeToArrive = Time.valueOf("4:00:00").toLocalTime();
+        if (monday) {
+            flagCeremonyTime = Time.valueOf("6:30:00").toLocalTime();
+        } else {
+            flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
+        }
+
+        LocalTime earliestTimeToArrive = Time.valueOf("5:30:00").toLocalTime();
         Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Time currentTime = new Time(System.currentTimeMillis());
+        LocalTime currentLocalTime = currentTime.toLocalTime();
 
-        Optional<Student> student = this.studentRepository.findById(student_lrn);
+        Optional<Student> student = this.studentRepository.findById(studentLrn);
         if (student.isPresent()) {
             Attendance attendance = new Attendance();
             attendance.setStudent(student.get());
 
-            if (flagCeremonyTime.isBefore(earliestTimeToArrive)) {
+            if (currentLocalTime.isBefore(flagCeremonyTime) && currentLocalTime.isAfter(earliestTimeToArrive)) {
                 attendance.setAttendance_status(Enums.status.ONTIME);
-            } else if (flagCeremonyTime.isAfter(earliestTimeToArrive)) {
+            } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
                 attendance.setAttendance_status(Enums.status.LATE);
-            } else {
+            } else if (currentLocalTime.isBefore(earliestTimeToArrive)) {
                 // EARLY
             }
 
