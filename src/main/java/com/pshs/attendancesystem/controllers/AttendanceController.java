@@ -23,7 +23,6 @@ public class AttendanceController {
 
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public AttendanceController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.attendanceRepository = attendanceRepository;
@@ -69,13 +68,13 @@ public class AttendanceController {
         return "Student does not exist";
     }
 
-    @DeleteMapping("/delete")
-    public String deleteAttendance(@RequestBody Attendance attendance) {
-        if (!this.attendanceRepository.existsById(attendance.getId())) {
-            logger.info("Attendance does not exist");
+    @DeleteMapping("/delete/id/{id}")
+    public String deleteAttendance(@PathVariable Integer id) {
+        if (!this.attendanceRepository.existsById(id)) {
+            return "Attendance does not exist";
         }
 
-        this.attendanceRepository.delete(attendance);
+        this.attendanceRepository.deleteById(id);
         return "Attendance was deleted";
     }
 

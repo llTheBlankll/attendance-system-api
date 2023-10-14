@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 @RestController
 @CrossOrigin
@@ -59,7 +60,8 @@ public class StudentController {
     @GetMapping("/search/gradelevel/name/{gradeName}")
     public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
         if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
-            return (Iterable<Student>) Collections.emptyIterator();
+            Stream<Student> empty = Stream.empty();
+            return () -> empty.iterator();
         }
 
         return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
@@ -68,9 +70,19 @@ public class StudentController {
     @GetMapping("/search/id/{id}")
     public Student getStudentById(@PathVariable("id") Long id) {
         if (!this.studentRepository.existsById(id)) {
-            return new Student();
+            return null;
         }
 
         return this.studentRepository.findStudentById(id);
+    }
+
+    @PostMapping("/update")
+    public String updateStudent(@RequestBody Student student) {
+        if (!this.studentRepository.existsById(student.getId())) {
+            return "Student does not exist.";
+        }
+
+        this.studentRepository.save(student);
+        return "Student was updated.";
     }
 }

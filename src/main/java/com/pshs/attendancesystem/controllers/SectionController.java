@@ -5,6 +5,8 @@ import com.pshs.attendancesystem.repositories.SectionRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 @RestController
 @CrossOrigin
@@ -22,7 +24,7 @@ public class SectionController {
         return this.sectionRepository.findAll();
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
         if (!this.sectionRepository.existsById(id)) {
             return "Section does not exists.";
@@ -33,8 +35,13 @@ public class SectionController {
     }
 
     @GetMapping("/delete")
-    public void deleteSectionBySectionId(String sectionId) {
-        this.sectionRepository.deleteSectionBySectionId(sectionId);
+    public String deleteSectionBySectionId(@RequestBody Section section) {
+        if (!this.sectionRepository.existsById(section.getSectionId())) {
+            return "Section does not exists.";
+        }
+
+        this.sectionRepository.delete(section);
+        return "Section with ID " + section.getSectionId() + " was deleted.";
     }
 
     @PutMapping("/add")
@@ -61,7 +68,10 @@ public class SectionController {
 
     @GetMapping("/search/adviser/{adviser}")
     public Iterable<Section> getSectionByAdviser(@PathVariable String adviser) {
-        if (!this.sectionRepository.existsByAdviser(adviser)) return (Iterable<Section>) Collections.emptyIterator();
-        return this.sectionRepository.findByAdviser(adviser);
+        if (!this.sectionRepository.existsByAdviser(adviser)) {
+            Stream<Section> emptyStream = Stream.empty();
+            return emptyStream::iterator;
+        }
+        return this.sectionRepository.findByAdviserLikeIgnoreCase(adviser);
     }
 }
