@@ -52,14 +52,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             Attendance attendance = new Attendance();
             attendance.setStudent(student.get());
 
-//            if (flagCeremonyTime.isBefore(earliestTimeToArrive)) {
-//                attendance.setAttendance_status(Enums.status.ONTIME);
-//            } else if (flagCeremonyTime.isAfter(earliestTimeToArrive)) {
-//                attendance.setAttendance_status(Enums.status.LATE);
-//            } else {
-//                // EARLY
-//            }
-
             if (currentLocalTime.isBefore(flagCeremonyTime) && currentLocalTime.isAfter(earliestTimeToArrive)) {
                 attendance.setAttendance_status(Enums.status.ONTIME);
             } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
@@ -79,21 +71,48 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String hashedLrn = message.getPayload();
+        // Check if empty
+        if (hashedLrn.isEmpty()) {
+            TextMessage emptyLrnMessage = new TextMessage("Empty LRN");
+            session.sendMessage(emptyLrnMessage);
+            return;
+        }
+
         Scan scan = this.scanRepository.findByHashedLrn(hashedLrn);
 
+        // Check if no matching lrn was found.
         if (scan != null) {
-            LocalTime flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
-            LocalTime earliestTimeToArrive = Time.valueOf("0:00:00").toLocalTime();
+            // Change flag ceremony time if today is monday.
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(calendar.getTime());
+            boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+            LocalTime flagCeremonyTime;
+
+            if (monday) {
+                flagCeremonyTime = Time.valueOf("6:30:00").toLocalTime();
+            } else {
+                flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
+            }
+
+            // Earliest time
+            LocalTime earliestTimeToArrive = Time.valueOf("5:30:00").toLocalTime();
+
+            // Get the current time
             Time currentTime = new Time(System.currentTimeMillis());
             LocalTime currentLocalTime = currentTime.toLocalTime();
 
-            if (currentLocalTime.isBefore(flagCeremonyTime) && currentLocalTime.isAfter(earliestTimeToArrive)) {
+            if (currentLocalTime.isBefore(flagCeremonyTime)) {
                 TextMessage onTimeMessage = new TextMessage("You are on time");
                 session.sendMessage(onTimeMessage);
-            } else {
+            } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
                 TextMessage lateMessage = new TextMessage("You are late");
                 session.sendMessage(lateMessage);
+            } else if (currentLocalTime.isBefore(earliestTimeToArrive)){
+                TextMessage earlyMessage = new TextMessage("You are early");
+                session.sendMessage(earlyMessage);
             }
+
+            // Now add attendance.
             this.addAttendance(scan.getLrn());
         } else {
             TextMessage invalidLrnMessage = new TextMessage("Invalid LRN");
