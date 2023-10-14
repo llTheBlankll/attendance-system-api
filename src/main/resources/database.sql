@@ -43,7 +43,7 @@ CREATE TABLE Students(
                          guardian_name VARCHAR(255),
                          contact_guardian BIGINT,
                          address TEXT,
-                         PRIMARY KEY(lrn),
+                         PRIMARY KEY(lrn, scan),
                          FOREIGN KEY (grade_level) REFERENCES GradeLevels(grade_level),
                          FOREIGN KEY (section_id) REFERENCES Sections(section_id)
 );
@@ -155,7 +155,7 @@ SELECT * FROM attendance
 -- @block
 CREATE TABLE scan (
     lrn BIGINT NOT NULL,
-    hashed_lrn CHAR(128),
+    hashed_lrn CHAR(32),
     PRIMARY KEY (lrn),
     FOREIGN KEY (lrn) REFERENCES students (lrn)
 );
@@ -164,3 +164,9 @@ CREATE TABLE scan (
 -- Change it to character varying.
 ALTER TABLE attendance
 ALTER COLUMN attendance_status TYPE character varying;
+
+-- @block
+ALTER TABLE students
+ADD COLUMN scan BIGINT;
+ALTER TABLE students
+ADD CONSTRAINT fk_scan FOREIGN KEY (scan) REFERENCES scan (lrn);
