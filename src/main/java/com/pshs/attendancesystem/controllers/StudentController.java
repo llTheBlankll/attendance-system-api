@@ -1,6 +1,8 @@
 package com.pshs.attendancesystem.controllers;
 
+import com.pshs.attendancesystem.entities.Scan;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.repositories.ScanRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.stream.Stream;
 @RequestMapping("/api/v1/student")
 public class StudentController {
     private final StudentRepository studentRepository;
+    private final ScanRepository scanRepository;
 
     // * MD5 HASHING FUNCTION
     private String HashMD5(String value) {
@@ -45,8 +48,9 @@ public class StudentController {
         return null;
     }
 
-    public StudentController(StudentRepository studentRepository) {
+    public StudentController(StudentRepository studentRepository, ScanRepository scanRepository) {
         this.studentRepository = studentRepository;
+        this.scanRepository = scanRepository;
     }
 
     /**
@@ -71,7 +75,19 @@ public class StudentController {
             return "Student already exists.";
         }
 
+        Scan studentScan = new Scan();
+
+        // First save the un-hashed student's learning resource number.
         this.studentRepository.save(student);
+
+        // Then encode the student's learning resource number with MD5.
+        studentScan.setStudent(student);
+        studentScan.setLrn(student.getLrn());
+        studentScan.setHashedLrn(HashMD5(student.getLrn().toString()));
+
+        // Add the hashed lrn to the database.
+        this.scanRepository.save(studentScan);
+
         return "Student was added";
     }
 
