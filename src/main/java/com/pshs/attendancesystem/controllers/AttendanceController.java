@@ -23,7 +23,6 @@ public class AttendanceController {
 
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public AttendanceController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.attendanceRepository = attendanceRepository;
