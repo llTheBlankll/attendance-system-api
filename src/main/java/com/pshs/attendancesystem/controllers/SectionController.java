@@ -4,8 +4,6 @@ import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.stream.Stream;
 
 @RestController
@@ -36,6 +34,10 @@ public class SectionController {
 
     @DeleteMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
+        if (section.getSectionId() == null) {
+            return "Section does not exists.";
+        }
+
         if (!this.sectionRepository.existsById(section.getSectionId())) {
             return "Section does not exists.";
         }
