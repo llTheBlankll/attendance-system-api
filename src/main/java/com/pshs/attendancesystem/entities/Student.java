@@ -41,7 +41,7 @@ public class Student {
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Attendance> attendances = new LinkedHashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
