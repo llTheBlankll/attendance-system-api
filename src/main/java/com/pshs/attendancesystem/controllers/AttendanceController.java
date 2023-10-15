@@ -25,8 +25,6 @@ public class AttendanceController {
 
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
-    LocalDate today = LocalDate.now();
-    LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
     public AttendanceController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.attendanceRepository = attendanceRepository;
@@ -102,58 +100,5 @@ public class AttendanceController {
 
         this.attendanceRepository.save(attendance);
         return "Attendance was updated";
-    }
-
-    @GetMapping("/late/month")
-    public Iterable<Attendance> getLateStudentsThisMonth() throws ParseException{
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                Date.from(firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Enums.status.LATE
-        );
-    }
-
-    @GetMapping("/ontime/month")
-    public Iterable<Attendance> getOnTimeStudentsThisMonth() throws ParseException {
-
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        Date fromFirstMonth = Date.from(firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastMonth = Date.from(lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstMonth,
-                toLastMonth,
-                Enums.status.ONTIME
-        );
-    }
-
-    @GetMapping("/late/week")
-    public Iterable<Attendance> getLateStudentsThisWeek() throws ParseException {
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        Date fromFirstWeek = Date.from(firstDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastWeek = Date.from(lastDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstWeek,
-                toLastWeek,
-                Enums.status.LATE
-        );
-    }
-
-    @GetMapping("/ontime/week")
-    public Iterable<Attendance> getOnTimeStudentsThisWeek() throws ParseException {
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        Date fromFirstWeek = Date.from(firstDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastWeek = Date.from(lastDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstWeek,
-                toLastWeek,
-                Enums.status.ONTIME
-        );
     }
 }
