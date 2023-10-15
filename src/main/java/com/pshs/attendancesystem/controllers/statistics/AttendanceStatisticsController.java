@@ -2,7 +2,9 @@ package com.pshs.attendancesystem.controllers.statistics;
 
 import com.pshs.attendancesystem.Enums;
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
+import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
 
 @RestController
 @CrossOrigin
@@ -20,11 +20,13 @@ import java.util.Date;
 public class AttendanceStatisticsController {
 
     private final AttendanceRepository attendanceRepository;
-    LocalDate today = LocalDate.now();
-    LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    private final ManipulateAttendance manipulateAttendance;
 
-    public AttendanceStatisticsController(AttendanceRepository attendanceRepository) {
+    LocalDate today = LocalDate.now();
+
+    public AttendanceStatisticsController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.attendanceRepository = attendanceRepository;
+        manipulateAttendance = new ManipulateAttendance(attendanceRepository, studentRepository);
     }
 
     @GetMapping("/late/month")
@@ -32,11 +34,7 @@ public class AttendanceStatisticsController {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                Date.from(firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Date.from(lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                Enums.status.LATE
-        );
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth, Enums.status.LATE);
     }
 
     @GetMapping("/ontime/month")
@@ -44,38 +42,52 @@ public class AttendanceStatisticsController {
 
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        Date fromFirstMonth = Date.from(firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastMonth = Date.from(lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstMonth,
-                toLastMonth,
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                firstDayOfMonth,
+                lastDayOfMonth,
                 Enums.status.ONTIME
         );
     }
 
     @GetMapping("/late/week")
     public Iterable<Attendance> getLateStudentsThisWeek() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        Date fromFirstWeek = Date.from(firstDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastWeek = Date.from(lastDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstWeek,
-                toLastWeek,
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                firstDayOfWeek,
+                lastDayOfWeek,
                 Enums.status.LATE
         );
     }
 
     @GetMapping("/ontime/week")
     public Iterable<Attendance> getOnTimeStudentsThisWeek() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        Date fromFirstWeek = Date.from(firstDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date toLastWeek = Date.from(lastDayOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        return this.attendanceRepository.findByDateAfterAndDateBeforeAndAttendanceStatus(
-                fromFirstWeek,
-                toLastWeek,
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                firstDayOfWeek,
+                lastDayOfWeek,
+                Enums.status.ONTIME
+        );
+    }
+
+    @GetMapping("/late/today")
+    public Iterable<Attendance> getLateStudentsToday() {
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                LocalDate.now(),
+                LocalDate.now(),
+                Enums.status.LATE
+        );
+    }
+
+    @GetMapping("/ontime/today")
+    public Iterable<Attendance> getOnTimeStudentsToday() {
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                LocalDate.now(),
+                LocalDate.now(),
                 Enums.status.ONTIME
         );
     }

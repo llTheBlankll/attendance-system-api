@@ -4,6 +4,7 @@ import com.pshs.attendancesystem.Enums;
 import jakarta.persistence.*;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class Attendance {
     private Student student;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDate date;
     @Column(name = "time")
     private Time time;
 
@@ -47,11 +48,11 @@ public class Attendance {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
