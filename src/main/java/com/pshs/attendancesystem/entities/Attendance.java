@@ -24,14 +24,14 @@ public class Attendance {
     private Time time;
 
     @Enumerated(EnumType.STRING)
-    Enums.status attendance_status;
+    Enums.status attendanceStatus;
 
-    public Enums.status getAttendance_status() {
-        return attendance_status;
+    public Enums.status getAttendanceStatus() {
+        return attendanceStatus;
     }
 
-    public void setAttendance_status(Enums.status attendance_status) {
-        this.attendance_status = attendance_status;
+    public void setAttendanceStatus(Enums.status attendanceStatus) {
+        this.attendanceStatus = attendanceStatus;
     }
 
 
