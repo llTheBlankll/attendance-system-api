@@ -23,6 +23,21 @@ public class ManipulateAttendance {
         this.attendanceRepository = attendanceRepository;
         this.studentRepository = studentRepository;
     }
+
+    public boolean checkIfAlreadyArrived(Student student) {
+
+        // Iterate each attendance and get the attendance with the current date time,
+        // If a row exists, return false because the student has already arrived.
+        for (Attendance currentAttendance : student.getAttendances()) {
+            if (currentAttendance.getDate().equals(LocalDate.now())) {
+                logger.info(String.format("Student %s already arrived", student.getLrn()));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean addAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
@@ -38,16 +53,6 @@ public class ManipulateAttendance {
 
         Optional<Student> student = this.studentRepository.findById(studentLrn);
         if (student.isPresent()) {
-            Student studentData = student.get();
-
-            // Iterate each attendance and get the attendance with the current date time,
-            // If a row exists, return false because the student has already arrived.
-            for (Attendance currentAttendance : studentData.getAttendances()) {
-                if (currentAttendance.getDate().equals(LocalDate.now())) {
-                    return false;
-                }
-            }
-
             Attendance attendance = new Attendance();
             attendance.setStudent(student.get());
 

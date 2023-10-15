@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.websocketconfig;
 
 import com.pshs.attendancesystem.entities.Scan;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.ScanRepository;
@@ -39,10 +40,19 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        // Look for student by their LRN.
         Scan scan = this.scanRepository.findByHashedLrn(hashedLrn);
 
+        // Check if student already arrived.
+        Student student = this.studentRepository.findStudentByLrn(scan.getLrn());
+        if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
+            TextMessage alreadyArrivedMessage = new TextMessage("You've already arrived.");
+            session.sendMessage(alreadyArrivedMessage);
+            return;
+        }
+
         // Check if no matching lrn was found.
-        if (scan != null) {
+        if (scan.getLrn() != null) {
             // Change flag ceremony time if today is monday.
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(calendar.getTime());
