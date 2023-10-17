@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.pshs.attendancesystem.Enums;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,7 +15,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     long countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Enums.status attendanceStatus);
     Iterable<Attendance> findByStudentLrnAndDate(Long studentLrn, LocalDate date);
 
+    @Query("UPDATE Attendance attendance SET attendance.timeOut = ?1 WHERE attendance.id = ?2")
     @Modifying
-    @Query("UPDATE Attendance a SET a.timeOut = ?2 WHERE a.id = ?1")
+    @Transactional
     void studentAttendanceOut(LocalTime timeOut, Integer id);
 }
