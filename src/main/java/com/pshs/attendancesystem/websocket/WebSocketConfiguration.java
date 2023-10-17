@@ -22,6 +22,11 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
         this.studentRepository = studentRepository;
     }
 
+    /**
+     * Registers WebSocket handlers for the given WebSocketHandlerRegistry.
+     *
+     * @param  handlerRegistry  the WebSocketHandlerRegistry to register the handlers with. This allows for managing WebSocket connections and communication.
+     */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {
         handlerRegistry.addHandler(new ScannerWebSocketHandler(scanRepository, attendanceRepository, studentRepository), "/websocket/scanner/in").setAllowedOrigins("*");
