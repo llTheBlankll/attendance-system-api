@@ -24,6 +24,9 @@ public class Attendance {
     @Column(name = "time")
     private Time time;
 
+    @Column(name = "time_out")
+    private Time timeOut;
+
     @Enumerated(EnumType.STRING)
     Enums.status attendanceStatus;
 
@@ -35,6 +38,13 @@ public class Attendance {
         this.attendanceStatus = attendanceStatus;
     }
 
+    public Time getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(Time timeOut) {
+        this.timeOut = timeOut;
+    }
 
     public void setStudent(Student student) {
         this.student = student;
