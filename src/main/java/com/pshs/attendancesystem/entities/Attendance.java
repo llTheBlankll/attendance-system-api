@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "attendance")

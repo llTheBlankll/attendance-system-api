@@ -7,12 +7,14 @@ import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
+@Component
 public class ManipulateAttendance {
 
     private final AttendanceRepository attendanceRepository;
@@ -24,6 +26,12 @@ public class ManipulateAttendance {
         this.studentRepository = studentRepository;
     }
 
+    /**
+     * Checks if the student has already arrived by iterating through their attendances and comparing the date.
+     *
+     * @param  student  the student object to check
+     * @return          true if the student has already arrived, false otherwise
+     */
     public boolean checkIfAlreadyArrived(Student student) {
 
         // Iterate each attendance and get the attendance with the current date time,
@@ -38,6 +46,12 @@ public class ManipulateAttendance {
         return false;
     }
 
+    /**
+     * Checks if the student has already left.
+     *
+     * @param  student  the student object
+     * @return          true if the student has already left, false otherwise
+     */
     public boolean checkIfAlreadyOut(Student student) {
         // Iterate eachAttendance and get theAttendance with the current date time,
         // If a row exists, return false because the student has already left.
@@ -56,6 +70,12 @@ public class ManipulateAttendance {
         return false;
     }
 
+    /**
+     * Adds attendance for a student based on their LRN.
+     *
+     * @param  studentLrn  the LRN (Learner Reference Number) of the student
+     * @return             true if the attendance is successfully added, false otherwise
+     */
     public boolean addAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
@@ -92,6 +112,12 @@ public class ManipulateAttendance {
         return false;
     }
 
+    /**
+     * Checks the attendance status of a student and marks them as "out" if they are currently "in".
+     *
+     * @param  studentLrn  the LRN (Learner Reference Number) of the student
+     * @return             true if the student's attendance was successfully marked as "out", false otherwise
+     */
     public boolean attendanceOut(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
@@ -104,10 +130,7 @@ public class ManipulateAttendance {
             Student studentData = student.get();
             for (Attendance attendance : studentData.getAttendances()) {
                 if (attendance.getDate().equals(LocalDate.now()) && attendance.getTimeOut() == null) {
-                    studentData.getAttendances().remove(attendance);
-                    attendance.setTimeOut(Time.valueOf(LocalTime.now()));
-                    studentData.getAttendances().add(attendance);
-                    this.studentRepository.save(studentData);
+                    this.attendanceRepository.studentAttendanceOut(LocalTime.now(), attendance.getId());
                     logger.info(String.format("Student %s has left at %s", studentData.getLrn(), LocalTime.now()));
                     return true;
                 }
@@ -124,5 +147,14 @@ public class ManipulateAttendance {
 
     public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Enums.status status) {
         return attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+    }
+
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(long studentLrn
+            , LocalDate startDate, LocalDate endDate, Enums.status status) {
+        return attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
+    }
+
+    public long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Enums.status status) {
+        return attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
     }
 }

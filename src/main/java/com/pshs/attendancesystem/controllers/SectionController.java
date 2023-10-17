@@ -17,11 +17,22 @@ public class SectionController {
         this.sectionRepository = sectionRepository;
     }
 
+    /**
+     * Retrieves all sections.
+     *
+     * @return  an iterable collection of Section objects representing all sections
+     */
     @GetMapping("/sections")
     public Iterable<Section> getAllSection() {
         return this.sectionRepository.findAll();
     }
 
+    /**
+     * Deletes a section by its ID.
+     *
+     * @param  id  the ID of the section to delete
+     * @return     a message indicating whether the section was deleted successfully or not
+     */
     @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
         if (!this.sectionRepository.existsById(id)) {
@@ -32,6 +43,12 @@ public class SectionController {
         return "Section with ID " + id + " was deleted.";
     }
 
+    /**
+     * Deletes a section by section ID.
+     *
+     * @param  section  the section object containing the section ID to be deleted
+     * @return          a message indicating whether the section was successfully deleted or not
+     */
     @DeleteMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
         if (section.getSectionId() == null) {
@@ -46,6 +63,12 @@ public class SectionController {
         return "Section with ID " + section.getSectionId() + " was deleted.";
     }
 
+    /**
+     * Adds a new section to the repository.
+     *
+     * @param  section  the section to be added
+     * @return          a string indicating the status of the operation
+     */
     @PutMapping("/add")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
@@ -56,6 +79,12 @@ public class SectionController {
         return "Section is created.";
     }
 
+    /**
+     * Updates a section.
+     *
+     * @param  section  the section to update
+     * @return          a message indicating the result of the update
+     */
     @PostMapping("/update")
     public String updateSection(@RequestBody Section section) {
         if (!this.sectionRepository.existsById(section.getSectionId())) {
@@ -68,6 +97,12 @@ public class SectionController {
 
     // SEARCH FUNCTION
 
+    /**
+     * Retrieves a collection of Section objects based on the given adviser.
+     *
+     * @param  adviser  the adviser to search for
+     * @return          an iterable collection of Section objects
+     */
     @GetMapping("/search/adviser/{adviser}")
     public Iterable<Section> getSectionByAdviser(@PathVariable String adviser) {
         if (!this.sectionRepository.existsByAdviser(adviser)) {

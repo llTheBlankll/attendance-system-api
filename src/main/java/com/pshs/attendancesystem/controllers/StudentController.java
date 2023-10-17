@@ -18,7 +18,12 @@ public class StudentController {
     private final ScanRepository scanRepository;
     private final String salt = "ujsX54enWHyPuAU";
 
-    // * MD5 HASHING FUNCTION
+    /**
+     * Hashes a given value using the MD5 algorithm.
+     *
+     * @param  value  the value to be hashed
+     * @return        the hexadecimal string representation of the hash value
+     */
     private String HashMD5(String value) {
         value += salt;
         try {

@@ -44,6 +44,13 @@ public class WebSecurity {
         return manager;
     }
 
+    /**
+     * Generates the security filter chain for the HTTP security.
+     *
+     * @param  httpSecurity  the HttpSecurity object representing the security configuration
+     * @return               the SecurityFilterChain object representing the security filter chain
+     * @throws Exception    if an exception occurs during the generation of the security filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
