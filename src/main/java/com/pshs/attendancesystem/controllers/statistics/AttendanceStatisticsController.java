@@ -19,13 +19,11 @@ import java.time.temporal.TemporalAdjusters;
 @RequestMapping("/api/v1/attendance/statistics")
 public class AttendanceStatisticsController {
 
-    private final AttendanceRepository attendanceRepository;
     private final ManipulateAttendance manipulateAttendance;
 
     LocalDate today = LocalDate.now();
 
     public AttendanceStatisticsController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
-        this.attendanceRepository = attendanceRepository;
         manipulateAttendance = new ManipulateAttendance(attendanceRepository, studentRepository);
     }
 
@@ -88,6 +86,54 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 LocalDate.now(),
                 LocalDate.now(),
+                Enums.status.ONTIME
+        );
+    }
+
+    @GetMapping("/late/month/count")
+    public long getLateStudentCountThisMonth() {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                firstDayOfMonth,
+                lastDayOfMonth,
+                Enums.status.LATE
+        );
+    }
+
+    @GetMapping("/ontime/month/count")
+    public long getOnTimeStudentCountThisMonth() {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                firstDayOfMonth,
+                lastDayOfMonth,
+                Enums.status.ONTIME
+        );
+    }
+
+    @GetMapping("/late/week/count")
+    public long getLateStudentCountThisWeek() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                firstDayOfWeek,
+                lastDayOfWeek,
+                Enums.status.LATE
+        );
+    }
+
+    @GetMapping("/ontime/week/count")
+    public long getOnTimeStudentCountThisWeek() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                firstDayOfWeek,
+                lastDayOfWeek,
                 Enums.status.ONTIME
         );
     }
