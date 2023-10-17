@@ -1,8 +1,10 @@
-package com.pshs.attendancesystem.websocketconfig;
+package com.pshs.attendancesystem.websocket;
 
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.ScanRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.websocket.Handlers.ScannerOutWebSocketHandler;
+import com.pshs.attendancesystem.websocket.Handlers.ScannerWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.*;
 
@@ -22,6 +24,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {
-        handlerRegistry.addHandler(new ScannerWebSocketHandler(scanRepository, attendanceRepository, studentRepository), "/websocket/scanner").setAllowedOrigins("*");
+        handlerRegistry.addHandler(new ScannerWebSocketHandler(scanRepository, attendanceRepository, studentRepository), "/websocket/scanner/in").setAllowedOrigins("*");
+        handlerRegistry.addHandler(new ScannerOutWebSocketHandler(scanRepository,attendanceRepository, studentRepository), "/websocket/scanner/out").setAllowedOrigins("*");
     }
 }
