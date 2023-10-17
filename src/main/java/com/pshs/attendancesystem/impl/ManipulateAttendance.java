@@ -38,6 +38,24 @@ public class ManipulateAttendance {
         return false;
     }
 
+    public boolean checkIfAlreadyOut(Student student) {
+        // Iterate eachAttendance and get theAttendance with the current date time,
+        // If a row exists, return false because the student has already left.
+        for (Attendance currentAttendance : student.getAttendances()) {
+            if (currentAttendance.getDate().equals(LocalDate.now())) {
+                // If the student has already left, return true
+                if (currentAttendance.getTimeOut() != null) {
+                    logger.info(String.format("Student %s already left", student.getLrn()));
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     public boolean addAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
@@ -74,7 +92,37 @@ public class ManipulateAttendance {
         return false;
     }
 
+    public boolean attendanceOut(Long studentLrn) {
+        // Check for the existence of Student LRN
+        if (!studentRepository.existsById(studentLrn)) {
+            logger.info("Student LRN does not exist");
+            return false;
+        }
+
+        Optional<Student> student = this.studentRepository.findById(studentLrn);
+        if (student.isPresent()) {
+            Student studentData = student.get();
+            for (Attendance attendance : studentData.getAttendances()) {
+                if (attendance.getDate().equals(LocalDate.now()) && attendance.getTimeOut() == null) {
+                    studentData.getAttendances().remove(attendance);
+                    attendance.setTimeOut(Time.valueOf(LocalTime.now()));
+                    studentData.getAttendances().add(attendance);
+                    this.studentRepository.save(studentData);
+                    logger.info(String.format("Student %s has left at %s", studentData.getLrn(), LocalTime.now()));
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Enums.status status) {
         return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+    }
+
+    public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Enums.status status) {
+        return attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
     }
 }
