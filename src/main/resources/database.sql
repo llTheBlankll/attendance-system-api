@@ -133,6 +133,7 @@ CREATE TABLE Attendance(
     attendance_status status,
     date DATE DEFAULT CURRENT_DATE,
     time TIME DEFAULT LOCALTIME,
+    time_out TIME DEFAULT LOCALTIME,
     PRIMARY KEY (id),
     FOREIGN KEY (student_id) REFERENCES Students(lrn)
 );
