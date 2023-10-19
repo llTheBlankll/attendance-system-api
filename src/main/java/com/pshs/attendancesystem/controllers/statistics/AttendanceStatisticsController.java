@@ -260,7 +260,6 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getStudentAttendanceBetweenDate(
                 studentLrn,
                 LocalDate.now(),
-                LocalDate.now(),
-                Enums.status.ONTIME);
+                LocalDate.now());
     }
 }
