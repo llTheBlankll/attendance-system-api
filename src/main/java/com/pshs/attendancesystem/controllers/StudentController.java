@@ -4,6 +4,7 @@ import com.pshs.attendancesystem.entities.Scan;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.ScanRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.security.PasswordGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
@@ -16,7 +17,6 @@ import java.util.stream.Stream;
 public class StudentController {
     private final StudentRepository studentRepository;
     private final ScanRepository scanRepository;
-    private final String salt = "ujsX54enWHyPuAU";
 
     /**
      * Hashes a given value using the MD5 algorithm.
@@ -25,7 +25,6 @@ public class StudentController {
      * @return        the hexadecimal string representation of the hash value
      */
     private String HashMD5(String value) {
-        value += salt;
         try {
             // Create an instance of MessageDigest with MD5 algorithm
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -83,13 +82,15 @@ public class StudentController {
         }
 
         Scan studentScan = new Scan();
-
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
         // First save the un-hashed student's learning resource number.
         this.studentRepository.save(student);
 
         // Then encode the student's learning resource number with MD5.
+        String salt = passwordGenerator.generate(16);
         studentScan.setLrn(student.getLrn());
-        studentScan.setHashedLrn(HashMD5(student.getLrn().toString()));
+        studentScan.setHashedLrn(HashMD5(student.getLrn() + salt));
+        studentScan.setSalt(salt);
 
         // Add the hashed lrn to the database.
         this.scanRepository.save(studentScan);
