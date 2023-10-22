@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.controllers.statistics;
 
-import com.pshs.attendancesystem.Enums;
+import com.pshs.attendancesystem.Status;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
@@ -35,7 +35,7 @@ public class AttendanceStatisticsController {
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
         return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -52,7 +52,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 firstDayOfMonth,
                 lastDayOfMonth,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -84,7 +84,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -97,7 +97,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 LocalDate.now(),
                 LocalDate.now(),
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -110,7 +110,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(
                 LocalDate.now(),
                 LocalDate.now(),
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -126,7 +126,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
                 firstDayOfMonth,
                 lastDayOfMonth,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -142,7 +142,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
                 firstDayOfMonth,
                 lastDayOfMonth,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -158,7 +158,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -174,7 +174,7 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -192,7 +192,7 @@ public class AttendanceStatisticsController {
                 studentLrn,
                 firstDayOfMonth,
                 lastDayOfMonth,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -210,7 +210,7 @@ public class AttendanceStatisticsController {
                 studentLrn,
                 firstDayOfMonth,
                 lastDayOfMonth,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
@@ -228,7 +228,7 @@ public class AttendanceStatisticsController {
                 studentLrn,
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.ONTIME);
+                Status.ONTIME);
     }
 
     /**
@@ -246,7 +246,7 @@ public class AttendanceStatisticsController {
                 studentLrn,
                 firstDayOfWeek,
                 lastDayOfWeek,
-                Enums.status.LATE);
+                Status.LATE);
     }
 
     /**
