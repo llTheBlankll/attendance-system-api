@@ -1,9 +1,14 @@
 package com.pshs.attendancesystem.controllers;
 
+import com.pshs.attendancesystem.entities.Scan;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.repositories.ScanRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.security.PasswordGenerator;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 @RestController
@@ -11,9 +16,47 @@ import java.util.stream.Stream;
 @RequestMapping("/api/v1/student")
 public class StudentController {
     private final StudentRepository studentRepository;
+    private final ScanRepository scanRepository;
 
-    public StudentController(StudentRepository studentRepository) {
+    /**
+     * Hashes a given value using the MD5 algorithm.
+     *
+     * @param  value  the value to be hashed
+     * @return        the hexadecimal string representation of the hash value
+     */
+    private String HashMD5(String value) {
+        try {
+            // Create an instance of MessageDigest with MD5 algorithm
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // Convert the value to bytes
+            byte[] valueBytes = value.getBytes();
+
+            // Update the MessageDigest with the value bytes
+            md.update(valueBytes);
+
+            // Get the hash value as bytes
+            byte[] hashBytes = md.digest();
+
+            // Convert the hash bytes to a hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            // Return the hexadecimal string representation of the hash value
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Handle the exception if MD5 algorithm is not available
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public StudentController(StudentRepository studentRepository, ScanRepository scanRepository) {
         this.studentRepository = studentRepository;
+        this.scanRepository = scanRepository;
     }
 
     /**
@@ -38,7 +81,20 @@ public class StudentController {
             return "Student already exists.";
         }
 
+        Scan studentScan = new Scan();
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+        // First save the un-hashed student's learning resource number.
         this.studentRepository.save(student);
+
+        // Then encode the student's learning resource number with MD5.
+        String salt = passwordGenerator.generate(16);
+        studentScan.setLrn(student.getLrn());
+        studentScan.setHashedLrn(HashMD5(student.getLrn() + salt));
+        studentScan.setSalt(salt);
+
+        // Add the hashed lrn to the database.
+        this.scanRepository.save(studentScan);
+
         return "Student was added";
     }
 

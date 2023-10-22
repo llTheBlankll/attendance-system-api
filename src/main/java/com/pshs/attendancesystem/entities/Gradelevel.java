@@ -15,10 +15,10 @@ public class Gradelevel {
     @Column(name = "grade_name", nullable = false)
     private String gradeName;
 
-    @OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class)
+    @OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
     private Set<Section> sections = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "studentGradeLevel", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "studentGradeLevel", cascade = CascadeType.ALL)
     private Set<Student> students = new LinkedHashSet<>();
 
     public void setStudents(Set<Student> students) {
