@@ -1,9 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "scan")
@@ -12,11 +10,24 @@ public class Scan {
     @Column(name = "lrn", nullable = false)
     private Long lrn;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
+    @JsonManagedReference
+    private Student student;
+
     @Column(name = "hashed_lrn", length = 128)
     private String hashedLrn;
 
     @Column(name = "salt", length = 32)
     private String salt;
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public Long getLrn() {
         return lrn;
