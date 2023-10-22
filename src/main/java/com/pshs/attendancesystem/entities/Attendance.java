@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import com.pshs.attendancesystem.Enums;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.pshs.attendancesystem.Status;
 import jakarta.persistence.*;
 
 import java.sql.Time;
@@ -14,9 +15,8 @@ public class Attendance {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @Enumerated(EnumType.STRING)
+    Status attendanceStatus;
 
     @Column(name = "date")
     private LocalDate date;
@@ -25,15 +25,20 @@ public class Attendance {
 
     @Column(name = "time_out")
     private Time timeOut;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    @JsonBackReference
+    private Student student;
 
-    @Enumerated(EnumType.STRING)
-    Enums.status attendanceStatus;
+    public Student getStudent() {
+        return student;
+    }
 
-    public Enums.status getAttendanceStatus() {
+    public Status getAttendanceStatus() {
         return attendanceStatus;
     }
 
-    public void setAttendanceStatus(Enums.status attendanceStatus) {
+    public void setAttendanceStatus(Status attendanceStatus) {
         this.attendanceStatus = attendanceStatus;
     }
 

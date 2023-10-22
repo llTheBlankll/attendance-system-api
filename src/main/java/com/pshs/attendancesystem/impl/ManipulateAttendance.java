@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.Enums;
+import com.pshs.attendancesystem.Status;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
@@ -95,9 +95,9 @@ public class ManipulateAttendance {
             attendance.setStudent(student.get());
 
             if (currentLocalTime.isBefore(flagCeremonyTime) && currentLocalTime.isAfter(earliestTimeToArrive)) {
-                attendance.setAttendanceStatus(Enums.status.ONTIME);
+                attendance.setAttendanceStatus(Status.ONTIME);
             } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
-                attendance.setAttendanceStatus(Enums.status.LATE);
+                attendance.setAttendanceStatus(Status.LATE);
             } else {
                 // EARLY
             }
@@ -141,16 +141,16 @@ public class ManipulateAttendance {
         return false;
     }
 
-    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Enums.status status) {
+    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
     }
 
-    public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Enums.status status) {
+    public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
     }
 
     public Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn
-            , LocalDate startDate, LocalDate endDate, Enums.status status) {
+            , LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
     }
 
@@ -158,7 +158,7 @@ public class ManipulateAttendance {
         return this.attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
     }
 
-    public long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Enums.status status) {
+    public long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
     }
 }
