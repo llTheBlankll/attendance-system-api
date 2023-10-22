@@ -4,7 +4,7 @@ import com.pshs.attendancesystem.Enums;
 import jakarta.persistence.*;
 
 import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "attendance")
@@ -19,21 +19,31 @@ public class Attendance {
     private Student student;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDate date;
     @Column(name = "time")
     private Time time;
 
+    @Column(name = "time_out")
+    private Time timeOut;
+
     @Enumerated(EnumType.STRING)
-    Enums.status attendance_status;
+    Enums.status attendanceStatus;
 
-    public Enums.status getAttendance_status() {
-        return attendance_status;
+    public Enums.status getAttendanceStatus() {
+        return attendanceStatus;
     }
 
-    public void setAttendance_status(Enums.status attendance_status) {
-        this.attendance_status = attendance_status;
+    public void setAttendanceStatus(Enums.status attendanceStatus) {
+        this.attendanceStatus = attendanceStatus;
     }
 
+    public Time getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(Time timeOut) {
+        this.timeOut = timeOut;
+    }
 
     public void setStudent(Student student) {
         this.student = student;
@@ -47,11 +57,11 @@ public class Attendance {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

@@ -18,11 +18,22 @@ public class GradeLevelController {
         this.gradelevelRepository = gradelevelRepository;
     }
 
+    /**
+     * Retrieves all grade levels from the database.
+     *
+     * @return  an iterable collection of grade levels
+     */
     @GetMapping("/gradelevels")
     public Iterable<Gradelevel> getAllGradeLevel() {
         return this.gradelevelRepository.findAll();
     }
 
+    /**
+     * Adds a grade level to the system.
+     *
+     * @param  gradelevel  the grade level to be added
+     * @return             a message indicating the status of the operation
+     */
     @PutMapping("/add")
     public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (this.gradelevelRepository.existsById(gradelevel.getId())) {
@@ -32,6 +43,12 @@ public class GradeLevelController {
         return "Grade level is created.";
     }
 
+    /**
+     * Deletes a grade level.
+     *
+     * @param  gradelevel    the grade level object to be deleted
+     * @return               a message indicating the grade level was deleted
+     */
     @DeleteMapping("/delete")
     public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (!this.gradelevelRepository.existsById(gradelevel.getId())) {
@@ -42,6 +59,12 @@ public class GradeLevelController {
         return "Grade level was deleted";
     }
 
+    /**
+     * Deletes a grade level by its ID.
+     *
+     * @param  id  the ID of the grade level to be deleted
+     * @return     a message indicating whether the grade level was deleted or not
+     */
     @DeleteMapping("/delete/{id}")
     public String deleteGradeLevelById(@PathVariable Integer id) {
         if (!this.gradelevelRepository.existsById(id)) {
@@ -52,6 +75,12 @@ public class GradeLevelController {
         return "Grade level was deleted";
     }
 
+    /**
+     * Update a grade level.
+     *
+     * @param  gradelevel  the grade level to update
+     * @return             a message indicating if the grade level was successfully updated or if it was empty
+     */
     @PostMapping("/update")
     public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (gradelevel.getGradeName().isEmpty()) {

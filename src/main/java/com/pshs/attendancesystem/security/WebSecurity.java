@@ -44,6 +44,13 @@ public class WebSecurity {
         return manager;
     }
 
+    /**
+     * Generates the security filter chain for the HTTP security.
+     *
+     * @param  httpSecurity  the HttpSecurity object representing the security configuration
+     * @return               the SecurityFilterChain object representing the security filter chain
+     * @throws Exception    if an exception occurs during the generation of the security filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
@@ -54,6 +61,8 @@ public class WebSecurity {
                         authorize.requestMatchers("/api/v1/**").hasRole(Privilege.TEACHER.name())
                                 .requestMatchers("/api/v1/**")
                                 .hasRole(Privilege.PRINCIPAL.name())
+                                .requestMatchers("/websocket/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .cors(AbstractHttpConfigurer::disable);

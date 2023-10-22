@@ -17,7 +17,7 @@ public class Section {
     @Column(name = "room")
     private Integer room;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "grade_level")
     private Gradelevel gradeLevel;
 
