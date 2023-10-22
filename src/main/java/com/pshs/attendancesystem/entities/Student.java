@@ -1,9 +1,9 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -41,13 +41,13 @@ public class Student {
 
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class)
     @JsonManagedReference
-    private Set<Attendance> attendances = new LinkedHashSet<>();
+    private Set<Attendance> attendances;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = Scan.class, mappedBy = "student")
     @JoinColumn(name = "lrn")
+    @JsonBackReference
     private Scan studentScan;
 
     public Scan getStudentScan() {
