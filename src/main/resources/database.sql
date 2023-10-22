@@ -35,6 +35,7 @@ SELECT * FROM sections;
 CREATE TABLE scan (
     lrn BIGINT NOT NULL,
     hashed_lrn CHAR(32),
+    salt VARCHAR(32),
     PRIMARY KEY (lrn),
     FOREIGN KEY (lrn) REFERENCES students (lrn)
 );
@@ -165,5 +166,6 @@ SELECT * FROM attendance
 -- Change it to character varying.
 ALTER TABLE attendance
 ALTER COLUMN attendance_status TYPE character varying;
-
+ALTER TABLE scan
+    ADD COLUMN salt VARCHAR(32);
 -- @block

@@ -1,6 +1,9 @@
 package com.pshs.attendancesystem.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "scan")
@@ -11,6 +14,9 @@ public class Scan {
 
     @Column(name = "hashed_lrn", length = 128)
     private String hashedLrn;
+
+    @Column(name = "salt", length = 32)
+    private String salt;
 
     public Long getLrn() {
         return lrn;
@@ -28,4 +34,11 @@ public class Scan {
         this.hashedLrn = hashedLrn;
     }
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 }
