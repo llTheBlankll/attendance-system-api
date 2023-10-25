@@ -1,8 +1,8 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.Status;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.slf4j.Logger;

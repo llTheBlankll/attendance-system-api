@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.repositories;
 
-import com.pshs.attendancesystem.Status;
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
