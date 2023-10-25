@@ -1,10 +1,10 @@
 package com.pshs.attendancesystem.websocket.Handlers;
 
-import com.pshs.attendancesystem.entities.Scan;
+import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
-import com.pshs.attendancesystem.repositories.ScanRepository;
+import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,22 +19,24 @@ import java.util.Calendar;
 
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
-    private final ScanRepository scanRepository;
+    private final RfidCredentialsRepository rfidCredentialsRepository;
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ScannerWebSocketHandler(ScanRepository scanRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
-        this.scanRepository = scanRepository;
+    public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
+        this.rfidCredentialsRepository = rfidCredentialsRepository;
         this.attendanceRepository = attendanceRepository;
         this.studentRepository = studentRepository;
     }
 
+    private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
+        session.sendMessage(textMessage);
+    }
+
     /**
      * Handles a text message in the WebSocket session.
-     *
      * This method is responsible for handling incoming text messages in the WebSocket session. It performs the following steps:
-     *
      * 1. Creates an instance of the ManipulateAttendance class, passing in the attendanceRepository and studentRepository as arguments.
      * 2. Retrieves the payload of the text message using message.getPayload().
      * 3. Checks if the payload is empty. If so, it sends a text message back to the client with the content "Empty LRN" and returns.
@@ -58,24 +60,30 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         String hashedLrn = message.getPayload();
         // Check if empty
         if (hashedLrn.isEmpty()) {
-            TextMessage emptyLrnMessage = new TextMessage("Empty LRN");
-            session.sendMessage(emptyLrnMessage);
+            session.sendMessage(new TextMessage("Empty LRN"));
             return;
         }
 
+
         // Look for student by their LRN.
-        Scan scan = this.scanRepository.findByHashedLrn(hashedLrn);
+        RfidCredentials rfidCredentials;
+        if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
+            sendErrorMessage(session, new TextMessage("Invalid LRN"));
+            logger.warn("Hashed LRN does not exist in the database.");
+            return;
+        }
+
+        rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
 
         // Check if student already arrived.
-        Student student = this.studentRepository.findStudentByLrn(scan.getLrn());
+        Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
         if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
-            TextMessage alreadyArrivedMessage = new TextMessage("You've already arrived.");
-            session.sendMessage(alreadyArrivedMessage);
+            session.sendMessage(new TextMessage("You've already arrived."));
             return;
         }
 
         // Check if no matching lrn was found.
-        if (scan.getLrn() != null) {
+        if (rfidCredentials.getLrn() != null) {
             // Change flag ceremony time if today is monday.
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(calendar.getTime());
@@ -107,7 +115,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             }
 
             // Now add attendance.
-            attendanceManipulate.addAttendance(scan.getLrn());
+            attendanceManipulate.addAttendance(rfidCredentials.getLrn());
         } else {
             // Send a warning message, because there might be an error in scanner.
             TextMessage invalidLrnMessage = new TextMessage("Invalid LRN");
