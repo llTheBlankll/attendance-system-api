@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "scan")
-public class Scan {
+@Table(name = "rfid_credentials")
+public class RfidCredentials {
     @Id
     @Column(name = "lrn", nullable = false)
     private Long lrn;

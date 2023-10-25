@@ -1,10 +1,10 @@
 package com.pshs.attendancesystem.websocket.Handlers;
 
-import com.pshs.attendancesystem.entities.Scan;
+import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
-import com.pshs.attendancesystem.repositories.ScanRepository;
+import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,25 +13,25 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.time.LocalTime;
 
 public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
 
     private final StudentRepository studentRepository;
     private final AttendanceRepository attendanceRepository;
-    private final ScanRepository scanRepository;
+    private final RfidCredentialsRepository rfidCredentialsRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ScannerOutWebSocketHandler(ScanRepository scanRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
+    public ScannerOutWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
         this.attendanceRepository = attendanceRepository;
-        this.scanRepository = scanRepository;
+        this.rfidCredentialsRepository = rfidCredentialsRepository;
     }
 
     /**
      * Overrides the handleTextMessage method from the WebSocketHandlerAdapter class.
      * Handles a WebSocket text message received.
-     *
      * This function processes the received text message and performs various operations based on its content.
      * It follows the following steps:
      * 1. Retrieves the payload of the text message using message.getPayload().
@@ -56,10 +56,10 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
         }
 
         ManipulateAttendance manipulateAttendance = new ManipulateAttendance(this.attendanceRepository,this.studentRepository);
-        Scan scan = this.scanRepository.findByHashedLrn(textMessage);
+        RfidCredentials rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(textMessage);
 
-        if (scan != null && scan.getLrn() != null) {
-            Student student = this.studentRepository.findStudentByLrn(scan.getLrn());
+        if (rfidCredentials != null && rfidCredentials.getLrn() != null) {
+            Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
 
             if (student.getLrn() != null && manipulateAttendance.checkIfAlreadyOut(student)) {
                 TextMessage alreadyOutMessage = new TextMessage("You've already left.");
@@ -70,8 +70,8 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
             if (!manipulateAttendance.attendanceOut(student.getLrn())) {
                 session.sendMessage(new TextMessage("Invalid LRN"));
             }
-            logger.info("Student " + student.getLrn() + " has left at " + LocalTime.now());
-            session.sendMessage(new TextMessage("Student " + student.getLrn() + " has left at " + LocalTime.now()));
+            logger.info("Student " + student.getLrn() + " has left at " + Time.valueOf(LocalTime.now()));
+            session.sendMessage(new TextMessage("Student " + student.getLrn() + " has left at " + Time.valueOf(LocalTime.now())));
         }
     }
 }
