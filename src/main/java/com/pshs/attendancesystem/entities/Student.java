@@ -41,21 +41,21 @@ public class Student {
 
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
     @JsonManagedReference
     private Set<Attendance> attendances;
 
-    @OneToOne(targetEntity = Scan.class, mappedBy = "student")
+    @OneToOne(targetEntity = RfidCredentials.class, mappedBy = "student")
     @JoinColumn(name = "lrn")
     @JsonBackReference
-    private Scan studentScan;
+    private RfidCredentials studentRfidCredentials;
 
-    public Scan getStudentScan() {
-        return studentScan;
+    public RfidCredentials getStudentRfidCredentials() {
+        return studentRfidCredentials;
     }
 
-    public void setStudentScan(Scan studentScan) {
-        this.studentScan = studentScan;
+    public void setStudentRfidCredentials(RfidCredentials studentRfidCredentials) {
+        this.studentRfidCredentials = studentRfidCredentials;
     }
 
     public Long getLrn() {

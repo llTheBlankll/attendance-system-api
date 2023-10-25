@@ -16,7 +16,7 @@ public class Attendance {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    Status attendanceStatus;
+    private Status attendanceStatus;
 
     @Column(name = "date")
     private LocalDate date;
