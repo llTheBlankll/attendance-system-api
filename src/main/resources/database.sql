@@ -166,6 +166,6 @@ SELECT * FROM attendance
 -- Change it to character varying.
 ALTER TABLE attendance
 ALTER COLUMN attendance_status TYPE character varying;
+
 ALTER TABLE scan
-    ADD COLUMN salt VARCHAR(32);
--- @block
+    ADD CONSTRAINT fk_lrn_students FOREIGN KEY (lrn) REFERENCES students (lrn);
