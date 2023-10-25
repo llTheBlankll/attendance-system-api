@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem;
+package com.pshs.attendancesystem.enums;
 
 public enum Status {
     ONTIME,
