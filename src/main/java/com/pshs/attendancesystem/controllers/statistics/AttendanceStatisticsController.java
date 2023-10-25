@@ -16,6 +16,20 @@ import java.time.temporal.TemporalAdjusters;
 @RequestMapping("/api/v1/attendance/statistics")
 public class AttendanceStatisticsController {
 
+    /**
+     * Retrieves the attendance records for a specific student.
+     *
+     * @param  studentLrn  the learning reference number of the student
+     * @return             an iterable collection of Attendance objects representing the student's attendance records
+     */
+    @GetMapping("/student/{studentLrn}")
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(@PathVariable Long studentLrn) {
+        return this.manipulateAttendance.getStudentAttendanceBetweenDate(
+                studentLrn,
+                LocalDate.now(),
+                LocalDate.now());
+    }
+
     private final ManipulateAttendance manipulateAttendance;
     LocalDate today = LocalDate.now();
 
@@ -250,16 +264,37 @@ public class AttendanceStatisticsController {
     }
 
     /**
-     * Retrieves the attendance records for a specific student.
+     * Retrieves the attendance records for a student within a specific date range and attendance status.
      *
-     * @param  studentLrn  the learning reference number of the student
-     * @return             an iterable collection of Attendance objects representing the student's attendance records
+     * @param dates      object containing the start and end dates of the range
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @param status     the attendance status to filter the records by
+     * @return an iterable collection of Attendance objects matching the specified criteria
      */
-    @GetMapping("/student/{studentLrn}")
-    public Iterable<Attendance> getStudentAttendance(@PathVariable Long studentLrn) {
-        return this.manipulateAttendance.getStudentAttendanceBetweenDate(
-                studentLrn,
-                LocalDate.now(),
-                LocalDate.now());
+    @GetMapping("/student/{studentLrn}/{status}")
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody BetweenDate dates, @PathVariable Long studentLrn, @PathVariable Status status) {
+        return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(studentLrn, dates.getFirstDate(), dates.getSecondDate(), status);
+    }
+
+    private static class BetweenDate {
+        private LocalDate firstDate;
+        private LocalDate secondDate;
+
+        public LocalDate getFirstDate() {
+            return firstDate;
+        }
+
+        public void setFirstDate(LocalDate firstDate) {
+            this.firstDate = firstDate;
+        }
+
+        public LocalDate getSecondDate() {
+            return secondDate;
+        }
+
+        public void setSecondDate(LocalDate secondDate) {
+            this.secondDate = secondDate;
+        }
     }
 }
+
