@@ -38,7 +38,7 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
      * 2. If the payload is empty, the function returns and does nothing.
      * 3. Creates an instance of the ManipulateAttendance class, passing in the attendanceRepository and studentRepository as arguments.
      * 4. Retrieves a Scan object from the scanRepository based on the hashed LRN (Learning Reference Number) obtained from the text message.
-     * 5. If a valid Scan object is found and it has a valid LRN, the function proceeds with further processing.
+     * 5. If a valid Scan object is found, and it has a valid LRN, the function proceeds with further processing.
      * 6. Retrieves a Student object from the studentRepository based on the LRN obtained from the Scan object.
      * 7. If the Student object has a valid LRN and the attendance for the student has already been marked as "out", it sends a text message back to the client with the content "You've already left," and the function returns.
      * 8. If the above condition is not met, the function marks the attendance for the student as "out" using the manipulateAttendance.attendanceOut() method.
@@ -67,7 +67,9 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
                 return;
             }
 
-            manipulateAttendance.attendanceOut(student.getLrn());
+            if (!manipulateAttendance.attendanceOut(student.getLrn())) {
+                session.sendMessage(new TextMessage("Invalid LRN"));
+            }
             logger.info("Student " + student.getLrn() + " has left at " + LocalTime.now());
             session.sendMessage(new TextMessage("Student " + student.getLrn() + " has left at " + LocalTime.now()));
         }
