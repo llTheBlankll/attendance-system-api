@@ -5,6 +5,8 @@ import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.security.PasswordGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 public class StudentController {
     private final StudentRepository studentRepository;
     private final RfidCredentialsRepository rfidCredentialsRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Hashes a given value using the MD5 algorithm.
@@ -48,7 +51,7 @@ public class StudentController {
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             // Handle the exception if MD5 algorithm is not available
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return null;

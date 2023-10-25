@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.controllers.statistics;
 
-import com.pshs.attendancesystem.Status;
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
