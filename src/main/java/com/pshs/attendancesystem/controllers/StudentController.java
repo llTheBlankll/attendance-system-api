@@ -1,8 +1,8 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.entities.Scan;
+import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
-import com.pshs.attendancesystem.repositories.ScanRepository;
+import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.security.PasswordGenerator;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @RequestMapping("/api/v1/student")
 public class StudentController {
     private final StudentRepository studentRepository;
-    private final ScanRepository scanRepository;
+    private final RfidCredentialsRepository rfidCredentialsRepository;
 
     /**
      * Hashes a given value using the MD5 algorithm.
@@ -54,9 +54,9 @@ public class StudentController {
         return null;
     }
 
-    public StudentController(StudentRepository studentRepository, ScanRepository scanRepository) {
+    public StudentController(StudentRepository studentRepository, RfidCredentialsRepository rfidCredentialsRepository) {
         this.studentRepository = studentRepository;
-        this.scanRepository = scanRepository;
+        this.rfidCredentialsRepository = rfidCredentialsRepository;
     }
 
     /**
@@ -81,19 +81,19 @@ public class StudentController {
             return "Student already exists.";
         }
 
-        Scan studentScan = new Scan();
+        RfidCredentials studentRfidCredentials = new RfidCredentials();
         PasswordGenerator passwordGenerator = new PasswordGenerator();
         // First save the un-hashed student's learning resource number.
         this.studentRepository.save(student);
 
         // Then encode the student's learning resource number with MD5.
         String salt = passwordGenerator.generate(16);
-        studentScan.setLrn(student.getLrn());
-        studentScan.setHashedLrn(HashMD5(student.getLrn() + salt));
-        studentScan.setSalt(salt);
+        studentRfidCredentials.setLrn(student.getLrn());
+        studentRfidCredentials.setHashedLrn(HashMD5(student.getLrn() + salt));
+        studentRfidCredentials.setSalt(salt);
 
         // Add the hashed lrn to the database.
-        this.scanRepository.save(studentScan);
+        this.rfidCredentialsRepository.save(studentRfidCredentials);
 
         return "Student was added";
     }

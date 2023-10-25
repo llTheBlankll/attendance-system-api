@@ -5,12 +5,12 @@ CREATE TABLE GradeLevels(
 );
 
 -- @block
-INSERT INTO GradeLevels(grade_level,grade_name)
-VALUES (11,'Grade 11'),
-(12,'Grade 12');
+CREATE TYPE Status AS ENUM ('LATE','ONTIME');
 
--- @block
-select grade_level, grade_name FROM GradeLevels;
+-- CREATE A CAST, The CREATE CAST solution does not seem to work when the enum
+-- is used as an argument of a JPA Repository. E.g.
+-- Entity findByMyEnum(MyEnum myEnum)
+CREATE CAST (CHARACTER VARYING as Status) WITH INOUT AS IMPLICIT;
 
 -- @block
 CREATE TABLE Sections(
@@ -24,43 +24,69 @@ CREATE TABLE Sections(
 );
 
 -- @block
-INSERT INTO Sections(section_id,adviser,room,grade_level,section_name)
-VALUES('MC','Dumaquita',3,12,'Marie Curie'),
-      ('DB','Blandeux',2,11,'Diosdado Banatao');
+CREATE TABLE Students
+(
+    lrn              BIGINT,
+    rfid_credentials BIGINT,
+    first_name       VARCHAR(255) NOT NULL,
+    middle_name      VARCHAR(255),
+    last_name        VARCHAR(255),
+    grade_level      int,
+    sex              VARCHAR(6),
+    section_id       VARCHAR(2),
+    guardian_name    VARCHAR(255),
+    contact_guardian BIGINT,
+    address          TEXT,
+    PRIMARY KEY (lrn),
+    UNIQUE (rfid_credentials),
+    FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
+    FOREIGN KEY (section_id) REFERENCES Sections (section_id)
+);
 
 -- @block
-SELECT * FROM sections;
-
--- @block
-CREATE TABLE scan (
-    lrn BIGINT NOT NULL,
+CREATE TABLE rfid_credentials
+(
+    lrn        BIGINT NOT NULL,
     hashed_lrn CHAR(32),
-    salt VARCHAR(32),
+    salt       VARCHAR(32),
     PRIMARY KEY (lrn),
     FOREIGN KEY (lrn) REFERENCES students (lrn)
 );
 
 -- @block
-CREATE TABLE Students(
-    lrn BIGINT,
-    first_name VARCHAR(255) NOT NULL,
-    middle_name VARCHAR(255),
-    last_name VARCHAR(255),
-    grade_level int,
-    sex VARCHAR(6),
-    section_id VARCHAR(2),
-    guardian_name VARCHAR(255),
-    contact_guardian BIGINT,
-    address TEXT,
-    scan BIGINT,
-    PRIMARY KEY(lrn, scan),
-    FOREIGN KEY (grade_level) REFERENCES GradeLevels(grade_level),
-    FOREIGN KEY (section_id) REFERENCES Sections(section_id),
-    FOREIGN KEY (scan) REFERENCES scan (lrn)
-);
+INSERT INTO GradeLevels(grade_level, grade_name)
+VALUES (11, 'Grade 11'),
+       (12, 'Grade 12');
 
 -- @block
-    INSERT INTO Students (last_name, first_name, middle_name, lrn, guardian_name, contact_guardian, address, sex,grade_level,section_id) VALUES
+INSERT INTO Sections(section_id, adviser, room, grade_level, section_name)
+VALUES ('MC', 'Dumaquita', 3, 12, 'Marie Curie'),
+       ('DB', 'Blandeux', 2, 11, 'Diosdado Banatao');
+
+-- @block
+CREATE TABLE Attendance
+(
+    id                SERIAL,
+    student_id        BIGINT NOT NULL,
+    attendance_status Status,
+    date              DATE DEFAULT CURRENT_DATE,
+    time              TIME DEFAULT LOCALTIME,
+    time_out          TIME DEFAULT LOCALTIME,
+    CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn)
+);
+
+
+-- @block
+SELECT *
+FROM sections;
+-- @block
+select grade_level, grade_name
+FROM GradeLevels;
+
+-- @block
+INSERT INTO Students (last_name, first_name, middle_name, lrn, guardian_name, contact_guardian, address, sex,
+                      grade_level, section_id)
+VALUES
   ('Aguilon ', 'Sian Zyryll ', 'C.', '136812120445', 'Elino Aguilon ', '09197770725', 'BLK 1 LOT 11 CNAI, MAHABANG PARANG ST., BIGNAY, VALENZUELA CITY', 'Male', 11, 'DB'),
 ('ALCOBER ', 'Meg ryan', 'A.', '136812110015', 'Marites Alcober ', '09197409590', 'Blk 26 lot 5 northville 1 A bignay Valenzuela city ', 'Male', 11, 'DB'),
 ('Ambos', 'Clarrise Jolia', 'G. ', '136815120162', 'Olivia G. Ambos ', '09203688358', '#7 Malinis St. Lawang Bato Valenzuela City', 'Female', 11, 'DB'),
@@ -121,51 +147,8 @@ CREATE TABLE Students(
 
 
 
--- @block
-INSERT INTO Students
-VALUES(136818110047,'ADRIAN','MONTANA','DE VERA',12,'M','MC');
-
--- @block
-CREATE TYPE status AS ENUM('LATE','ONTIME');
-
-CREATE TABLE Attendance(
-    id SERIAL,
-    student_id BIGINT NOT NULL,
-    attendance_status status,
-    date DATE DEFAULT CURRENT_DATE,
-    time TIME DEFAULT LOCALTIME,
-    time_out TIME DEFAULT LOCALTIME,
-    PRIMARY KEY (id),
-    FOREIGN KEY (student_id) REFERENCES Students(lrn)
-);
-
--- @block
-ALTER TABLE Attendance
-    ALTER COLUMN date SET DEFAULT CURRENT_DATE,
-ALTER COLUMN time SET DEFAULT LOCALTIME;
--- @block
-SELECT * FROM students
--- @block
-INSERT INTO Attendance(student_id,date,time,attendance_status) VALUES (136815120330,CURRENT_DATE,LOCALTIME,CASE
-WHEN LOCALTIME < '07:00:00' THEN status('ONTIME')
-    ELSE status('LATE')
-    END);
--- @block
-select * from attendance
-                  INNER JOIN students
-                             ON students.lrn = attendance.student_id
-WHERE section_id = 'DB';
--- @block
-SELECT * FROM attendance
-                  INNER JOIN students
-                             ON students.lrn = attendance.student_id;
-
-
 
 -- @block
 -- Change it to character varying.
-ALTER TABLE attendance
-ALTER COLUMN attendance_status TYPE character varying;
-
-ALTER TABLE scan
-    ADD CONSTRAINT fk_lrn_students FOREIGN KEY (lrn) REFERENCES students (lrn);
+-- ALTER TABLE attendance
+-- ALTER COLUMN attendance_status TYPE character varying;
