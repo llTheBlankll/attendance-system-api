@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class SectionController {
     @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
         if (!this.sectionRepository.existsById(id)) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.deleteById(id);
@@ -49,18 +50,18 @@ public class SectionController {
      * @param  section  the section object containing the section ID to be deleted
      * @return          a message indicating whether the section was successfully deleted or not
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
         if (section.getSectionId() == null) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.delete(section);
-        return "Section with ID " + section.getSectionId() + " was deleted.";
+        return SectionMessages.SECTION_DELETED(section.getSectionId());
     }
 
     /**
@@ -69,14 +70,14 @@ public class SectionController {
      * @param  section  the section to be added
      * @return          a string indicating the status of the operation
      */
-    @PutMapping("/add")
+    @PostMapping("/add")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section already exists";
+            return SectionMessages.SECTION_EXISTS;
         }
 
         this.sectionRepository.save(section);
-        return "Section is created.";
+        return SectionMessages.SECTION_CREATED;
     }
 
     /**
@@ -88,11 +89,11 @@ public class SectionController {
     @PostMapping("/update")
     public String updateSection(@RequestBody Section section) {
         if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section does not exist.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.save(section);
-        return "Section was updated.";
+        return SectionMessages.SECTION_UPDATED;
     }
 
     // SEARCH FUNCTION
@@ -100,15 +101,15 @@ public class SectionController {
     /**
      * Retrieves a collection of Section objects based on the given adviser.
      *
-     * @param  adviser  the adviser to search for
+     * @param  lastName the last name of the teacher.
      * @return          an iterable collection of Section objects
      */
-    @GetMapping("/search/adviser/{adviser}")
-    public Iterable<Section> getSectionByAdviser(@PathVariable String adviser) {
-        if (!this.sectionRepository.existsByAdviser(adviser)) {
+    @GetMapping("/search/teacher/{lastName}")
+    public Iterable<Section> getSectionByAdviser(@PathVariable String lastName) {
+        if (!this.sectionRepository.existsByTeacherLastName(lastName)) {
             Stream<Section> emptyStream = Stream.empty();
             return emptyStream::iterator;
         }
-        return this.sectionRepository.findByAdviserLikeIgnoreCase(adviser);
+        return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
     }
 }

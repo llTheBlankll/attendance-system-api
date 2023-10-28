@@ -1,10 +1,12 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.entities.Scan;
+import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
-import com.pshs.attendancesystem.repositories.ScanRepository;
+import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.security.PasswordGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
@@ -16,7 +18,8 @@ import java.util.stream.Stream;
 @RequestMapping("/api/v1/student")
 public class StudentController {
     private final StudentRepository studentRepository;
-    private final ScanRepository scanRepository;
+    private final RfidCredentialsRepository rfidCredentialsRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Hashes a given value using the MD5 algorithm.
@@ -24,7 +27,7 @@ public class StudentController {
      * @param  value  the value to be hashed
      * @return        the hexadecimal string representation of the hash value
      */
-    private String HashMD5(String value) {
+    private String hashMD5(String value) {
         try {
             // Create an instance of MessageDigest with MD5 algorithm
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -48,15 +51,15 @@ public class StudentController {
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             // Handle the exception if MD5 algorithm is not available
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return null;
     }
 
-    public StudentController(StudentRepository studentRepository, ScanRepository scanRepository) {
+    public StudentController(StudentRepository studentRepository, RfidCredentialsRepository rfidCredentialsRepository) {
         this.studentRepository = studentRepository;
-        this.scanRepository = scanRepository;
+        this.rfidCredentialsRepository = rfidCredentialsRepository;
     }
 
     /**
@@ -75,25 +78,25 @@ public class StudentController {
      * @param  student  the student object to be added
      * @return          a message indicating the success of the operation
      */
-    @PutMapping("/add")
+    @PostMapping("/add")
     public String addStudent(@RequestBody Student student) {
         if (this.studentRepository.existsById(student.getLrn())) {
             return "Student already exists.";
         }
 
-        Scan studentScan = new Scan();
+        RfidCredentials studentRfidCredentials = new RfidCredentials();
         PasswordGenerator passwordGenerator = new PasswordGenerator();
         // First save the un-hashed student's learning resource number.
         this.studentRepository.save(student);
 
         // Then encode the student's learning resource number with MD5.
         String salt = passwordGenerator.generate(16);
-        studentScan.setLrn(student.getLrn());
-        studentScan.setHashedLrn(HashMD5(student.getLrn() + salt));
-        studentScan.setSalt(salt);
+        studentRfidCredentials.setLrn(student.getLrn());
+        studentRfidCredentials.setHashedLrn(hashMD5(student.getLrn() + salt));
+        studentRfidCredentials.setSalt(salt);
 
         // Add the hashed lrn to the database.
-        this.scanRepository.save(studentScan);
+        this.rfidCredentialsRepository.save(studentRfidCredentials);
 
         return "Student was added";
     }
@@ -104,7 +107,7 @@ public class StudentController {
      * @param  student  the student object to be deleted
      * @return          a string indicating the result of the deletion
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public String deleteStudent(@RequestBody Student student) {
         if (!this.studentRepository.existsById(student.getLrn())) {
             return "Student does not exist";
@@ -120,7 +123,7 @@ public class StudentController {
      * @param  id  the ID of the student to delete
      * @return     a message indicating if the student was deleted or if they do not exist
      */
-    @DeleteMapping("/delete/lrn/{id}")
+    @PostMapping("/delete/lrn/{id}")
     public String deleteStudentById(@PathVariable Long id) {
         if (!this.studentRepository.existsById(id)) {
             return "Student does not exist";
@@ -142,7 +145,7 @@ public class StudentController {
     public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
         if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
             Stream<Student> empty = Stream.empty();
-            return () -> empty.iterator(); // Return empty.
+            return empty::iterator; // Return empty.
         }
 
         return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
