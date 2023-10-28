@@ -13,7 +13,7 @@ CREATE TYPE Relationship AS ENUM (
     'SIBLING',
     'STEPFATHER',
     'STEPMOTHER',
-    'GRANDPARENT'
+    'GRANDPARENT',
         'OTHER'
     );
 
@@ -43,9 +43,14 @@ CREATE TABLE Guardians
     first_name              VARCHAR(32),
     middle_name             VARCHAR(32),
     last_name               VARCHAR(32),
+    contact_number VARCHAR(32),
     relationship_to_student Relationship NOT NULL DEFAULT 'OTHER',
     FOREIGN KEY (student_id) REFERENCES Students (lrn)
 );
+
+ALTER TABLE Guardians
+    ALTER COLUMN relationship_to_student TYPE CHARACTER VARYING;
+CREATE INDEX guardian_student_id_idx ON Guardians (student_id);
 
 -- @block
 CREATE TABLE Students
@@ -58,13 +63,13 @@ CREATE TABLE Students
     grade_level INT,
     sex              VARCHAR(6),
     section_id       VARCHAR(2),
-    guardian    INT,
     address          TEXT,
     UNIQUE (rfid_credentials),
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
-    FOREIGN KEY (section_id) REFERENCES Sections (section_id),
-    FOREIGN KEY (guardian) REFERENCES Guardians (guardian_id)
+    FOREIGN KEY (section_id) REFERENCES Sections (section_id)
 );
+
+CREATE INDEX student_rfid_credentials_idx ON Students (rfid_credentials);
 
 -- @block
 CREATE TABLE rfid_credentials
@@ -74,6 +79,8 @@ CREATE TABLE rfid_credentials
     salt VARCHAR(16),
     FOREIGN KEY (lrn) REFERENCES students (lrn) ON DELETE CASCADE
 );
+
+CREATE INDEX rfid_credentials_lrn_idx ON rfid_credentials (lrn);
 
 
 -- @block
@@ -87,6 +94,10 @@ CREATE TABLE Attendance
     time_out          TIME DEFAULT LOCALTIME,
     CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+ALTER TABLE Attendance
+    ALTER COLUMN attendance_status TYPE CHARACTER VARYING;
+CREATE INDEX attendance_student_id_idx ON Attendance (student_id);
 
 -- Creates Subjects Table.
 CREATE TABLE Subjects
@@ -112,6 +123,7 @@ CREATE TABLE Teachers
     PRIMARY KEY (teacher_id),
     FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id)
 );
+CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 
 -- ==================== SELECT STATEMENTS =================== --
 
