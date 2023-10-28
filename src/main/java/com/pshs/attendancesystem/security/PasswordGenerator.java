@@ -5,13 +5,13 @@ import java.util.Random;
 public class PasswordGenerator {
     private static final Random RANDOM = new Random();
 
-    public String generate(int PASSWORD_LENGTH) {
+    public String generate(int passwordLength) {
         String loweralpha = "abcdefghijklmnopqrstuvwxyz";
         String upperalpha = "ABCDEFGHIJKLMNOPARSTUVWXYZ";
         String numeric = "01234567890";
-        StringBuilder builder = new StringBuilder(PASSWORD_LENGTH);
+        StringBuilder builder = new StringBuilder(passwordLength);
 
-        for (int length = 0; length < PASSWORD_LENGTH; length++) {
+        for (int length = 0; length < passwordLength; length++) {
             switch (randomInt(1, 4)) {
                 case 1:
                     builder.append(loweralpha.charAt(randomInt(0, loweralpha.length() - 1)));
