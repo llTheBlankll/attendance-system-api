@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.websocket.Handlers;
+package com.pshs.attendancesystem.websocket.handlers;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
@@ -70,7 +70,7 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
             if (!manipulateAttendance.attendanceOut(student.getLrn())) {
                 session.sendMessage(new TextMessage("Invalid LRN"));
             }
-            logger.info("Student " + student.getLrn() + " has left at " + Time.valueOf(LocalTime.now()));
+            logger.info("Student {} has left at {}", student.getLrn(), Time.valueOf(LocalTime.now()));
             session.sendMessage(new TextMessage("Student " + student.getLrn() + " has left at " + Time.valueOf(LocalTime.now())));
         }
     }
