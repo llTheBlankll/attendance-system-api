@@ -9,7 +9,7 @@ public interface GuardianRepository extends JpaRepository<Guardian, Integer> {
 
     Iterable<Guardian> findByStudentLrn(Long studentLrn);
 
-    Iterable<Guardian> findByLastNameIgnoreCase(String lastName);
+    Iterable<Guardian> findGuardiansByLastNameIgnoreCase(String lastName);
 
     boolean existsByStudentLrn(long studentLrn);
 }

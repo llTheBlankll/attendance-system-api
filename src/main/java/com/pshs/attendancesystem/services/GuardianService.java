@@ -11,4 +11,12 @@ public interface GuardianService {
     Iterable<Guardian> getStudentGuardiansByLrn(Long lrn);
 
     Iterable<Guardian> getGuardianByLastName(String lastName);
+
+    boolean createGuardian(Guardian guardian);
+
+    boolean deleteGuardian(Guardian guardian);
+
+    void deleteGuardianById(Integer guardianId);
+
+    boolean updateGuardian(Guardian guardian);
 }
