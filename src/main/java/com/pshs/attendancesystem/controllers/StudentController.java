@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.security.PasswordGenerator;
@@ -81,7 +82,7 @@ public class StudentController {
     @PostMapping("/add")
     public String addStudent(@RequestBody Student student) {
         if (this.studentRepository.existsById(student.getLrn())) {
-            return "Student already exists.";
+            return StudentMessages.STUDENT_EXISTS;
         }
 
         RfidCredentials studentRfidCredentials = new RfidCredentials();
@@ -98,7 +99,7 @@ public class StudentController {
         // Add the hashed lrn to the database.
         this.rfidCredentialsRepository.save(studentRfidCredentials);
 
-        return "Student was added";
+        return StudentMessages.STUDENT_CREATED;
     }
 
     /**
@@ -110,11 +111,11 @@ public class StudentController {
     @PostMapping("/delete")
     public String deleteStudent(@RequestBody Student student) {
         if (!this.studentRepository.existsById(student.getLrn())) {
-            return "Student does not exist";
+            return StudentMessages.STUDENT_NOT_FOUND;
         }
 
         this.studentRepository.delete(student);
-        return "Student was deleted";
+        return StudentMessages.STUDENT_DELETED;
     }
 
     /**
@@ -126,11 +127,11 @@ public class StudentController {
     @PostMapping("/delete/lrn/{id}")
     public String deleteStudentById(@PathVariable Long id) {
         if (!this.studentRepository.existsById(id)) {
-            return "Student does not exist";
+            return StudentMessages.STUDENT_NOT_FOUND;
         }
 
         this.studentRepository.deleteById(id);
-        return "Student was deleted";
+        return StudentMessages.STUDENT_DELETED;
     }
 
     // SEARCH FUNCTION
@@ -160,7 +161,7 @@ public class StudentController {
     @GetMapping("/search/lrn/{lrn}")
     public Student getStudentById(@PathVariable("lrn") Long lrn) {
         if (!this.studentRepository.existsById(lrn)) {
-            return null;
+            return new Student();
         }
 
         return this.studentRepository.findStudentByLrn(lrn);
@@ -175,10 +176,10 @@ public class StudentController {
     @PostMapping("/update")
     public String updateStudent(@RequestBody Student student) {
         if (!this.studentRepository.existsById(student.getLrn())) {
-            return "Student does not exist.";
+            return StudentMessages.STUDENT_NOT_FOUND;
         }
 
         this.studentRepository.save(student);
-        return "Student was updated.";
+        return StudentMessages.STUDENT_UPDATED;
     }
 }
