@@ -2,6 +2,9 @@ package com.pshs.attendancesystem.messages;
 
 public class GradeLevelMessages {
 
+    private GradeLevelMessages() {
+
+    }
     public static final String GRADELEVEL_NOT_FOUND = "Grade level does not exist.";
     public static final String GRADELEVEL_CREATED = "Grade level was created.";
     public static final String GRADELEVEL_UPDATED = "Grade level was updated.";
