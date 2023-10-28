@@ -1,8 +1,12 @@
 package com.pshs.attendancesystem.websocket.handlers;
 
+import com.pshs.attendancesystem.AttendanceSystemConfiguration;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
+import com.pshs.attendancesystem.messages.AttendanceMessages;
+import com.pshs.attendancesystem.messages.RfidMessages;
+import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
@@ -88,29 +92,29 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(calendar.getTime());
             boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
-            LocalTime flagCeremonyTime;
+            LocalTime lateTime;
 
             if (monday) {
-                flagCeremonyTime = Time.valueOf("6:30:00").toLocalTime();
+                lateTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
             } else {
-                flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
+                lateTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
             }
 
             // Earliest time
-            LocalTime earliestTimeToArrive = Time.valueOf("5:30:00").toLocalTime();
+            LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
 
             // Get the current time
             Time currentTime = new Time(System.currentTimeMillis());
             LocalTime currentLocalTime = currentTime.toLocalTime();
 
-            if (currentLocalTime.isBefore(flagCeremonyTime)) {
-                TextMessage onTimeMessage = new TextMessage("You are on time");
+            if (currentLocalTime.isBefore(lateTime)) {
+                TextMessage onTimeMessage = new TextMessage(AttendanceMessages.ATTENDANCE_ONTIME);
                 session.sendMessage(onTimeMessage);
-            } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
-                TextMessage lateMessage = new TextMessage("You are late");
+            } else if (currentLocalTime.isAfter(lateTime)) {
+                TextMessage lateMessage = new TextMessage(AttendanceMessages.ATTENDANCE_LATE);
                 session.sendMessage(lateMessage);
-            } else if (currentLocalTime.isBefore(earliestTimeToArrive)){
-                TextMessage earlyMessage = new TextMessage("You are early");
+            } else if (currentLocalTime.isBefore(onTimeArrival)) {
+                TextMessage earlyMessage = new TextMessage(AttendanceMessages.ATTENDANCE_EARLY);
                 session.sendMessage(earlyMessage);
             }
 
@@ -118,9 +122,9 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             attendanceManipulate.addAttendance(rfidCredentials.getLrn());
         } else {
             // Send a warning message, because there might be an error in scanner.
-            TextMessage invalidLrnMessage = new TextMessage("Invalid LRN");
+            TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
             session.sendMessage(invalidLrnMessage);
-            logger.warn("Hashed LRN does not exist in the database.");
+            logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
         }
     }
 }
