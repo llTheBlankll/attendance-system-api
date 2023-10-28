@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.websocket.Handlers;
+package com.pshs.attendancesystem.websocket.handlers;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
