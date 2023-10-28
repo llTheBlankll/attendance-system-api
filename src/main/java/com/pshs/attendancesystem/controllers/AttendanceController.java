@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
+import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.springframework.web.bind.annotation.*;
@@ -50,11 +51,11 @@ public class AttendanceController {
     @PostMapping("/delete/id/{id}")
     public String deleteAttendance(@PathVariable Integer id) {
         if (!this.attendanceRepository.existsById(id)) {
-            return "Attendance does not exist";
+            return AttendanceMessages.ATTENDANCE_NOT_FOUND;
         }
 
         this.attendanceRepository.deleteById(id);
-        return "Attendance was deleted";
+        return AttendanceMessages.ATTENDANCE_DELETED;
     }
 
     /**
@@ -66,10 +67,10 @@ public class AttendanceController {
     @PostMapping ("/update")
     public String updateAttendance(@RequestBody Attendance attendance) {
         if (!this.attendanceRepository.existsById(attendance.getId())) {
-            return "Attendance does not exist";
+            return AttendanceMessages.ATTENDANCE_NOT_FOUND;
         }
 
         this.attendanceRepository.save(attendance);
-        return "Attendance was updated";
+        return AttendanceMessages.ATTENDANCE_UPDATED;
     }
 }

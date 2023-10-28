@@ -41,7 +41,7 @@ public class SectionController {
         }
 
         this.sectionRepository.deleteById(id);
-        return "Section with ID " + id + " was deleted.";
+        return SectionMessages.SECTION_DELETED(id);
     }
 
     /**
@@ -110,6 +110,7 @@ public class SectionController {
             Stream<Section> emptyStream = Stream.empty();
             return emptyStream::iterator;
         }
+
         return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
     }
 }

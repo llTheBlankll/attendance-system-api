@@ -19,6 +19,7 @@ target/
 *.iml
 *.ipr
 .fastRequest
+.jpb
 
 ### NetBeans ###
 /nbproject/private/
