@@ -36,7 +36,7 @@ public class AttendanceController {
      * @param  studentLrn  the Long studentLrn to add attendance for
      * @return             true if the attendance was successfully added, false otherwise
      */
-    @PutMapping("/add/{studentLrn}")
+    @PostMapping("/add/{studentLrn}")
     public boolean addAttendance(@PathVariable Long studentLrn) {
         return manipulateAttendance.addAttendance(studentLrn);
     }
@@ -47,7 +47,7 @@ public class AttendanceController {
      * @param  id  the ID of the attendance record to be deleted
      * @return     a message indicating whether the attendance record was successfully deleted or not
      */
-    @DeleteMapping("/delete/id/{id}")
+    @PostMapping("/delete/id/{id}")
     public String deleteAttendance(@PathVariable Integer id) {
         if (!this.attendanceRepository.existsById(id)) {
             return "Attendance does not exist";
