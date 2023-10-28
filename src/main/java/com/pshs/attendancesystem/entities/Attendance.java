@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.pshs.attendancesystem.Status;
+import com.pshs.attendancesystem.enums.Status;
 import jakarta.persistence.*;
 
 import java.sql.Time;

@@ -1,8 +1,8 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -10,9 +10,6 @@ import java.util.Set;
 public class Section {
     @Id
     private String sectionId;
-
-    @Column(name = "adviser")
-    private String adviser;
 
     @Column(name = "room")
     private Integer room;
@@ -24,8 +21,13 @@ public class Section {
     @Column(name = "section_name", nullable = false)
     private String sectionName;
 
-    @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE)
-    private Set<Student> students = new LinkedHashSet<>();
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Teacher.class)
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
+    @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<Student> students;
 
     public String getSectionId() {
         return sectionId;
@@ -35,12 +37,20 @@ public class Section {
         this.sectionId = sectionId;
     }
 
-    public String getAdviser() {
-        return adviser;
+    public Teacher getTeacher() {
+        return teacher;
     }
 
-    public void setAdviser(String adviser) {
-        this.adviser = adviser;
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     public Integer getRoom() {
