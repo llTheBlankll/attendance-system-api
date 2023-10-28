@@ -34,7 +34,7 @@ public class GradeLevelController {
      * @param  gradelevel  the grade level to be added
      * @return             a message indicating the status of the operation
      */
-    @PutMapping("/add")
+    @PostMapping("/add")
     public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (this.gradelevelRepository.existsById(gradelevel.getId())) {
             return "Grade level already exists";
@@ -49,7 +49,7 @@ public class GradeLevelController {
      * @param  gradelevel    the grade level object to be deleted
      * @return               a message indicating the grade level was deleted
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (!this.gradelevelRepository.existsById(gradelevel.getId())) {
             logger.info("Grade level does not exist");
@@ -65,7 +65,7 @@ public class GradeLevelController {
      * @param  id  the ID of the grade level to be deleted
      * @return     a message indicating whether the grade level was deleted or not
      */
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteGradeLevelById(@PathVariable Integer id) {
         if (!this.gradelevelRepository.existsById(id)) {
             return "Grade level does not exist";

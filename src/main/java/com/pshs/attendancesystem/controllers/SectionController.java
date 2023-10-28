@@ -49,7 +49,7 @@ public class SectionController {
      * @param  section  the section object containing the section ID to be deleted
      * @return          a message indicating whether the section was successfully deleted or not
      */
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
         if (section.getSectionId() == null) {
             return "Section does not exists.";
@@ -69,7 +69,7 @@ public class SectionController {
      * @param  section  the section to be added
      * @return          a string indicating the status of the operation
      */
-    @PutMapping("/add")
+    @PostMapping("/add")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
             return "Section already exists";
@@ -100,15 +100,15 @@ public class SectionController {
     /**
      * Retrieves a collection of Section objects based on the given adviser.
      *
-     * @param  adviser  the adviser to search for
+     * @param  lastName the last name of the teacher.
      * @return          an iterable collection of Section objects
      */
-    @GetMapping("/search/adviser/{adviser}")
-    public Iterable<Section> getSectionByAdviser(@PathVariable String adviser) {
-        if (!this.sectionRepository.existsByAdviser(adviser)) {
+    @GetMapping("/search/teacher/{lastName}")
+    public Iterable<Section> getSectionByAdviser(@PathVariable String lastName) {
+        if (!this.sectionRepository.existsByTeacherLastName(lastName)) {
             Stream<Section> emptyStream = Stream.empty();
             return emptyStream::iterator;
         }
-        return this.sectionRepository.findByAdviserLikeIgnoreCase(adviser);
+        return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
     }
 }
