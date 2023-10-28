@@ -37,7 +37,7 @@ public class AttendanceController {
      * @param  studentLrn  the Long studentLrn to add attendance for
      * @return             true if the attendance was successfully added, false otherwise
      */
-    @PostMapping("/add/{studentLrn}")
+    @PostMapping("/create/{studentLrn}")
     public boolean addAttendance(@PathVariable Long studentLrn) {
         return manipulateAttendance.addAttendance(studentLrn);
     }

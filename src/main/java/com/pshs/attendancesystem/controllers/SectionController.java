@@ -70,7 +70,7 @@ public class SectionController {
      * @param  section  the section to be added
      * @return          a string indicating the status of the operation
      */
-    @PostMapping("/add")
+    @PostMapping("/create")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
             return SectionMessages.SECTION_EXISTS;

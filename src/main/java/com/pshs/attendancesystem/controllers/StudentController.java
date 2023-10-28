@@ -79,7 +79,7 @@ public class StudentController {
      * @param  student  the student object to be added
      * @return          a message indicating the success of the operation
      */
-    @PostMapping("/add")
+    @PostMapping("/create")
     public String addStudent(@RequestBody Student student) {
         if (this.studentRepository.existsById(student.getLrn())) {
             return StudentMessages.STUDENT_EXISTS;

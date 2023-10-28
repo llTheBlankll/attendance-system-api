@@ -35,7 +35,7 @@ public class GradeLevelController {
      * @param  gradelevel  the grade level to be added
      * @return             a message indicating the status of the operation
      */
-    @PostMapping("/add")
+    @PostMapping("/create")
     public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (this.gradelevelRepository.existsById(gradelevel.getId())) {
             return GradeLevelMessages.GRADELEVEL_EXISTS;
