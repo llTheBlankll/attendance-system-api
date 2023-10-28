@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,7 +12,7 @@ public class RfidCredentials {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
-    @JsonManagedReference
+    @JsonBackReference
     private Student student;
 
     @Column(name = "hashed_lrn", length = 128)

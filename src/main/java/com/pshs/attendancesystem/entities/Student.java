@@ -1,7 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -29,26 +27,30 @@ public class Student {
     @Column(name = "sex", length = 6)
     private String sex;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.DETACH)
+    @ManyToOne(targetEntity = Section.class, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinColumn(name = "section_id")
     private Section studentSection;
 
-    @Column(name = "guardian_name")
-    private String guardianName;
-
-    @Column(name = "contact_guardian")
-    private Long contactGuardian;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Guardian.class, fetch = FetchType.EAGER)
+    private Set<Guardian> guardian;
 
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
-    @JsonManagedReference
     private Set<Attendance> attendances;
 
-    @OneToOne(targetEntity = RfidCredentials.class, mappedBy = "student")
+    @OneToOne(targetEntity = RfidCredentials.class, mappedBy = "student", cascade = CascadeType.REMOVE)
     @JoinColumn(name = "lrn")
-    @JsonBackReference
     private RfidCredentials studentRfidCredentials;
+
+    public Set<Guardian> getGuardian() {
+        return guardian;
+    }
+
+    public void setGuardian(Set<Guardian> guardian) {
+        this.guardian = guardian;
+    }
 
     public RfidCredentials getStudentRfidCredentials() {
         return studentRfidCredentials;
@@ -112,22 +114,6 @@ public class Student {
 
     public void setStudentSection(Section studentSection) {
         this.studentSection = studentSection;
-    }
-
-    public String getGuardianName() {
-        return guardianName;
-    }
-
-    public void setGuardianName(String guardianName) {
-        this.guardianName = guardianName;
-    }
-
-    public Long getContactGuardian() {
-        return contactGuardian;
-    }
-
-    public void setContactGuardian(Long contactGuardian) {
-        this.contactGuardian = contactGuardian;
     }
 
     public String getAddress() {
