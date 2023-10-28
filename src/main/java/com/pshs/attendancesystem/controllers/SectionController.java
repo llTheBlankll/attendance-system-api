@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class SectionController {
     @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
         if (!this.sectionRepository.existsById(id)) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.deleteById(id);
@@ -52,15 +53,15 @@ public class SectionController {
     @PostMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
         if (section.getSectionId() == null) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section does not exists.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.delete(section);
-        return "Section with ID " + section.getSectionId() + " was deleted.";
+        return SectionMessages.SECTION_DELETED(section.getSectionId());
     }
 
     /**
@@ -72,11 +73,11 @@ public class SectionController {
     @PostMapping("/add")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section already exists";
+            return SectionMessages.SECTION_EXISTS;
         }
 
         this.sectionRepository.save(section);
-        return "Section is created.";
+        return SectionMessages.SECTION_CREATED;
     }
 
     /**
@@ -88,11 +89,11 @@ public class SectionController {
     @PostMapping("/update")
     public String updateSection(@RequestBody Section section) {
         if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return "Section does not exist.";
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         this.sectionRepository.save(section);
-        return "Section was updated.";
+        return SectionMessages.SECTION_UPDATED;
     }
 
     // SEARCH FUNCTION
