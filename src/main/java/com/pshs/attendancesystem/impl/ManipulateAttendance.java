@@ -1,8 +1,10 @@
 package com.pshs.attendancesystem.impl;
 
+import com.pshs.attendancesystem.AttendanceSystemConfiguration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
+import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -47,6 +50,15 @@ public class ManipulateAttendance {
     }
 
     /**
+     * Checks if today is Monday.
+     *
+     * @return true if today is Monday, false otherwise
+     */
+    private boolean isTodayMonday() {
+        return LocalDate.now().getDayOfWeek().equals(DayOfWeek.MONDAY);
+    }
+
+    /**
      * Checks if the student has already left.
      *
      * @param  student  the student object
@@ -59,7 +71,7 @@ public class ManipulateAttendance {
             if (currentAttendance.getDate().equals(LocalDate.now())) {
                 // If the student has already left, return true
                 if (currentAttendance.getTimeOut() != null) {
-                    logger.info(String.format("Student %s already left", student.getLrn()));
+                    logger.info("Student {} already left", student.getLrn());
                     return true;
                 }
 
@@ -83,29 +95,37 @@ public class ManipulateAttendance {
             return false;
         }
 
-        LocalTime flagCeremonyTime = Time.valueOf("7:00:00").toLocalTime();
-        LocalTime earliestTimeToArrive = Time.valueOf("4:00:00").toLocalTime();
+        LocalTime lateArrivalTime;
+        LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
 
         Time currentTime = new Time(System.currentTimeMillis());
         LocalTime currentLocalTime = currentTime.toLocalTime();
 
+        // Get Student Data from the database.
         Optional<Student> student = this.studentRepository.findById(studentLrn);
+
+        // Flag Ceremony Time
+        if (isTodayMonday()) {
+            lateArrivalTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
+        } else {
+            lateArrivalTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
+        }
+
+        // Check if the data is valid.
         if (student.isPresent()) {
             Attendance attendance = new Attendance();
             attendance.setStudent(student.get());
 
-            if (currentLocalTime.isBefore(flagCeremonyTime) && currentLocalTime.isAfter(earliestTimeToArrive)) {
+            if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
                 attendance.setAttendanceStatus(Status.ONTIME);
-            } else if (currentLocalTime.isAfter(flagCeremonyTime)) {
+            } else if (currentLocalTime.isAfter(lateArrivalTime)) {
                 attendance.setAttendanceStatus(Status.LATE);
-            } else {
-                // EARLY
-            }
+            } // ADD CODE HERE FOR EARLY ARRIVAL.
 
             attendance.setTime(Time.valueOf(LocalTime.now()));
             attendance.setDate(LocalDate.now());
             this.attendanceRepository.save(attendance);
-            logger.info(String.format("The student %s is %s, Time arrived: %s", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime));
+            logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
             return true;
         }
 
@@ -121,7 +141,7 @@ public class ManipulateAttendance {
     public boolean attendanceOut(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
-            logger.info("Student LRN does not exist");
+            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
             return false;
         }
 
@@ -131,7 +151,7 @@ public class ManipulateAttendance {
             for (Attendance attendance : studentData.getAttendances()) {
                 if (attendance.getDate().equals(LocalDate.now()) && attendance.getTimeOut() == null) {
                     this.attendanceRepository.studentAttendanceOut(LocalTime.now(), attendance.getId());
-                    logger.info(String.format("Student %s has left at %s", studentData.getLrn(), LocalTime.now()));
+                    logger.info("Student {} has left at {}", studentData.getLrn(), LocalTime.now());
                     return true;
                 }
             }
