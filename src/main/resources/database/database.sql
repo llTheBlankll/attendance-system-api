@@ -6,16 +6,6 @@ CREATE TABLE GradeLevels(
 
 -- Create enum types for each table.
 CREATE TYPE Status AS ENUM ('LATE','ONTIME');
-CREATE TYPE Relationship AS ENUM (
-    'FATHER',
-    'MOTHER',
-    'GUARDIAN',
-    'SIBLING',
-    'STEPFATHER',
-    'STEPMOTHER',
-    'GRANDPARENT',
-        'OTHER'
-    );
 
 -- CREATE A CAST, The CREATE CAST solution does not seem to work when the enum
 -- is used as an argument of a JPA Repository. E.g.
@@ -40,16 +30,11 @@ CREATE TABLE Guardians
 (
     guardian_id             SERIAL PRIMARY KEY,
     student_id              BIGINT,
-    first_name              VARCHAR(32),
-    middle_name             VARCHAR(32),
-    last_name               VARCHAR(32),
+    full_name      VARCHAR(255) NOT NULL,
     contact_number VARCHAR(32),
-    relationship_to_student Relationship NOT NULL DEFAULT 'OTHER',
     FOREIGN KEY (student_id) REFERENCES Students (lrn)
 );
 
-ALTER TABLE Guardians
-    ALTER COLUMN relationship_to_student TYPE CHARACTER VARYING;
 CREATE INDEX guardian_student_id_idx ON Guardians (student_id);
 
 -- @block
@@ -58,7 +43,7 @@ CREATE TABLE Students
     lrn         BIGINT PRIMARY KEY,
     rfid_credentials BIGINT,
     first_name       VARCHAR(255) NOT NULL,
-    middle_name      VARCHAR(255),
+    middle_name VARCHAR(255) NULL,
     last_name        VARCHAR(255),
     grade_level INT,
     sex              VARCHAR(6),
