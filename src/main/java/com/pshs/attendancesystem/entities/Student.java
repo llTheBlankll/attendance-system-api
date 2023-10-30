@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -41,25 +40,12 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
     private Set<Attendance> attendances;
 
-    @OneToOne(targetEntity = RfidCredentials.class, mappedBy = "student", cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "lrn")
-    @JsonBackReference
-    private RfidCredentials studentRfidCredentials;
-
     public Set<Guardian> getGuardian() {
         return guardian;
     }
 
     public void setGuardian(Set<Guardian> guardian) {
         this.guardian = guardian;
-    }
-
-    public RfidCredentials getStudentRfidCredentials() {
-        return studentRfidCredentials;
-    }
-
-    public void setStudentRfidCredentials(RfidCredentials studentRfidCredentials) {
-        this.studentRfidCredentials = studentRfidCredentials;
     }
 
     public Long getLrn() {

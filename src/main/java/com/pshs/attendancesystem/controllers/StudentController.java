@@ -88,7 +88,6 @@ public class StudentController {
         RfidCredentials studentRfidCredentials = new RfidCredentials();
         PasswordGenerator passwordGenerator = new PasswordGenerator();
         // First save the un-hashed student's learning resource number.
-        this.studentRepository.save(student);
 
         // Then encode the student's learning resource number with MD5.
         String salt = passwordGenerator.generate(16);
@@ -97,6 +96,7 @@ public class StudentController {
         studentRfidCredentials.setSalt(salt);
 
         // Add the hashed lrn to the database.
+        this.studentRepository.save(student);
         this.rfidCredentialsRepository.save(studentRfidCredentials);
 
         return StudentMessages.STUDENT_CREATED;
