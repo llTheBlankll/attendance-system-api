@@ -26,9 +26,9 @@ public class GuardianController {
         return guardianService.getStudentGuardiansByLrn(lrn);
     }
 
-    @GetMapping("/search/last-name/{lastName}")
-    public Iterable<Guardian> getGuardianByLastName(@PathVariable String lastName) {
-        return guardianService.getGuardianByLastName(lastName);
+    @GetMapping("/search/{fullName}")
+    public Iterable<Guardian> getGuardianByLastName(@PathVariable String fullName) {
+        return guardianService.searchGuardianByFullName(fullName);
     }
 
     @GetMapping("/student")
