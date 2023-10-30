@@ -49,6 +49,7 @@ CREATE TABLE Students
     sex              VARCHAR(6),
     section_id       VARCHAR(2),
     address          TEXT,
+    birthday DATE NOT NULL,
     UNIQUE (rfid_credentials),
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
     FOREIGN KEY (section_id) REFERENCES Sections (section_id)
