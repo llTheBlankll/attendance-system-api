@@ -10,7 +10,7 @@ public interface GuardianService {
 
     Iterable<Guardian> getStudentGuardiansByLrn(Long lrn);
 
-    Iterable<Guardian> getGuardianByLastName(String lastName);
+    Iterable<Guardian> searchGuardianByFullName(String fullName);
 
     boolean createGuardian(Guardian guardian);
 
