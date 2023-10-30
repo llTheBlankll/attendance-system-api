@@ -41,8 +41,12 @@ public class GuardianServiceImpl implements GuardianService {
     }
 
     @Override
-    public Iterable<Guardian> getGuardianByLastName(String lastName) {
-        return this.guardianRepository.findGuardiansByLastNameIgnoreCase(lastName);
+    public Iterable<Guardian> searchGuardianByFullName(String fullName) {
+        if (fullName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return this.guardianRepository.findGuardiansByFullNameIgnoreCase(fullName);
     }
 
     @Override

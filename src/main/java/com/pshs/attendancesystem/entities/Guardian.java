@@ -1,7 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.pshs.attendancesystem.enums.Relationship;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,24 +12,23 @@ public class Guardian {
     private Integer id;
 
     @JoinColumn(name = "student_lrn")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private Student student;
 
-    @Column(name = "first_name", length = 32)
-    private String firstName;
-
-    @Column(name = "middle_name", length = 32)
-    private String middleName;
-
-    @Column(name = "last_name", length = 32)
-    private String lastName;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "contact_number", length = 32)
     private String contactNumber;
-    @Column(name = "relationship_to_student", columnDefinition = "ENUM ('FATHER', 'MOTHER', 'GUARDIAN', 'SIBLING', 'STEPFATHER', 'STEPMOTHER', 'GRANDPARENT', 'OTHER')")
-    @Enumerated(EnumType.STRING)
-    private Relationship relationshipToStudent;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public String getContactNumber() {
         return contactNumber;
@@ -48,45 +46,12 @@ public class Guardian {
         this.student = student;
     }
 
-    public Relationship getRelationshipToStudent() {
-        return relationshipToStudent;
-    }
-
-    public void setRelationshipToStudent(Relationship relationshipToStudent) {
-        this.relationshipToStudent = relationshipToStudent;
-    }
-
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
 }
