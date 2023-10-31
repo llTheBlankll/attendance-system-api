@@ -53,7 +53,6 @@ CREATE TABLE Sections
 CREATE TABLE Students
 (
     lrn              BIGINT PRIMARY KEY,
-    rfid_credentials BIGINT,
     first_name       VARCHAR(255) NOT NULL,
     middle_name      VARCHAR(255) NULL,
     last_name        VARCHAR(255),
@@ -61,13 +60,10 @@ CREATE TABLE Students
     sex              VARCHAR(6),
     section_id       VARCHAR(2),
     address          TEXT,
-    birthday         DATE         NOT NULL,
-    UNIQUE (rfid_credentials),
+    birthdate DATE NOT NULL,
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
     FOREIGN KEY (section_id) REFERENCES Sections (section_id)
 );
-
-CREATE INDEX student_rfid_credentials_idx ON Students (rfid_credentials);
 
 -- @block
 CREATE TABLE rfid_credentials
