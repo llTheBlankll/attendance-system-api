@@ -21,8 +21,8 @@ public class Section {
     @Column(name = "section_name", nullable = false)
     private String sectionName;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Teacher.class)
-    @JoinColumn(name = "teacher_id")
+    @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "teacher")
     private Teacher teacher;
 
     @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)

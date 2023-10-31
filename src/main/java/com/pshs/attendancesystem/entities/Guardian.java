@@ -12,7 +12,7 @@ public class Guardian {
     private Integer id;
 
     @JoinColumn(name = "student_lrn")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
     private Student student;
 
@@ -21,7 +21,6 @@ public class Guardian {
 
     @Column(name = "contact_number", length = 32)
     private String contactNumber;
-
     public String getFullName() {
         return fullName;
     }
