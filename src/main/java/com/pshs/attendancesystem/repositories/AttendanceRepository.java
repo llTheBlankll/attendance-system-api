@@ -24,8 +24,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     /**
      * Updates the time when the time the student was out of the school.
      *
-     * @param  timeOut  the new time out value
-     * @param  id       the ID of the attendance record
+     * @param timeOut the new time out value
+     * @param id      the ID of the attendance record
      */
     @Query("UPDATE Attendance attendance SET attendance.timeOut = ?1 WHERE attendance.id = ?2")
     @Modifying

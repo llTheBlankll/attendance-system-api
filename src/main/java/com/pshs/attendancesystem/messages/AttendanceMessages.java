@@ -9,6 +9,7 @@ public class AttendanceMessages {
     public static final String ATTENDANCE_DELETED = "Attendance was deleted.";
     public static final String ATTENDANCE_ONTIME = "You are on time.";
     public static final String ATTENDANCE_EARLY = "You are early.";
+
     private AttendanceMessages() {
 
     }

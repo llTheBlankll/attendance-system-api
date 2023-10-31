@@ -32,8 +32,8 @@ public class ManipulateAttendance {
     /**
      * Checks if the student has already arrived by iterating through their attendances and comparing the date.
      *
-     * @param  student  the student object to check
-     * @return          true if the student has already arrived, false otherwise
+     * @param student the student object to check
+     * @return true if the student has already arrived, false otherwise
      */
     public boolean checkIfAlreadyArrived(Student student) {
 
@@ -61,8 +61,8 @@ public class ManipulateAttendance {
     /**
      * Checks if the student has already left.
      *
-     * @param  student  the student object
-     * @return          true if the student has already left, false otherwise
+     * @param student the student object
+     * @return true if the student has already left, false otherwise
      */
     public boolean checkIfAlreadyOut(Student student) {
         // Iterate eachAttendance and get theAttendance with the current date time,
@@ -85,8 +85,8 @@ public class ManipulateAttendance {
     /**
      * Adds attendance for a student based on their LRN.
      *
-     * @param  studentLrn  the LRN (Learner Reference Number) of the student
-     * @return             true if the attendance is successfully added, false otherwise
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @return true if the attendance is successfully added, false otherwise
      */
     public boolean addAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
@@ -135,8 +135,8 @@ public class ManipulateAttendance {
     /**
      * Checks the attendance status of a student and marks them as "out" if they are currently "in".
      *
-     * @param  studentLrn  the LRN (Learner Reference Number) of the student
-     * @return             true if the student's attendance was successfully marked as "out", false otherwise
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @return true if the student's attendance was successfully marked as "out", false otherwise
      */
     public boolean attendanceOut(Long studentLrn) {
         // Check for the existence of Student LRN

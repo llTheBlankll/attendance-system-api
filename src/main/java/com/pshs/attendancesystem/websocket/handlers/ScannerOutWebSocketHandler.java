@@ -44,8 +44,8 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
      * 8. If the above condition is not met, the function marks the attendance for the student as "out" using the manipulateAttendance.attendanceOut() method.
      * 9. It logs a message indicating that the student has left, and sends a text message back to the client with the same information.
      *
-     * @param  session  the WebSocket session
-     * @param  message  the received text message
+     * @param session the WebSocket session
+     * @param message the received text message
      * @throws IOException if an I/O error occurs
      */
     @Override
@@ -55,7 +55,7 @@ public class ScannerOutWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        ManipulateAttendance manipulateAttendance = new ManipulateAttendance(this.attendanceRepository,this.studentRepository);
+        ManipulateAttendance manipulateAttendance = new ManipulateAttendance(this.attendanceRepository, this.studentRepository);
         RfidCredentials rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(textMessage);
 
         if (rfidCredentials != null && rfidCredentials.getLrn() != null) {

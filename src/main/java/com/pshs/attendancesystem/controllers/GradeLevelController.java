@@ -22,7 +22,7 @@ public class GradeLevelController {
     /**
      * Retrieves all grade levels from the database.
      *
-     * @return  an iterable collection of grade levels
+     * @return an iterable collection of grade levels
      */
     @GetMapping("/gradelevels")
     public Iterable<Gradelevel> getAllGradeLevel() {
@@ -32,8 +32,8 @@ public class GradeLevelController {
     /**
      * Adds a grade level to the system.
      *
-     * @param  gradelevel  the grade level to be added
-     * @return             a message indicating the status of the operation
+     * @param gradelevel the grade level to be added
+     * @return a message indicating the status of the operation
      */
     @PostMapping("/create")
     public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
@@ -48,8 +48,8 @@ public class GradeLevelController {
     /**
      * Deletes a grade level.
      *
-     * @param  gradelevel    the grade level object to be deleted
-     * @return               a message indicating the grade level was deleted
+     * @param gradelevel the grade level object to be deleted
+     * @return a message indicating the grade level was deleted
      */
     @PostMapping("/delete")
     public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
@@ -64,8 +64,8 @@ public class GradeLevelController {
     /**
      * Deletes a grade level by its ID.
      *
-     * @param  id  the ID of the grade level to be deleted
-     * @return     a message indicating whether the grade level was deleted or not
+     * @param id the ID of the grade level to be deleted
+     * @return a message indicating whether the grade level was deleted or not
      */
     @PostMapping("/delete/{id}")
     public String deleteGradeLevelById(@PathVariable Integer id) {
@@ -80,8 +80,8 @@ public class GradeLevelController {
     /**
      * Update a grade level.
      *
-     * @param  gradelevel  the grade level to update
-     * @return             a message indicating if the grade level was successfully updated or if it was empty
+     * @param gradelevel the grade level to update
+     * @return a message indicating if the grade level was successfully updated or if it was empty
      */
     @PostMapping("/update")
     public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
