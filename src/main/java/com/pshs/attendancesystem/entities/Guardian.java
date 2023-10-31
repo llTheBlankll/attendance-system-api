@@ -21,6 +21,7 @@ public class Guardian {
 
     @Column(name = "contact_number", length = 32)
     private String contactNumber;
+
     public String getFullName() {
         return fullName;
     }

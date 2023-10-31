@@ -47,16 +47,16 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
      * 4. Looks for a student scan in the scanRepository based on the hashed LRN obtained from the text message.
      * 5. Checks if the student has already arrived by retrieving the student from the studentRepository based on the LRN obtained from the scan object. If the student has already arrived, it sends a text message back to the client with the content "You've already arrived" and returns.
      * 6. Checks if no matching LRN was found. If a matching LRN is found, it follows these steps:
-     *     a. Determines the flag ceremony time based on the current day. If it is Monday, the flag ceremony time is set to 6:30 AM. Otherwise, it is set to 7:00 AM.
-     *     b. Sets the earliest time to arrive as 5:30 AM.
-     *     c. Retrieves the current time and stores it as currentTime.
-     *     d. Compares the current time with the flag ceremony time and sends the appropriate text message back to the client based on the result.
-     *     e. Adds the attendance by calling the addAttendance method of the attendanceManipulate object.
+     * a. Determines the flag ceremony time based on the current day. If it is Monday, the flag ceremony time is set to 6:30 AM. Otherwise, it is set to 7:00 AM.
+     * b. Sets the earliest time to arrive as 5:30 AM.
+     * c. Retrieves the current time and stores it as currentTime.
+     * d. Compares the current time with the flag ceremony time and sends the appropriate text message back to the client based on the result.
+     * e. Adds the attendance by calling the addAttendance method of the attendanceManipulate object.
      * 7. If no matching LRN is found, it sends a text message back to the client with the content "Invalid LRN", logs a warning message, and returns.
      *
-     * @param session  the WebSocket session in which the message was received
-     * @param message  the text message received
-     * @throws IOException  if an I/O error occurs while sending a response to the client
+     * @param session the WebSocket session in which the message was received
+     * @param message the text message received
+     * @throws IOException if an I/O error occurs while sending a response to the client
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
