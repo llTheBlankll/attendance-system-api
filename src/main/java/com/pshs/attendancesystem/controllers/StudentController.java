@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers;
 
+import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.messages.StudentMessages;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @RestController
@@ -94,6 +96,12 @@ public class StudentController {
         studentRfidCredentials.setLrn(student.getLrn());
         studentRfidCredentials.setHashedLrn(hashMD5(student.getLrn() + salt));
         studentRfidCredentials.setSalt(salt);
+
+        // Set guardian student lrn
+        Set<Guardian> guardianSet = student.getGuardian();
+        for (Guardian guardian : guardianSet) {
+            guardian.setStudent(student);
+        }
 
         // Add the hashed lrn to the database.
         this.studentRepository.save(student);
@@ -181,5 +189,15 @@ public class StudentController {
 
         this.studentRepository.save(student);
         return StudentMessages.STUDENT_UPDATED;
+    }
+
+    @GetMapping("/get/students/{section_id}")
+    public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") String sectionId) {
+        return this.studentRepository.findStudentsByStudentSection_SectionId(sectionId);
+    }
+
+    @GetMapping("/count/students/{section_id}")
+    public long countStudentsBySectionId(@PathVariable("section_id") String sectionId) {
+        return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
     }
 }
