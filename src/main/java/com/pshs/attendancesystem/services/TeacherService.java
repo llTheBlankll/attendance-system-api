@@ -13,6 +13,6 @@ public interface TeacherService {
     Iterable<Teacher> getTeacherByLastName(String lastName);
 
     Iterable<Teacher> getTeacherBySubjectExpertiseName(String subjectName);
-
     void updateTeacher(Teacher teacher);
+    Iterable<Teacher> getAllTeachers();
 }
