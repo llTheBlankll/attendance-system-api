@@ -1,21 +1,18 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Section;
-import com.pshs.attendancesystem.messages.SectionMessages;
-import com.pshs.attendancesystem.repositories.SectionRepository;
+import com.pshs.attendancesystem.services.SectionService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.stream.Stream;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/section")
 public class SectionController {
 
-    private final SectionRepository sectionRepository;
+    private final SectionService sectionService;
 
-    public SectionController(SectionRepository sectionRepository) {
-        this.sectionRepository = sectionRepository;
+    public SectionController(SectionService sectionService) {
+        this.sectionService = sectionService;
     }
 
     /**
@@ -25,7 +22,7 @@ public class SectionController {
      */
     @GetMapping("/sections")
     public Iterable<Section> getAllSection() {
-        return this.sectionRepository.findAll();
+        return this.sectionService.getAllSection();
     }
 
     /**
@@ -36,12 +33,7 @@ public class SectionController {
      */
     @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
-        if (!this.sectionRepository.existsById(id)) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
-
-        this.sectionRepository.deleteById(id);
-        return SectionMessages.SECTION_DELETED(id);
+        return this.sectionService.deleteSectionById(id);
     }
 
     /**
@@ -51,17 +43,8 @@ public class SectionController {
      * @return a message indicating whether the section was successfully deleted or not
      */
     @PostMapping("/delete")
-    public String deleteSectionBySectionId(@RequestBody Section section) {
-        if (section.getSectionId() == null) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
-
-        if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
-
-        this.sectionRepository.delete(section);
-        return SectionMessages.SECTION_DELETED(section.getSectionId());
+    public String deleteSection(@RequestBody Section section) {
+        return this.sectionService.deleteSection(section);
     }
 
     /**
@@ -72,12 +55,7 @@ public class SectionController {
      */
     @PostMapping("/create")
     public String addSection(@RequestBody Section section) {
-        if (this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_EXISTS;
-        }
-
-        this.sectionRepository.save(section);
-        return SectionMessages.SECTION_CREATED;
+        return this.sectionService.addSection(section);
     }
 
     /**
@@ -88,12 +66,7 @@ public class SectionController {
      */
     @PostMapping("/update")
     public String updateSection(@RequestBody Section section) {
-        if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
-
-        this.sectionRepository.save(section);
-        return SectionMessages.SECTION_UPDATED;
+        return this.sectionService.updateSection(section);
     }
 
     // SEARCH FUNCTION
@@ -106,11 +79,17 @@ public class SectionController {
      */
     @GetMapping("/search/teacher/{lastName}")
     public Iterable<Section> getSectionByAdviser(@PathVariable String lastName) {
-        if (!this.sectionRepository.existsByTeacherLastName(lastName)) {
-            Stream<Section> emptyStream = Stream.empty();
-            return emptyStream::iterator;
-        }
-
-        return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
+        return this.sectionService.getSectionByTeacherLastName(lastName);
     }
+
+    @GetMapping("/get/id/{sectionId}")
+    public Section getSectionById(@PathVariable String sectionId) {
+        return this.sectionService.getSectionBySectionId(sectionId);
+    }
+
+    @GetMapping("/get/sectionId/{sectionId}")
+    public Section getSectionBySectionId(@PathVariable String sectionId) {
+        return this.sectionService.getSectionBySectionId(sectionId);
+    }
+
 }
