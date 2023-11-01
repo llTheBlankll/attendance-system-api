@@ -32,20 +32,6 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public String deleteSectionBySectionId(String sectionId) {
-        if (sectionId.isEmpty()) {
-            return SectionMessages.SECTION_CANNOT_EMPTY;
-        }
-
-        if (!this.sectionRepository.existsById(sectionId)) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
-
-        this.sectionRepository.deleteById(sectionId);
-        return SectionMessages.SECTION_DELETED(sectionId);
-    }
-
-    @Override
     public String addSection(Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
             return SectionMessages.SECTION_EXISTS;

@@ -7,8 +7,6 @@ public interface SectionService {
 
     String deleteSectionById(String id);
 
-    String deleteSectionBySectionId(String section);
-
     String addSection(Section section);
 
     String updateSection(Section section);
