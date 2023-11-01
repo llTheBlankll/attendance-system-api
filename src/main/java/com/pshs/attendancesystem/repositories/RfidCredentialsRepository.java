@@ -7,5 +7,7 @@ public interface RfidCredentialsRepository extends JpaRepository<RfidCredentials
     RfidCredentials findByHashedLrn(String hashedLrn);
 
     RfidCredentials findByLrn(Long lrn);
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean existsByHashedLrn(String hashedLrn);
 }
