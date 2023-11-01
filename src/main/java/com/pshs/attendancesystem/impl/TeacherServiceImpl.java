@@ -73,4 +73,9 @@ public class TeacherServiceImpl implements TeacherService {
 
         this.teacherRepository.save(teacher);
     }
+
+    @Override
+    public Iterable<Teacher> getAllTeachers() {
+        return this.teacherRepository.findAll();
+    }
 }
