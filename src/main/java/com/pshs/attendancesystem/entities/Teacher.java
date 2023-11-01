@@ -44,7 +44,7 @@ public class Teacher {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JsonIgnore
     private Set<Section> sections;
 

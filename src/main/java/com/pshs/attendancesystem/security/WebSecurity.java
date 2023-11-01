@@ -17,11 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurity {
 
-    private enum Privilege {
-        PRINCIPAL,
-        TEACHER
-    }
-
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -47,12 +42,12 @@ public class WebSecurity {
     /**
      * Generates the security filter chain for the HTTP security.
      *
-     * @param  httpSecurity  the HttpSecurity object representing the security configuration
-     * @return               the SecurityFilterChain object representing the security filter chain
-     * @throws Exception    if an exception occurs during the generation of the security filter chain
+     * @param httpSecurity the HttpSecurity object representing the security configuration
+     * @return the SecurityFilterChain object representing the security filter chain
+     * @throws Exception if an exception occurs during the generation of the security filter chain
      */
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
@@ -68,5 +63,10 @@ public class WebSecurity {
                 .cors(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
+    }
+
+    private enum Privilege {
+        PRINCIPAL,
+        TEACHER
     }
 }
