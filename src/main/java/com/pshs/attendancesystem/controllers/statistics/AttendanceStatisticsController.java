@@ -312,6 +312,32 @@ public class AttendanceStatisticsController {
         return students;
     }
 
+    /**
+     * Retrieves the count of student attendance in a specific section on a given date.
+     *
+     * @param  sectionId       the ID of the section
+     * @param  attendanceStatus  the attendance status
+     * @param  date            the date to filter the attendance count
+     * @return                 the count of student attendance in the specified section on the given date
+     */
+    @GetMapping("/count/date/{sectionId}")
+    public long getStudentAttendanceCountInSectionId(@PathVariable String sectionId, @RequestParam("status") Status attendanceStatus , @RequestParam LocalDate date) {
+        return this.manipulateAttendance.countStudentAttendanceInSectionIdByAttendanceStatusAndDate(sectionId, attendanceStatus, date);
+    }
+
+    /**
+     * Retrieves the number of student attendance records in a given section between two dates.
+     *
+     * @param  sectionId          the ID of the section
+     * @param  attendanceStatus   the attendance status to filter by
+     * @param  date               the date range to filter by
+     * @return                    the count of student attendance records
+     */
+    @GetMapping("/count/between-date/{sectionId}")
+    public long getStudentAttendanceCountInSectionIdBetweenDate(@PathVariable String sectionId, @RequestParam("status") Status attendanceStatus, @RequestBody BetweenDate date) {
+        return this.manipulateAttendance.countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(sectionId, attendanceStatus, date.getFirstDate(), date.getSecondDate());
+    }
+
     private static class BetweenDate {
         private LocalDate firstDate;
         private LocalDate secondDate;
