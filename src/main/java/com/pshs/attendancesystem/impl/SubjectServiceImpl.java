@@ -19,30 +19,19 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void deleteSubject(Integer subjectId) {
-        if (!this.subjectRepository.existsById(subjectId)) {
-            logger.info("Subject with ID {} doesn't exists.", subjectId);
-            return;
-        }
-        this.subjectRepository.deleteById(subjectId);
-        logger.info("Subject with ID {} deleted.", subjectId);
-    }
-
-    @Override
-    public Integer createSubject(Subject subject) {
+    public void createSubject(Subject subject) {
         if (subject.getId() == null) {
             logger.info(SubjectMessages.SUBJECT_NULL);
-            return null;
+            return;
         }
 
         // Check if subject already exists
         if (this.subjectRepository.existsById(subject.getId())) {
             logger.info(SubjectMessages.SUBJECT_ALREADY_EXISTS);
-            return 0;
+            return;
         }
 
         this.subjectRepository.save(subject);
-        return subject.getId();
     }
 
     @Override
@@ -81,18 +70,18 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject updateSubject(Subject subject) {
+    public void updateSubject(Subject subject) {
         if (subject.getId() == null) {
             logger.info(SubjectMessages.SUBJECT_NULL);
-            return null;
+            return;
         }
 
         if (!this.subjectRepository.existsById(subject.getId())) {
             logger.info(SubjectMessages.SUBJECT_NOT_FOUND);
-            return null;  // Subject doesn't exist. Nothing to update.
+            return;
         }
 
-        return this.subjectRepository.save(subject);
+        this.subjectRepository.save(subject);
     }
 
     @Override
@@ -108,5 +97,10 @@ public class SubjectServiceImpl implements SubjectService {
         }
 
         this.subjectRepository.deleteById(subjectId);
+    }
+
+    @Override
+    public Iterable<Subject> getAllSubjects() {
+        return this.subjectRepository.findAll();
     }
 }

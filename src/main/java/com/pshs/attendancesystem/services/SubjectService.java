@@ -4,9 +4,9 @@ import com.pshs.attendancesystem.entities.Subject;
 
 public interface SubjectService {
 
-    void deleteSubject(Integer subjectId);
+    void deleteSubject(Subject subjectId);
 
-    Integer createSubject(Subject subject);
+    void createSubject(Subject subject);
 
     Subject getSubject(Integer subjectId);
 
@@ -16,9 +16,9 @@ public interface SubjectService {
 
     Iterable<Subject> searchSubjectsByDescription(String subjectDescription);
 
-    void deleteSubject(Subject subject);
 
-    Subject updateSubject(Subject subject);
+    void updateSubject(Subject subject);
 
     void deleteSubjectById(Integer subjectId);
+    Iterable<Subject> getAllSubjects();
 }
