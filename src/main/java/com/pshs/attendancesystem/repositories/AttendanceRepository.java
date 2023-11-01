@@ -19,6 +19,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     Iterable<Attendance> findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(Long studentLrn, LocalDate startDate, LocalDate endDate);
 
+    Iterable<Attendance> findAttendancesByStudent_StudentSection_SectionId(String sectionId);
+    Iterable<Attendance> findAttendancesByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(String sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
+
     long countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
 
     /**

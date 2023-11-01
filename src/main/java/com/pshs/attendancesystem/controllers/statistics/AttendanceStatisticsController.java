@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.controllers.statistics;
 
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -273,6 +276,40 @@ public class AttendanceStatisticsController {
     @GetMapping("/student/{studentLrn}/{status}")
     public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody BetweenDate dates, @PathVariable Long studentLrn, @PathVariable Status status) {
         return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(studentLrn, dates.getFirstDate(), dates.getSecondDate(), status);
+    }
+
+    /**
+     * Retrieves the attendance of students in a specific section.
+     *
+     * @param  sectionId  the ID of the section
+     * @return            a list of Student objects representing the attendance of students in the section
+     */
+    @GetMapping("/seection/{sectionId}/attendance")
+    public List<Student> getStudentAttendanceInSectionId(@PathVariable String sectionId) {
+        Iterable<Attendance> studentsAttendance = this.manipulateAttendance.getStudentAttendanceInSectionId(sectionId);
+        List<Student> students = new ArrayList<>();
+
+        studentsAttendance.forEach(student -> students.add(student.getStudent()));
+
+        return students;
+    }
+
+    /**
+     * Retrieves the attendance of students in a specific section by their attendance status within a given date range.
+     *
+     * @param  betweenDate  the date range within which the attendance is being retrieved
+     * @param  status       the status of the attendance (e.g., present, absent)
+     * @param  sectionId    the ID of the section for which the attendance is being retrieved
+     * @return              a list of students who have attended the section within the specified date range and status
+     */
+    @GetMapping("/student/{sectionId}")
+    public List<Student> getStudentsAttendanceInSectionIdByStatus(@RequestBody BetweenDate betweenDate, @RequestParam Status status, @RequestParam String sectionId) {
+        Iterable<Attendance> studentsAttendance = manipulateAttendance.getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(sectionId, status, betweenDate.getFirstDate(), betweenDate.getSecondDate());
+        List<Student> students = new ArrayList<>();
+
+        studentsAttendance.forEach(student -> students.add(student.getStudent()));
+
+        return students;
     }
 
     private static class BetweenDate {
