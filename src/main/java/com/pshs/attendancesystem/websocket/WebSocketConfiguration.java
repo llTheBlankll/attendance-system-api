@@ -27,7 +27,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     /**
      * Registers WebSocket handlers for the given WebSocketHandlerRegistry.
      *
-     * @param  handlerRegistry  the WebSocketHandlerRegistry to register the handlers with. This allows for managing WebSocket connections and communication.
+     * @param handlerRegistry the WebSocketHandlerRegistry to register the handlers with. This allows for managing WebSocket connections and communication.
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {

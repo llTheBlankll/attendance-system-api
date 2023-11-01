@@ -34,6 +34,10 @@ public class Attendance {
         return student;
     }
 
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     public Status getAttendanceStatus() {
         return attendanceStatus;
     }
@@ -48,10 +52,6 @@ public class Attendance {
 
     public void setTimeOut(Time timeOut) {
         this.timeOut = timeOut;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
     }
 
     public Integer getId() {

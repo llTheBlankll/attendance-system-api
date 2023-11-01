@@ -41,7 +41,46 @@ public class GuardianServiceImpl implements GuardianService {
     }
 
     @Override
-    public Iterable<Guardian> getGuardianByLastName(String lastName) {
-        return this.guardianRepository.findByLastNameIgnoreCase(lastName);
+    public Iterable<Guardian> searchGuardianByFullName(String fullName) {
+        if (fullName.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return this.guardianRepository.findGuardiansByFullNameIgnoreCase(fullName);
+    }
+
+    @Override
+    public boolean createGuardian(Guardian guardian) {
+        if (guardian.getStudent().getLrn() != null) {
+            this.guardianRepository.save(guardian);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean deleteGuardian(Guardian guardian) {
+        if (guardian.getStudent().getLrn() != null) {
+            this.guardianRepository.delete(guardian);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void deleteGuardianById(Integer guardianId) {
+        this.guardianRepository.deleteById(guardianId);
+    }
+
+    @Override
+    public boolean updateGuardian(Guardian guardian) {
+        if (guardian.getStudent().getLrn() != null) {
+            this.guardianRepository.save(guardian);
+            return true;
+        }
+
+        return false;
     }
 }

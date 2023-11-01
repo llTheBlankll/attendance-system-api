@@ -21,7 +21,7 @@ public class SectionController {
     /**
      * Retrieves all sections.
      *
-     * @return  an iterable collection of Section objects representing all sections
+     * @return an iterable collection of Section objects representing all sections
      */
     @GetMapping("/sections")
     public Iterable<Section> getAllSection() {
@@ -31,8 +31,8 @@ public class SectionController {
     /**
      * Deletes a section by its ID.
      *
-     * @param  id  the ID of the section to delete
-     * @return     a message indicating whether the section was deleted successfully or not
+     * @param id the ID of the section to delete
+     * @return a message indicating whether the section was deleted successfully or not
      */
     @GetMapping("/delete/id/{id}")
     public String deleteSectionById(@PathVariable String id) {
@@ -41,14 +41,14 @@ public class SectionController {
         }
 
         this.sectionRepository.deleteById(id);
-        return "Section with ID " + id + " was deleted.";
+        return SectionMessages.SECTION_DELETED(id);
     }
 
     /**
      * Deletes a section by section ID.
      *
-     * @param  section  the section object containing the section ID to be deleted
-     * @return          a message indicating whether the section was successfully deleted or not
+     * @param section the section object containing the section ID to be deleted
+     * @return a message indicating whether the section was successfully deleted or not
      */
     @PostMapping("/delete")
     public String deleteSectionBySectionId(@RequestBody Section section) {
@@ -67,10 +67,10 @@ public class SectionController {
     /**
      * Adds a new section to the repository.
      *
-     * @param  section  the section to be added
-     * @return          a string indicating the status of the operation
+     * @param section the section to be added
+     * @return a string indicating the status of the operation
      */
-    @PostMapping("/add")
+    @PostMapping("/create")
     public String addSection(@RequestBody Section section) {
         if (this.sectionRepository.existsById(section.getSectionId())) {
             return SectionMessages.SECTION_EXISTS;
@@ -83,8 +83,8 @@ public class SectionController {
     /**
      * Updates a section.
      *
-     * @param  section  the section to update
-     * @return          a message indicating the result of the update
+     * @param section the section to update
+     * @return a message indicating the result of the update
      */
     @PostMapping("/update")
     public String updateSection(@RequestBody Section section) {
@@ -101,8 +101,8 @@ public class SectionController {
     /**
      * Retrieves a collection of Section objects based on the given adviser.
      *
-     * @param  lastName the last name of the teacher.
-     * @return          an iterable collection of Section objects
+     * @param lastName the last name of the teacher.
+     * @return an iterable collection of Section objects
      */
     @GetMapping("/search/teacher/{lastName}")
     public Iterable<Section> getSectionByAdviser(@PathVariable String lastName) {
@@ -110,6 +110,7 @@ public class SectionController {
             Stream<Section> emptyStream = Stream.empty();
             return emptyStream::iterator;
         }
+
         return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
     }
 }

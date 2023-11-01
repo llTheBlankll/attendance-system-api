@@ -3,10 +3,7 @@ package com.pshs.attendancesystem.controllers;
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.GuardianService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/guardian")
 @CrossOrigin
@@ -25,17 +22,37 @@ public class GuardianController {
     }
 
     @GetMapping("/student/{lrn}")
-    public Iterable<Guardian> getStudentGuardiansByLrn(Long lrn) {
+    public Iterable<Guardian> getStudentGuardiansByLrn(@PathVariable Long lrn) {
         return guardianService.getStudentGuardiansByLrn(lrn);
     }
 
-    @GetMapping("/guardian/{lastName}")
-    public Iterable<Guardian> getGuardianByLastName(String lastName) {
-        return guardianService.getGuardianByLastName(lastName);
+    @GetMapping("/search/{fullName}")
+    public Iterable<Guardian> getGuardianByLastName(@PathVariable String fullName) {
+        return guardianService.searchGuardianByFullName(fullName);
     }
 
     @GetMapping("/student")
-    public Iterable<Guardian> getGuardiansByStudent(Student student) {
+    public Iterable<Guardian> getGuardiansByStudent(@RequestBody Student student) {
         return guardianService.getStudentGuardians(student);
+    }
+
+    @PostMapping("/create")
+    public boolean createGuardian(@RequestBody Guardian guardian) {
+        return guardianService.createGuardian(guardian);
+    }
+
+    @PostMapping("/update")
+    public boolean updateGuardian(@RequestBody Guardian guardian) {
+        return guardianService.updateGuardian(guardian);
+    }
+
+    @DeleteMapping("/delete")
+    public boolean deleteGuardian(@RequestBody Guardian guardian) {
+        return guardianService.deleteGuardian(guardian);
+    }
+
+    @DeleteMapping("/delete/{guardianId}")
+    public void deleteGuardianById(@PathVariable Integer guardianId) {
+        guardianService.deleteGuardianById(guardianId);
     }
 }

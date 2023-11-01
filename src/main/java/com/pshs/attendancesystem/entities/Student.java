@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,9 @@ public class Student {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "birthdate")
+    private LocalDate birthdate;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.DETACH)
     @JoinColumn(name = "grade_level")
@@ -40,9 +44,13 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
     private Set<Attendance> attendances;
 
-    @OneToOne(targetEntity = RfidCredentials.class, mappedBy = "student", cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "lrn")
-    private RfidCredentials studentRfidCredentials;
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
 
     public Set<Guardian> getGuardian() {
         return guardian;
@@ -50,14 +58,6 @@ public class Student {
 
     public void setGuardian(Set<Guardian> guardian) {
         this.guardian = guardian;
-    }
-
-    public RfidCredentials getStudentRfidCredentials() {
-        return studentRfidCredentials;
-    }
-
-    public void setStudentRfidCredentials(RfidCredentials studentRfidCredentials) {
-        this.studentRfidCredentials = studentRfidCredentials;
     }
 
     public Long getLrn() {
