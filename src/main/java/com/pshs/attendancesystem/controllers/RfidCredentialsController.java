@@ -1,20 +1,18 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
-import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
+import com.pshs.attendancesystem.services.RfidService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/rfid")
 public class RfidCredentialsController {
 
-    private final RfidCredentialsRepository rfidCredentialsRepository;
+    private final RfidService rfidService;
 
-    public RfidCredentialsController(RfidCredentialsRepository rfidCredentialsRepository) {
-        this.rfidCredentialsRepository = rfidCredentialsRepository;
+    public RfidCredentialsController(RfidService rfidService) {
+        this.rfidService = rfidService;
     }
 
     /**
@@ -24,29 +22,22 @@ public class RfidCredentialsController {
      */
     @GetMapping("/credentials")
     public Iterable<RfidCredentials> getAllScan() {
-        return this.rfidCredentialsRepository.findAll();
+        return this.rfidService.getAllRfidCredentials();
     }
 
     /**
-     * Retrieves a student scan by their hashed learning resource network (LRN) value.
+     * Retrieves an RfidCredentials object based on the provided type and data.
      *
-     * @param hash the hashed LRN value used to search for the student scan
-     * @return the student scan if found, otherwise an empty scan object
+     * @param  type  the type of data to search for (hash or studentLrn)
+     * @param  data  the data to search for (hashed value or studentLrn)
+     * @return the retrieved RfidCredentials object
      */
-    @GetMapping("/get/hash/{hash}")
-    public RfidCredentials getStudentByLrnHash(@PathVariable String hash) {
-        RfidCredentials hashed = this.rfidCredentialsRepository.findByHashedLrn(hash);
-        return (hashed != null) ? hashed : new RfidCredentials();
-    }
-
-    /**
-     * Retrieves a student scan by their LRN.
-     *
-     * @param lrn the LRN of the student
-     * @return an optional containing the student scan if it exists, otherwise an empty optional
-     */
-    @GetMapping("/get/lrn/{lrn}")
-    public Optional<RfidCredentials> getStudentByLrn(@PathVariable Long lrn) {
-        return (this.rfidCredentialsRepository.existsById(lrn)) ? this.rfidCredentialsRepository.findById(lrn) : Optional.empty();
+    @GetMapping("/get")
+    public RfidCredentials getStudent(@RequestParam String type, @RequestParam String data) {
+        if (type.equals("hash")) {
+            return this.rfidService.getRfidCredentialByHashedLrn(data);
+        } else {
+            return this.rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
+        }
     }
 }
