@@ -10,7 +10,7 @@ public class SectionMessages {
 
     }
 
-    public static String SECTION_DELETED(String sectionId) {
+    public static String SECTION_DELETED(Integer sectionId) {
         return "Section with ID " + sectionId + " was deleted.";
     }
 

@@ -234,7 +234,7 @@ public class ManipulateAttendance {
      * @param  sectionId  the ID of the section
      * @return an iterable of Attendance objects representing the student's attendance records
      */
-    public Iterable<Attendance> getStudentAttendanceInSectionId(String sectionId) {
+    public Iterable<Attendance> getStudentAttendanceInSectionId(Integer sectionId) {
         return attendanceRepository.findAttendancesByStudent_StudentSection_SectionId(sectionId);
     }
 
@@ -247,7 +247,7 @@ public class ManipulateAttendance {
      * @param endDate          the end date of the date range
      * @return an iterable collection of Attendance objects representing the student attendance records
      */
-    public Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(String sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
+    public Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.findAttendancesByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
     }
 
@@ -259,7 +259,7 @@ public class ManipulateAttendance {
      * @param date             the date of the attendance
      * @return the number of student attendances
      */
-    public long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(String sectionId, Status attendanceStatus, LocalDate date) {
+    public long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(sectionId, attendanceStatus, date);
     }
 
@@ -272,7 +272,7 @@ public class ManipulateAttendance {
      * @param endDate          the end date of the date range
      * @return the number of student attendance records that match the given criteria
      */
-    public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(String sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
+    public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
     }
 }

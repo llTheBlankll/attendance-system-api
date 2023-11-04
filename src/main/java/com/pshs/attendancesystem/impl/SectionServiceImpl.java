@@ -22,7 +22,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public String deleteSectionById(String id) {
+    public String deleteSectionById(Integer id) {
         if (!this.sectionRepository.existsById(id)) {
             return SectionMessages.SECTION_NOT_FOUND;
         }
