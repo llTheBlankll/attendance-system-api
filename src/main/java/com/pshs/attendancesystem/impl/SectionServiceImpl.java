@@ -53,12 +53,12 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     public Iterable<Section> getSectionByTeacherLastName(String lastName) {
-        if (!this.sectionRepository.existsByTeacherLastName(lastName)) {
+        if (!this.sectionRepository.existsByTeacherLastNameIgnoreCaseContaining(lastName)) {
             Stream<Section> emptyStream = Stream.empty();
             return emptyStream::iterator;
         }
 
-        return this.sectionRepository.findByTeacherLastNameIgnoreCase(lastName);
+        return this.sectionRepository.findByTeacherLastNameIgnoreCaseContaining(lastName);
     }
 
     @Override
@@ -78,5 +78,10 @@ public class SectionServiceImpl implements SectionService {
 
         this.sectionRepository.delete(section);
         return SectionMessages.SECTION_DELETED(section.getSectionId());
+    }
+
+    @Override
+    public Iterable<Section> searchSectionByName(String sectionName) {
+        return this.sectionRepository.findSectionsBySectionNameIgnoreCaseContaining(sectionName);
     }
 }

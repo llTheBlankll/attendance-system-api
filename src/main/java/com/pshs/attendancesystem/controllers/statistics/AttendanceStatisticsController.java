@@ -33,7 +33,7 @@ public class AttendanceStatisticsController {
      * @return an iterable collection of Attendance objects representing the student's attendance records
      */
     @GetMapping("/student/{studentLrn}")
-    public Iterable<Attendance> getStudentAttendanceBetweenDate(@PathVariable Long studentLrn) {
+    public Iterable<Attendance> getStudentAttendanceToday(@PathVariable Long studentLrn) {
         return this.manipulateAttendance.getStudentAttendanceBetweenDate(
                 studentLrn,
                 LocalDate.now(),
@@ -135,7 +135,7 @@ public class AttendanceStatisticsController {
      * @return the count of late students for the current month
      */
     @GetMapping("/late/month/count")
-    public long getLateStudentCountThisMonth() {
+    public long getLateStudentsCountThisMonth() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
@@ -284,7 +284,7 @@ public class AttendanceStatisticsController {
      * @param  sectionId  the ID of the section
      * @return            a list of Student objects representing the attendance of students in the section
      */
-    @GetMapping("/seection/{sectionId}/attendance")
+    @GetMapping("/section/{sectionId}/attendance")
     public List<Student> getStudentAttendanceInSectionId(@PathVariable String sectionId) {
         Iterable<Attendance> studentsAttendance = this.manipulateAttendance.getStudentAttendanceInSectionId(sectionId);
         List<Student> students = new ArrayList<>();

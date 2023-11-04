@@ -4,6 +4,8 @@ import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.services.SectionService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/section")
@@ -70,26 +72,23 @@ public class SectionController {
     }
 
     // SEARCH FUNCTION
+    @GetMapping("/search")
+    public Iterable<Section> getSectionByAdviser(@RequestParam("type") String type, @RequestParam String search) {
+        if (search.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-    /**
-     * Retrieves a collection of Section objects based on the given adviser.
-     *
-     * @param lastName the last name of the teacher.
-     * @return an iterable collection of Section objects
-     */
-    @GetMapping("/search/teacher/{lastName}")
-    public Iterable<Section> getSectionByAdviser(@PathVariable String lastName) {
-        return this.sectionService.getSectionByTeacherLastName(lastName);
+        if (type.equals("teacher")) {
+            return this.sectionService.getSectionByTeacherLastName(search);
+        } else if (type.equals("section name")) {
+            return this.sectionService.searchSectionByName(search);
+        }
+
+        return Collections.emptyList();
     }
 
-    @GetMapping("/get/id/{sectionId}")
-    public Section getSectionById(@PathVariable String sectionId) {
+    @GetMapping("/get")
+    public Section getSection(@RequestParam("sectionId") String sectionId) {
         return this.sectionService.getSectionBySectionId(sectionId);
     }
-
-    @GetMapping("/get/sectionId/{sectionId}")
-    public Section getSectionBySectionId(@PathVariable String sectionId) {
-        return this.sectionService.getSectionBySectionId(sectionId);
-    }
-
 }
