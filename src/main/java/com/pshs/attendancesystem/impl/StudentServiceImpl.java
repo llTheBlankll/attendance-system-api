@@ -3,8 +3,10 @@ package com.pshs.attendancesystem.impl;
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
+import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.security.PasswordGenerator;
 import com.pshs.attendancesystem.services.StudentService;
@@ -23,11 +25,13 @@ import java.util.stream.Stream;
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final RfidCredentialsRepository rfidCredentialsRepository;
+    private final SectionRepository sectionService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public StudentServiceImpl(StudentRepository studentRepository, RfidCredentialsRepository rfidCredentialsRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, RfidCredentialsRepository rfidCredentialsRepository, SectionRepository sectionService) {
         this.studentRepository = studentRepository;
         this.rfidCredentialsRepository = rfidCredentialsRepository;
+        this.sectionService = sectionService;
     }
 
     private String hashMD5(String value) {
@@ -83,6 +87,8 @@ public class StudentServiceImpl implements StudentService {
     public String addStudent(@RequestBody Student student) {
         if (this.studentRepository.existsById(student.getLrn())) {
             return StudentMessages.STUDENT_EXISTS;
+        } else if (!this.sectionService.existsById(student.getStudentSection().getSectionId())) {
+            return SectionMessages.SECTION_NOT_FOUND;
         }
 
         RfidCredentials studentRfidCredentials = new RfidCredentials();
