@@ -25,11 +25,6 @@ public class TeacherController {
         return this.teacherService.getTeacherByLastName(lastName);
     }
 
-    @GetMapping("/get/subject-expertise-name/{subject-expertise-name}")
-    public Iterable<Teacher> getTeachersBySubjectExpertiseName(@PathVariable("subject-expertise-name") String subjectName) {
-        return this.teacherService.getTeacherBySubjectExpertiseName(subjectName);
-    }
-
     @PostMapping("/create")
     public boolean createTeacher(@RequestBody Teacher teacher) {
         return this.teacherService.createTeacher(teacher);
