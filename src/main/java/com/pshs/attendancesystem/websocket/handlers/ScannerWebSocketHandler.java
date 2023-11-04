@@ -51,7 +51,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
      * b. Sets the earliest time to arrive as 5:30 AM.
      * c. Retrieves the current time and stores it as currentTime.
      * d. Compares the current time with the flag ceremony time and sends the appropriate text message back to the client based on the result.
-     * e. Adds the attendance by calling the addAttendance method of the attendanceManipulate object.
+     * e. Adds the attendance by calling the createAttendance method of the attendanceManipulate object.
      * 7. If no matching LRN is found, it sends a text message back to the client with the content "Invalid LRN", logs a warning message, and returns.
      *
      * @param session the WebSocket session in which the message was received
@@ -119,7 +119,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             }
 
             // Now add attendance.
-            attendanceManipulate.addAttendance(rfidCredentials.getLrn());
+            attendanceManipulate.createAttendance(rfidCredentials.getLrn());
         } else {
             // Send a warning message, because there might be an error in scanner.
             TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);

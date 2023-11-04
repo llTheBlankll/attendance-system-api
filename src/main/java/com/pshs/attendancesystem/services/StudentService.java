@@ -3,12 +3,15 @@ package com.pshs.attendancesystem.services;
 import com.pshs.attendancesystem.entities.Student;
 
 public interface StudentService {
-    Student findStudentByLrn(Long studentLrn);
+    String addStudent(Student student);
+    String deleteStudent(Student student);
+    String deleteStudentById(Long id);
+    Iterable<Student> getStudentByGradeLevel(String gradeLevel);
+    Student getStudentById(Long lrn);
+    String updateStudent(Student student);
+    Iterable<Student> getAllStudentWithSectionId(String sectionId);
+    long countStudentsBySectionId(String sectionId);
+    Iterable<Student> getAllStudent();
 
-    boolean existsById(Long id);
-
-    Iterable<Student> findStudentsByStudentGradeLevel_GradeName(String gradeName);
-
-    boolean existsByStudentGradeLevel_GradeName(String gradeName);
-
+    boolean studentExistsByLrn(Long lrn);
 }
