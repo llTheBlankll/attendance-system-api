@@ -14,13 +14,3 @@ VALUES ('General Mathematics', 'Hard Subject');
 INSERT INTO Teachers (first_name, middle_name, last_name, birth_date, subject_expertise, sex, address, contact_number,
                       email)
 VALUES ('John', 'Doe', 'Doe', '1990-01-01', 1, 'Male', '1234', '1234567890', 'jdoe@u.com');
-
--- Add Guardian Data
-INSERT INTO Guardians (guardian_id, student_lrn, first_name, middle_name, last_name, relationship_to_student)
-VALUES (1, 1, 'John', 'Doe', 'Doe', 'FATHER');
-
--- Add Student data
-INSERT INTO students (lrn, rfid_credentials, first_name, middle_name, last_name, grade_level, sex, section_id,
-                      guardian_name, contact_guardian, address)
-VALUES (
-       );

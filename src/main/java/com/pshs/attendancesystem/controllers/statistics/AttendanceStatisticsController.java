@@ -29,8 +29,8 @@ public class AttendanceStatisticsController {
      * @param studentLrn the learning reference number of the student
      * @return an iterable collection of Attendance objects representing the student's attendance records
      */
-    @GetMapping("/student/{studentLrn}")
-    public Iterable<Attendance> getStudentAttendanceBetweenDate(@PathVariable Long studentLrn) {
+    @GetMapping("/student")
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestParam("lrn") Long studentLrn) {
         return this.manipulateAttendance.getStudentAttendanceBetweenDate(
                 studentLrn,
                 LocalDate.now(),
@@ -174,6 +174,14 @@ public class AttendanceStatisticsController {
                 Status.LATE);
     }
 
+    @GetMapping("/late/today/count")
+    public long getLateStudentCountToday() {
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                LocalDate.now(),
+                LocalDate.now(),
+                Status.LATE);
+    }
+
     /**
      * Retrieves the number of on-time students for the current week.
      *
@@ -187,6 +195,14 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
                 firstDayOfWeek,
                 lastDayOfWeek,
+                Status.ONTIME);
+    }
+
+    @GetMapping("/ontime/today/count")
+    public long getOnTimeStudentCountToday() {
+        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                LocalDate.now(),
+                LocalDate.now(),
                 Status.ONTIME);
     }
 
@@ -270,8 +286,8 @@ public class AttendanceStatisticsController {
      * @param status     the attendance status to filter the records by
      * @return an iterable collection of Attendance objects matching the specified criteria
      */
-    @GetMapping("/student/{studentLrn}/{status}")
-    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody BetweenDate dates, @PathVariable Long studentLrn, @PathVariable Status status) {
+    @GetMapping("/student/get")
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody BetweenDate dates, @RequestParam(name = "lrn") Long studentLrn, @RequestParam Status status) {
         return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(studentLrn, dates.getFirstDate(), dates.getSecondDate(), status);
     }
 
