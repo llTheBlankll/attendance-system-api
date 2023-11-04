@@ -34,7 +34,7 @@ public class SectionController {
      * @return a message indicating whether the section was deleted successfully or not
      */
     @GetMapping("/delete/id/{id}")
-    public String deleteSectionById(@PathVariable String id) {
+    public String deleteSectionById(@PathVariable Integer id) {
         return this.sectionService.deleteSectionById(id);
     }
 
