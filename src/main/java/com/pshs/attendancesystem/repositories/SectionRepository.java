@@ -4,8 +4,10 @@ import com.pshs.attendancesystem.entities.Section;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SectionRepository extends JpaRepository<Section, String> {
-    boolean existsByTeacherLastName(String lastName);
-
+    boolean existsByTeacherLastNameIgnoreCaseContaining(String lastName);
     Section findBySectionId(String sectionId);
-    Iterable<Section> findByTeacherLastNameIgnoreCase(String adviser);
+
+    Iterable<Section> findSectionsBySectionNameIgnoreCaseContaining(String sectionName);
+
+    Iterable<Section> findByTeacherLastNameIgnoreCaseContaining(String lastName);
 }

@@ -41,7 +41,7 @@ public class ManipulateAttendance {
         // If a row exists, return false because the student has already arrived.
         for (Attendance currentAttendance : student.getAttendances()) {
             if (currentAttendance.getDate().equals(LocalDate.now())) {
-                logger.info(String.format("Student %s already arrived", student.getLrn()));
+                logger.info("Student {} already arrived", student.getLrn());
                 return true;
             }
         }
@@ -88,10 +88,10 @@ public class ManipulateAttendance {
      * @param studentLrn the LRN (Learner Reference Number) of the student
      * @return true if the attendance is successfully added, false otherwise
      */
-    public boolean addAttendance(Long studentLrn) {
+    public boolean createAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
-            logger.info("Student LRN does not exist");
+            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
             return false;
         }
 

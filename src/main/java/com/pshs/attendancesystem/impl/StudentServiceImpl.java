@@ -69,6 +69,11 @@ public class StudentServiceImpl implements StudentService {
         return this.studentRepository.findAll();
     }
 
+    @Override
+    public boolean studentExistsByLrn(Long lrn) {
+        return this.studentRepository.existsById(lrn);
+    }
+
     /**
      * Adds a new student to the database.
      *
@@ -186,4 +191,6 @@ public class StudentServiceImpl implements StudentService {
     public long countStudentsBySectionId(@PathVariable("section_id") String sectionId) {
         return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
     }
+
+
 }
