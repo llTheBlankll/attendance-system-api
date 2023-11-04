@@ -1,68 +1,18 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.entities.Guardian;
-import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
-import com.pshs.attendancesystem.messages.StudentMessages;
-import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
-import com.pshs.attendancesystem.repositories.StudentRepository;
-import com.pshs.attendancesystem.security.PasswordGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pshs.attendancesystem.services.StudentService;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Set;
-import java.util.stream.Stream;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/student")
 public class StudentController {
-    private final StudentRepository studentRepository;
-    private final RfidCredentialsRepository rfidCredentialsRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public StudentController(StudentRepository studentRepository, RfidCredentialsRepository rfidCredentialsRepository) {
-        this.studentRepository = studentRepository;
-        this.rfidCredentialsRepository = rfidCredentialsRepository;
-    }
+    private final StudentService studentService;
 
-    /**
-     * Hashes a given value using the MD5 algorithm.
-     *
-     * @param value the value to be hashed
-     * @return the hexadecimal string representation of the hash value
-     */
-    private String hashMD5(String value) {
-        try {
-            // Create an instance of MessageDigest with MD5 algorithm
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            // Convert the value to bytes
-            byte[] valueBytes = value.getBytes();
-
-            // Update the MessageDigest with the value bytes
-            md.update(valueBytes);
-
-            // Get the hash value as bytes
-            byte[] hashBytes = md.digest();
-
-            // Convert the hash bytes to a hexadecimal string
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-
-            // Return the hexadecimal string representation of the hash value
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            // Handle the exception if MD5 algorithm is not available
-            logger.error(e.getMessage());
-        }
-
-        return null;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
     /**
@@ -72,7 +22,7 @@ public class StudentController {
      */
     @GetMapping("/students")
     public Iterable<Student> getAllStudent() {
-        return this.studentRepository.findAll();
+        return this.studentService.getAllStudent();
     }
 
     /**
@@ -83,31 +33,7 @@ public class StudentController {
      */
     @PostMapping("/create")
     public String addStudent(@RequestBody Student student) {
-        if (this.studentRepository.existsById(student.getLrn())) {
-            return StudentMessages.STUDENT_EXISTS;
-        }
-
-        RfidCredentials studentRfidCredentials = new RfidCredentials();
-        PasswordGenerator passwordGenerator = new PasswordGenerator();
-        // First save the un-hashed student's learning resource number.
-
-        // Then encode the student's learning resource number with MD5.
-        String salt = passwordGenerator.generate(16);
-        studentRfidCredentials.setLrn(student.getLrn());
-        studentRfidCredentials.setHashedLrn(hashMD5(student.getLrn() + salt));
-        studentRfidCredentials.setSalt(salt);
-
-        // Set guardian student lrn
-        Set<Guardian> guardianSet = student.getGuardian();
-        for (Guardian guardian : guardianSet) {
-            guardian.setStudent(student);
-        }
-
-        // Add the hashed lrn to the database.
-        this.studentRepository.save(student);
-        this.rfidCredentialsRepository.save(studentRfidCredentials);
-
-        return StudentMessages.STUDENT_CREATED;
+        return this.studentService.addStudent(student);
     }
 
     /**
@@ -118,12 +44,7 @@ public class StudentController {
      */
     @PostMapping("/delete")
     public String deleteStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getLrn())) {
-            return StudentMessages.STUDENT_NOT_FOUND;
-        }
-
-        this.studentRepository.delete(student);
-        return StudentMessages.STUDENT_DELETED;
+        return this.studentService.deleteStudent(student);
     }
 
     /**
@@ -134,12 +55,7 @@ public class StudentController {
      */
     @PostMapping("/delete/lrn/{id}")
     public String deleteStudentById(@PathVariable Long id) {
-        if (!this.studentRepository.existsById(id)) {
-            return StudentMessages.STUDENT_NOT_FOUND;
-        }
-
-        this.studentRepository.deleteById(id);
-        return StudentMessages.STUDENT_DELETED;
+        return this.studentService.deleteStudentById(id);
     }
 
     // SEARCH FUNCTION
@@ -152,12 +68,7 @@ public class StudentController {
      */
     @GetMapping("/search/gradelevel/name/{gradeName}")
     public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
-        if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
-            Stream<Student> empty = Stream.empty();
-            return empty::iterator; // Return empty.
-        }
-
-        return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
+        return this.studentService.getStudentByGradeLevel(gradeName);
     }
 
     /**
@@ -168,11 +79,7 @@ public class StudentController {
      */
     @GetMapping("/search/lrn/{lrn}")
     public Student getStudentById(@PathVariable("lrn") Long lrn) {
-        if (!this.studentRepository.existsById(lrn)) {
-            return new Student();
-        }
-
-        return this.studentRepository.findStudentByLrn(lrn);
+        return this.studentService.getStudentById(lrn);
     }
 
     /**
@@ -183,21 +90,16 @@ public class StudentController {
      */
     @PostMapping("/update")
     public String updateStudent(@RequestBody Student student) {
-        if (!this.studentRepository.existsById(student.getLrn())) {
-            return StudentMessages.STUDENT_NOT_FOUND;
-        }
-
-        this.studentRepository.save(student);
-        return StudentMessages.STUDENT_UPDATED;
+        return this.studentService.updateStudent(student);
     }
 
     @GetMapping("/get/students/{section_id}")
     public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") String sectionId) {
-        return this.studentRepository.findStudentsByStudentSection_SectionId(sectionId);
+        return this.studentService.getAllStudentWithSectionId(sectionId);
     }
 
     @GetMapping("/count/students/{section_id}")
     public long countStudentsBySectionId(@PathVariable("section_id") String sectionId) {
-        return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
+        return this.studentService.countStudentsBySectionId(sectionId);
     }
 }
