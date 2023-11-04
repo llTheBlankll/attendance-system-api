@@ -20,5 +20,6 @@ public interface SubjectService {
     void updateSubject(Subject subject);
 
     void deleteSubjectById(Integer subjectId);
+
     Iterable<Subject> getAllSubjects();
 }
