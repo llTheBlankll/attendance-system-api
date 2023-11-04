@@ -62,7 +62,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public Section getSectionBySectionId(String sectionId) {
+    public Section getSectionBySectionId(Integer sectionId) {
         return this.sectionRepository.findBySectionId(sectionId);
     }
 

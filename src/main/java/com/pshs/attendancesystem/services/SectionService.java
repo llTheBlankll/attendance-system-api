@@ -13,7 +13,7 @@ public interface SectionService {
 
     Iterable<Section> getSectionByTeacherLastName(String lastName);
 
-    Section getSectionBySectionId(String sectionId);
+    Section getSectionBySectionId(Integer sectionId);
 
     String deleteSection(Section section);
 

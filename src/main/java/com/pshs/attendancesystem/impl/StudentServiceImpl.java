@@ -184,11 +184,11 @@ public class StudentServiceImpl implements StudentService {
         return StudentMessages.STUDENT_UPDATED;
     }
 
-    public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") String sectionId) {
+    public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") Integer sectionId) {
         return this.studentRepository.findStudentsByStudentSection_SectionId(sectionId);
     }
 
-    public long countStudentsBySectionId(@PathVariable("section_id") String sectionId) {
+    public long countStudentsBySectionId(@PathVariable("section_id") Integer sectionId) {
         return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
     }
 
