@@ -1,10 +1,8 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Attendance;
-import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
-import com.pshs.attendancesystem.repositories.AttendanceRepository;
-import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.services.AttendanceService;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -13,12 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/attendance")
 public class AttendanceController {
 
-    private final AttendanceRepository attendanceRepository;
-    private final ManipulateAttendance manipulateAttendance;
+    private final AttendanceService attendanceService;
 
-    public AttendanceController(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
-        this.attendanceRepository = attendanceRepository;
-        this.manipulateAttendance = new ManipulateAttendance(this.attendanceRepository, studentRepository);
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
     }
 
     /**
@@ -28,18 +24,12 @@ public class AttendanceController {
      */
     @GetMapping("/attendances")
     public Iterable<Attendance> getAllAttendance() {
-        return this.attendanceRepository.findAll();
+        return this.attendanceService.getAllAttendances();
     }
 
-    /**
-     * Adds attendance for a student.
-     *
-     * @param studentLrn the Long studentLrn to add attendance for
-     * @return true if the attendance was successfully added, false otherwise
-     */
-    @PostMapping("/create/{studentLrn}")
-    public boolean addAttendance(@PathVariable Long studentLrn) {
-        return manipulateAttendance.addAttendance(studentLrn);
+    @PostMapping("/create")
+    public String addAttendance(@RequestParam("student_lrn") Long studentLrn) {
+        return this.attendanceService.createAttendance(studentLrn);
     }
 
     /**
@@ -48,14 +38,13 @@ public class AttendanceController {
      * @param id the ID of the attendance record to be deleted
      * @return a message indicating whether the attendance record was successfully deleted or not
      */
-    @PostMapping("/delete/id/{id}")
-    public String deleteAttendance(@PathVariable Integer id) {
-        if (!this.attendanceRepository.existsById(id)) {
+    @PostMapping("/delete")
+    public String deleteAttendance(@RequestParam Integer id) {
+        if (!this.attendanceService.existsByAttendanceId(id)) {
             return AttendanceMessages.ATTENDANCE_NOT_FOUND;
         }
 
-        this.attendanceRepository.deleteById(id);
-        return AttendanceMessages.ATTENDANCE_DELETED;
+        return this.attendanceService.deleteAttendance(id);
     }
 
     /**
@@ -66,11 +55,10 @@ public class AttendanceController {
      */
     @PostMapping("/update")
     public String updateAttendance(@RequestBody Attendance attendance) {
-        if (!this.attendanceRepository.existsById(attendance.getId())) {
+        if (!this.attendanceService.existsByAttendanceId(attendance.getId())) {
             return AttendanceMessages.ATTENDANCE_NOT_FOUND;
         }
 
-        this.attendanceRepository.save(attendance);
-        return AttendanceMessages.ATTENDANCE_UPDATED;
+        return this.attendanceService.updateAttendance(attendance);
     }
 }

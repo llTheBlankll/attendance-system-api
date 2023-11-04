@@ -14,5 +14,6 @@ public interface TeacherService {
 
     Iterable<Teacher> getTeacherBySubjectExpertiseName(String subjectName);
     void updateTeacher(Teacher teacher);
+
     Iterable<Teacher> getAllTeachers();
 }

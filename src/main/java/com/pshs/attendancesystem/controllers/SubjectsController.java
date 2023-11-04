@@ -17,7 +17,7 @@ public class SubjectsController {
     /**
      * Retrieves all subjects.
      *
-     * @return  an iterable of Subject objects representing all subjects
+     * @return an iterable of Subject objects representing all subjects
      */
     @GetMapping("/all")
     public Iterable<Subject> getAllSubjects() {
@@ -27,8 +27,8 @@ public class SubjectsController {
     /**
      * Retrieves a list of subjects based on the given subject name.
      *
-     * @param  subjectName   the name of the subject to search for
-     * @return               an iterable collection of subjects matching the given name
+     * @param subjectName the name of the subject to search for
+     * @return an iterable collection of subjects matching the given name
      */
     @GetMapping("/search/subject-name/{subject-name}")
     public Iterable<Subject> searchSubjects(@PathVariable("subject-name") String subjectName) {
@@ -38,8 +38,8 @@ public class SubjectsController {
     /**
      * Retrieves a collection of Subject objects based on the provided subject description.
      *
-     * @param  subjectDescription  the description of the subject to search for
-     * @return                     an Iterable collection of Subject objects
+     * @param subjectDescription the description of the subject to search for
+     * @return an Iterable collection of Subject objects
      */
     @GetMapping("/search/subject-description/{subject-description}")
     public Iterable<Subject> searchSubjectsByDescription(@PathVariable("subject-description") String subjectDescription) {
@@ -49,7 +49,7 @@ public class SubjectsController {
     /**
      * Creates a subject using the given Subject object.
      *
-     * @param  subject  the Subject object containing the details of the subject to be created
+     * @param subject the Subject object containing the details of the subject to be created
      */
     @PostMapping("/create")
     public void createSubject(@RequestBody Subject subject) {
@@ -59,8 +59,8 @@ public class SubjectsController {
     /**
      * Updates a subject.
      *
-     * @param  subject	the subject object to be updated
-     * @return         	void
+     * @param subject the subject object to be updated
+     * @return void
      */
     @PutMapping("/update")
     public void updateSubject(@RequestBody Subject subject) {
@@ -70,8 +70,8 @@ public class SubjectsController {
     /**
      * Deletes a subject.
      *
-     * @param  subject  the subject to be deleted
-     * @return          void
+     * @param subject the subject to be deleted
+     * @return void
      */
     @DeleteMapping("/delete")
     public void deleteSubject(@RequestBody Subject subject) {
@@ -81,8 +81,8 @@ public class SubjectsController {
     /**
      * Retrieves a subject by its ID.
      *
-     * @param  subjectId  the ID of the subject
-     * @return            the subject with the given ID
+     * @param subjectId the ID of the subject
+     * @return the subject with the given ID
      */
     @GetMapping("/get/{subject-id}")
     public Subject getSubjectById(@PathVariable("subject-id") Integer subjectId) {
@@ -92,8 +92,8 @@ public class SubjectsController {
     /**
      * Retrieves a subject by its name.
      *
-     * @param  subjectName  the name of the subject to retrieve
-     * @return              the subject with the given name
+     * @param subjectName the name of the subject to retrieve
+     * @return the subject with the given name
      */
     @GetMapping("/get-by-name/{subject-name}")
     public Subject getSubjectByName(@PathVariable("subject-name") String subjectName) {
@@ -103,7 +103,7 @@ public class SubjectsController {
     /**
      * Deletes a subject by its ID.
      *
-     * @param  id  the ID of the subject to be deleted
+     * @param id the ID of the subject to be deleted
      */
     @PostMapping("/delete/{id}")
     public void deleteSubjectById(@PathVariable("id") Integer id) {
