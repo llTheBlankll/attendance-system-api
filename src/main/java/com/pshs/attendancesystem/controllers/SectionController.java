@@ -88,7 +88,7 @@ public class SectionController {
     }
 
     @GetMapping("/get")
-    public Section getSection(@RequestParam("sectionId") String sectionId) {
+    public Section getSection(@RequestParam("sectionId") Integer sectionId) {
         return this.sectionService.getSectionBySectionId(sectionId);
     }
 }

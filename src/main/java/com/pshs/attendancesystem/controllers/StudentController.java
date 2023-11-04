@@ -94,12 +94,12 @@ public class StudentController {
     }
 
     @GetMapping("/get/students/{section_id}")
-    public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") String sectionId) {
+    public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") Integer sectionId) {
         return this.studentService.getAllStudentWithSectionId(sectionId);
     }
 
     @GetMapping("/count/students/{section_id}")
-    public long countStudentsBySectionId(@PathVariable("section_id") String sectionId) {
+    public long countStudentsBySectionId(@PathVariable("section_id") Integer sectionId) {
         return this.studentService.countStudentsBySectionId(sectionId);
     }
 }

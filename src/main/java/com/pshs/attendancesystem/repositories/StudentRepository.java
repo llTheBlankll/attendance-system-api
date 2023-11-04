@@ -12,7 +12,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     boolean existsByStudentGradeLevel_GradeName(String gradeName);
 
-    Iterable<Student> findStudentsByStudentSection_SectionId(String sectionId);
+    Iterable<Student> findStudentsByStudentSection_SectionId(Integer sectionId);
 
-    long countStudentsByStudentSectionSectionId(String sectionId);
+    long countStudentsByStudentSectionSectionId(Integer sectionId);
 }

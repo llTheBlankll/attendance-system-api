@@ -15,9 +15,9 @@ public interface StudentService {
 
     String updateStudent(Student student);
 
-    Iterable<Student> getAllStudentWithSectionId(String sectionId);
+    Iterable<Student> getAllStudentWithSectionId(Integer sectionId);
 
-    long countStudentsBySectionId(String sectionId);
+    long countStudentsBySectionId(Integer sectionId);
 
     Iterable<Student> getAllStudent();
 

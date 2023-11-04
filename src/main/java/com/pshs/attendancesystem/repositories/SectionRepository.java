@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SectionRepository extends JpaRepository<Section, Integer> {
     boolean existsByTeacherLastNameIgnoreCaseContaining(String lastName);
 
-    Section findBySectionId(String sectionId);
+    Section findBySectionId(Integer sectionId);
 
     Iterable<Section> findSectionsBySectionNameIgnoreCaseContaining(String sectionName);
 
