@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +20,7 @@ public class RfidCredentials {
     private String hashedLrn;
 
     @Column(name = "salt", length = 32)
+    @JsonIgnore
     private String salt;
 
     public Student getStudent() {
