@@ -169,8 +169,12 @@ public class ManipulateAttendance {
      * @param status    the status to filter the attendance records by
      * @return an iterable collection of attendance records
      */
-    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
+    public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+    }
+
+    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate) {
+        return attendanceRepository.findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
     }
 
     /**
@@ -274,5 +278,13 @@ public class ManipulateAttendance {
      */
     public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
+    }
+
+    public long countAttendancesBetweenDate(LocalDate startDate, LocalDate endDate) {
+        return this.attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
+    }
+
+    public long countStudentAttendancesBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate) {
+        return this.attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
     }
 }

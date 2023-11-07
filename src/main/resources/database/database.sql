@@ -1,7 +1,15 @@
+CREATE TABLE Strand
+(
+    strand_id   SERIAL PRIMARY KEY,
+    strand_name VARCHAR(255) NOT NULL
+);
+
 -- @block
 CREATE TABLE GradeLevels(
-    grade_level INT PRIMARY KEY,
-    grade_name VARCHAR(255) NOT NULL
+                            grade_level  SERIAL PRIMARY KEY,
+                            grade_name   VARCHAR(255) NOT NULL,
+                            grade_strand INT,
+                            CONSTRAINT gradelevels_grade_strand_fk FOREIGN KEY (grade_strand) REFERENCES Strand (strand_id)
 );
 
 -- Create enum types for each table.
