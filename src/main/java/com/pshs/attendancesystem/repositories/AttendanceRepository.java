@@ -21,6 +21,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     Iterable<Attendance> findAttendancesByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(Integer sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
+    Iterable<Attendance> findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(LocalDate startDate, LocalDate endDate);
+
     long countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
 
     long countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
@@ -28,6 +30,10 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     long countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(Integer studentSectionId, Status status, LocalDate date);
 
     long countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(Integer studentSectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
+
+    long countByDateGreaterThanEqualAndDateLessThanEqual(LocalDate startDate, LocalDate endDate);
+
+    long countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(Long studentLrn, LocalDate startDate, LocalDate endDate);
 
     /**
      * Updates the time when the time the student was out of the school.
