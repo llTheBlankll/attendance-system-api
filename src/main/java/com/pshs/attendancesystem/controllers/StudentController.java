@@ -20,7 +20,7 @@ public class StudentController {
      *
      * @return an iterable of student objects
      */
-    @GetMapping("/students")
+    @GetMapping("/all")
     public Iterable<Student> getAllStudent() {
         return this.studentService.getAllStudent();
     }

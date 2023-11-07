@@ -1,10 +1,14 @@
 package com.pshs.attendancesystem.controllers.statistics;
 
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.statistics.*;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
+import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
@@ -17,7 +21,9 @@ import java.time.temporal.TemporalAdjusters;
 public class AttendanceStatisticsController {
 
     private final ManipulateAttendance manipulateAttendance;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     LocalDate today = LocalDate.now();
+
     public AttendanceStatisticsController(AttendanceRepository attendanceRepository,
                                           StudentRepository studentRepository) {
         manipulateAttendance = new ManipulateAttendance(attendanceRepository, studentRepository);
@@ -31,285 +37,463 @@ public class AttendanceStatisticsController {
      */
     @GetMapping("/student")
     public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestParam("lrn") Long studentLrn) {
+        if (studentLrn == null) {
+            logger.info(AttendanceMessages.ATTENDANCE_NULL);
+            return null;
+        }
+
+        LocalDate firstDayOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDate lastDayOfYear = today.withDayOfYear(today.lengthOfYear());
+
+
         return this.manipulateAttendance.getStudentAttendanceBetweenDate(
-                studentLrn,
-                LocalDate.now(),
-                LocalDate.now());
+            studentLrn,
+            firstDayOfYear,
+            lastDayOfYear);
     }
 
     /**
-     * Retrieves the list of students who were marked as late this month.
+     * Retrieves the attendance records for students based on a given date and status.
      *
-     * @return An iterable of Attendance objects representing the late students.
+     * @param dateWithStatus object containing the date and status to filter the attendance records
+     * @return an iterable collection of Attendance objects representing the attendance records
      */
-    @GetMapping("/late/month")
-    public Iterable<Attendance> getLateStudentsThisMonth() {
+    @GetMapping("/get/date")
+    public Iterable<Attendance> getStudentsAttendanceByDate(@RequestBody DateWithStatus dateWithStatus) {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        if (dateWithStatus.getDate() == null || dateWithStatus.getStatus() == null) {
+            logger.info(AttendanceMessages.ATTENDANCE_NULL);
+            return null;
+        }
+
+        Status status = dateWithStatus.getStatus();
+        BetweenDate betweenDate = dateWithStatus.getDate();
+
+        if (status == Status.LATE) {
+            return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.LATE
+            );
+        } else if (status == Status.ONTIME) {
+            return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.ONTIME
+            );
+        }
 
         return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth,
-                Status.LATE);
+            Status.LATE);
     }
 
     /**
-     * Retrieves the attendance records of students who arrived on time during the current month.
+     * Retrieves the attendance of students based on a specified time period and status.
      *
-     * @return an Iterable of Attendance objects representing the on-time attendance records
+     * @param timeWithStatus an object that contains the time period and status to filter the attendance
+     * @return the list of attendance records that match the specified time period and status
      */
-    @GetMapping("/ontime/month")
-    public Iterable<Attendance> getOnTimeStudentsThisMonth() {
+    @GetMapping("/get/time")
+    public Iterable<Attendance> getStudentsAttendanceByTime(@RequestBody TimeWithStatus timeWithStatus) {
+        Status status = timeWithStatus.getStatus();
+        String time = timeWithStatus.getTime();
 
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(
-                firstDayOfMonth,
-                lastDayOfMonth,
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the list of late students for the current week.
-     *
-     * @return The list of late students for the current week.
-     */
-    @GetMapping("/late/week")
-    public Iterable<Attendance> getLateStudentsThisWeek() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.LATE);
-    }
+        switch (time) {
+            case "month":
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.ONTIME
+                    );
+                }
+                break;
 
-    /**
-     * Retrieves the list of students who have attended classes on time this week.
-     *
-     * @return An iterable collection of Attendance objects representing the students who attended on time.
-     */
-    @GetMapping("/ontime/week")
-    public Iterable<Attendance> getOnTimeStudentsThisWeek() {
-        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+            case "week":
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.ONTIME
+                    );
+                }
+                break;
 
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.ONTIME);
-    }
+            case "today":
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.ONTIME
+                    );
+                }
+                break;
 
-    /**
-     * Retrieves the list of late students for today.
-     *
-     * @return An iterable of Attendance objects representing the late students for today.
-     */
-    @GetMapping("/late/today")
-    public Iterable<Attendance> getLateStudentsToday() {
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(
-                LocalDate.now(),
-                LocalDate.now(),
-                Status.LATE);
-    }
-
-    /**
-     * Retrieves a list of students who were on time today.
-     *
-     * @return an iterable collection of Attendance objects representing the on time students today
-     */
-    @GetMapping("/ontime/today")
-    public Iterable<Attendance> getOnTimeStudentsToday() {
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(
-                LocalDate.now(),
-                LocalDate.now(),
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the count of late students for the current month.
-     *
-     * @return the count of late students for the current month
-     */
-    @GetMapping("/late/month/count")
-    public long getLateStudentCountThisMonth() {
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                firstDayOfMonth,
-                lastDayOfMonth,
-                Status.LATE);
-    }
-
-    /**
-     * Retrieves the count of on-time students for the current month.
-     *
-     * @return The count of on-time students for the current month.
-     */
-    @GetMapping("/ontime/month/count")
-    public long getOnTimeStudentCountThisMonth() {
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                firstDayOfMonth,
-                lastDayOfMonth,
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the count of late students for the current week.
-     *
-     * @return the count of late students for the current week
-     */
-    @GetMapping("/late/week/count")
-    public long getLateStudentCountThisWeek() {
-        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.LATE);
-    }
-
-    @GetMapping("/late/today/count")
-    public long getLateStudentCountToday() {
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                LocalDate.now(),
-                LocalDate.now(),
-                Status.LATE);
-    }
-
-    /**
-     * Retrieves the number of on-time students for the current week.
-     *
-     * @return the count of on-time students for the current week
-     */
-    @GetMapping("/ontime/week/count")
-    public long getOnTimeStudentCountThisWeek() {
-        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.ONTIME);
-    }
-
-    @GetMapping("/ontime/today/count")
-    public long getOnTimeStudentCountToday() {
-        return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
-                LocalDate.now(),
-                LocalDate.now(),
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the number of on-time student attendances for the current month.
-     *
-     * @param studentLrn the learning reference number of the student
-     * @return the count of on-time student attendances for the current month
-     */
-    @GetMapping("/student/{studentLrn}/month/ontime")
-    public long getStudentOnTimeThisMonth(@PathVariable Long studentLrn) {
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-        return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
-                studentLrn,
-                firstDayOfMonth,
-                lastDayOfMonth,
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the total count of late attendances for a specific student in the current month.
-     *
-     * @param studentLrn the learning resource number (LRN) of the student
-     * @return the total count of late attendances for the student this month
-     */
-    @GetMapping("/student/{studentLrn}/month/late")
-    public long getStudentLateThisMonth(@PathVariable Long studentLrn) {
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-        return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
-                studentLrn,
-                firstDayOfMonth,
-                lastDayOfMonth,
-                Status.LATE);
-    }
-
-    /**
-     * Retrieves the count of on-time student attendance for the current week.
-     *
-     * @param studentLrn the student's LRN (Learner Reference Number)
-     * @return the count of on-time student attendance for the current week
-     */
-    @GetMapping("/student/{studentLrn}/week/ontime")
-    public long getStudentOnTimeThisWeek(@PathVariable Long studentLrn) {
-        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
-                studentLrn,
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.ONTIME);
-    }
-
-    /**
-     * Retrieves the number of late attendances for a specific student in the current week.
-     *
-     * @param studentLrn the learning reference number of the student
-     * @return the count of late attendances for the student in the current week
-     */
-    @GetMapping("/student/{studentLrn}/week/late")
-    public long getStudentLateThisWeek(@PathVariable Long studentLrn) {
-        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
-                studentLrn,
-                firstDayOfWeek,
-                lastDayOfWeek,
-                Status.LATE);
-    }
-
-    /**
-     * Retrieves the attendance records for a student within a specific date range and attendance status.
-     *
-     * @param dates      object containing the start and end dates of the range
-     * @param studentLrn the LRN (Learner Reference Number) of the student
-     * @param status     the attendance status to filter the records by
-     * @return an iterable collection of Attendance objects matching the specified criteria
-     */
-    @GetMapping("/student/get")
-    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody BetweenDate dates, @RequestParam(name = "lrn") Long studentLrn, @RequestParam Status status) {
-        return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(studentLrn, dates.getFirstDate(), dates.getSecondDate(), status);
-    }
-
-    private static class BetweenDate {
-        private LocalDate firstDate;
-        private LocalDate secondDate;
-
-        public LocalDate getFirstDate() {
-            return firstDate;
+            default:
+                return null;
         }
 
-        public void setFirstDate(LocalDate firstDate) {
-            this.firstDate = firstDate;
+        return null;
+    }
+
+    /**
+     * Retrieves the attendance count by date.
+     *
+     * @param dateWithStatus the DateWithStatus object containing the date and status
+     * @return the count of attendance for the given date and status
+     */
+    @GetMapping("/count/date")
+    public long getAttendanceCountByDate(@RequestBody DateWithStatus dateWithStatus) {
+        if (dateWithStatus.getDate() == null || dateWithStatus.getStatus() == null) {
+            logger.info(AttendanceMessages.ATTENDANCE_NULL);
+            return -3;
         }
 
-        public LocalDate getSecondDate() {
-            return secondDate;
+        Status status = dateWithStatus.getStatus();
+        BetweenDate betweenDate = dateWithStatus.getDate();
+
+        if (status == Status.LATE) {
+            return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.LATE
+            );
+        } else if (status == Status.ONTIME) {
+            return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.ONTIME
+            );
         }
 
-        public void setSecondDate(LocalDate secondDate) {
-            this.secondDate = secondDate;
+        return -1;
+    }
+
+    /**
+     * Retrieves the attendance count based on the given time and status.
+     *
+     * @param timeWithStatus The time and status to filter the attendance count.
+     * @return The count of attendance based on the given time and status.
+     */
+    @GetMapping("/count/time")
+    public long getAttendanceCountByTime(@RequestBody TimeWithStatus timeWithStatus) {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        Status status = timeWithStatus.getStatus();
+        String time = timeWithStatus.getTime();
+        switch (time) {
+            case "month" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "week" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "today" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            default -> {
+                return -1;
+            }
         }
+
+        return -2;
+    }
+
+    /**
+     * Retrieves the count of students based on the given date and status.
+     *
+     * @param dateWithStatus the date and status for filtering the student count
+     * @return the count of students based on the given date and status
+     */
+    @GetMapping("/student/date")
+    public long getStudentCountByDate(@RequestBody DateWithStatusLrn dateWithStatus) {
+        if (dateWithStatus.getDate() == null || dateWithStatus.getStatus() == null) {
+            logger.info(AttendanceMessages.ATTENDANCE_NULL);
+            return -2;
+        }
+
+        Status status = dateWithStatus.getStatus();
+        BetweenDate betweenDate = dateWithStatus.getDate();
+        Long studentLrn = dateWithStatus.getStudentLrn();
+
+        if (status == Status.LATE) {
+            return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                studentLrn,
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.LATE
+            );
+        } else if (status == Status.ONTIME) {
+            return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                studentLrn,
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.ONTIME
+            );
+        }
+
+        return -1;
+    }
+
+    /**
+     * Retrieves the count of student attendance based on the specified time and status.
+     *
+     * @param timeWithStatus the time and status information for the attendance count
+     * @return the count of student attendance based on the specified time and status,
+     * or -1 if an error occurs or the specified time is invalid
+     */
+    @GetMapping("/student/time")
+    public long getStudentCountByTime(@RequestBody TimeWithStatusLrn timeWithStatus) {
+        Status status = timeWithStatus.getStatus();
+        String time = timeWithStatus.getTime();
+        Long studentLrn = timeWithStatus.getStudentLrn();
+
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        switch (time) {
+            case "month" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "week" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "today" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                        studentLrn,
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            default -> {
+                return -1;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Retrieves the student attendance between two dates with a specific attendance status.
+     *
+     * @param dateWithStatusLrn the object containing the start and end dates, attendance status, and student LRN
+     * @return an iterable collection of Attendance objects representing the student attendance
+     */
+    @GetMapping("/student/get/date")
+    public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody DateWithStatusLrn dateWithStatusLrn) {
+        if (dateWithStatusLrn.getDate() == null || dateWithStatusLrn.getStatus() == null) {
+            logger.info(AttendanceMessages.ATTENDANCE_NULL);
+            return null;
+        }
+
+        Status status = dateWithStatusLrn.getStatus();
+        BetweenDate betweenDate = dateWithStatusLrn.getDate();
+        Long studentLrn = dateWithStatusLrn.getStudentLrn();
+
+        if (status == Status.LATE) {
+            return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                studentLrn,
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.LATE
+            );
+        } else if (status == Status.ONTIME) {
+            return this.manipulateAttendance.getAllAttendanceBetweenDate(
+                betweenDate.getStartDate(),
+                betweenDate.getEndDate(),
+                Status.ONTIME
+            );
+        }
+
+        return null;
+    }
+
+    @GetMapping("/student/get/time")
+    public Iterable<Attendance> getStudentAttendanceByTime(@RequestBody TimeWithStatusLrn timeWithStatus) {
+        Status status = timeWithStatus.getStatus();
+        String time = timeWithStatus.getTime();
+        Long studentLrn = timeWithStatus.getStudentLrn();
+
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        switch (time) {
+            case "month" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        firstDayOfMonth,
+                        lastDayOfMonth,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "week" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        firstDayOfWeek,
+                        lastDayOfWeek,
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            case "today" -> {
+                if (status == Status.LATE) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.LATE
+                    );
+                } else if (status == Status.ONTIME) {
+                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                        studentLrn,
+                        LocalDate.now(),
+                        LocalDate.now(),
+                        Status.ONTIME
+                    );
+                }
+            }
+
+            default -> {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
 

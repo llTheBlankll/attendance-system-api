@@ -8,6 +8,7 @@ public class GradeLevelMessages {
     public static final String GRADELEVEL_DELETED = "Grade level was deleted.";
     public static final String GRADELEVEL_EXISTS = "Grade level already exists.";
     public static final String GRADELEVEL_EMPTY = "Grade level is empty. Fill grade_level value.";
+
     private GradeLevelMessages() {
 
     }
