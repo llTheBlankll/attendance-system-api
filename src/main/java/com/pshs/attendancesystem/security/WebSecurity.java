@@ -27,14 +27,21 @@ public class WebSecurity {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
 
         manager.createUser(User.withUsername("principal")
-                .password(encoder.encode("1234"))
-                .roles(Privilege.PRINCIPAL.name())
-                .build());
+            .password(encoder.encode("1234"))
+            .roles(Privilege.PRINCIPAL.name())
+            .build());
 
         manager.createUser(User.withUsername("teacher")
+            .password(encoder.encode("1234"))
+            .roles(Privilege.TEACHER.name())
+            .build());
+
+        manager.createUser(
+            User.withUsername("esp32")
                 .password(encoder.encode("1234"))
-                .roles(Privilege.TEACHER.name())
-                .build());
+                .roles(Privilege.RFID_DEVICE.name())
+                .build()
+        );
 
         return manager;
     }
@@ -49,24 +56,27 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/api/v1/**").hasRole(Privilege.TEACHER.name())
-                                .requestMatchers("/api/v1/**")
-                                .hasRole(Privilege.PRINCIPAL.name())
-                                .requestMatchers("/websocket/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-                .cors(AbstractHttpConfigurer::disable);
+            .httpBasic(Customizer.withDefaults())
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize ->
+                authorize
+                    .requestMatchers("/api/v1/rfid/**")
+                    .hasAnyRole(Privilege.PRINCIPAL.name())
+                    .requestMatchers("/api/v1/**")
+                    .hasAnyRole(Privilege.PRINCIPAL.name(), Privilege.TEACHER.name())
+                    .requestMatchers("/websocket/**")
+                    .hasAnyRole(Privilege.RFID_DEVICE.name())
+                    .anyRequest()
+                    .authenticated())
+            .cors(AbstractHttpConfigurer::disable);
 
         return httpSecurity.build();
     }
 
     private enum Privilege {
         PRINCIPAL,
-        TEACHER
+        TEACHER,
+        RFID_DEVICE
     }
 }

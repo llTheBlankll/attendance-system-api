@@ -7,10 +7,10 @@ VALUES (11, 'Grade 11'),
 INSERT INTO Subjects (name, description)
 VALUES ('General Mathematics', 'Hard Subject');
 
--- Add Section
-
-
 -- Add Teacher
-INSERT INTO Teachers (first_name, middle_name, last_name, birth_date, subject_expertise, sex, address, contact_number,
-                      email)
-VALUES ('John', 'Doe', 'Doe', '1990-01-01', 1, 'Male', '1234', '1234567890', 'jdoe@u.com');
+INSERT INTO Teachers (first_name, middle_name, last_name)
+VALUES ('Gladys', null, 'Austria');
+
+-- Add Section
+INSERT INTO sections (teacher, room, grade_level, section_name)
+VALUES (1, 301, 11, 'Casimiro Del Rosario');

@@ -30,6 +30,25 @@ public class Attendance {
     @JsonBackReference
     private Student student;
 
+    @Transient
+    private String message;
+
+    public Attendance() {
+
+    }
+
+    public Attendance(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public Student getStudent() {
         return student;
     }

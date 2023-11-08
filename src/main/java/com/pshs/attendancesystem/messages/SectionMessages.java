@@ -6,11 +6,12 @@ public class SectionMessages {
     public static final String SECTION_EXISTS = "Section already exists.";
     public static final String SECTION_CREATED = "Section was created.";
     public static final String SECTION_UPDATED = "Section was updated.";
+
     private SectionMessages() {
 
     }
 
-    public static String SECTION_DELETED(String sectionId) {
+    public static String SECTION_DELETED(Integer sectionId) {
         return "Section with ID " + sectionId + " was deleted.";
     }
 

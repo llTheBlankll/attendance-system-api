@@ -9,7 +9,7 @@ import java.util.Set;
 @Table(name = "sections")
 public class Section {
     @Id
-    private String sectionId;
+    private Integer sectionId;
 
     @Column(name = "room")
     private Integer room;
@@ -29,11 +29,11 @@ public class Section {
     @JsonIgnore
     private Set<Student> students;
 
-    public String getSectionId() {
+    public Integer getSectionId() {
         return sectionId;
     }
 
-    public void setSectionId(String sectionId) {
+    public void setSectionId(Integer sectionId) {
         this.sectionId = sectionId;
     }
 

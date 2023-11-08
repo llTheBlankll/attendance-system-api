@@ -1,7 +1,15 @@
+CREATE TABLE Strand
+(
+    strand_id   SERIAL PRIMARY KEY,
+    strand_name VARCHAR(255) NOT NULL
+);
+
 -- @block
 CREATE TABLE GradeLevels(
-    grade_level INT PRIMARY KEY,
-    grade_name VARCHAR(255) NOT NULL
+                            grade_level  SERIAL PRIMARY KEY,
+                            grade_name   VARCHAR(255) NOT NULL,
+                            grade_strand INT,
+                            CONSTRAINT gradelevels_grade_strand_fk FOREIGN KEY (grade_strand) REFERENCES Strand (strand_id)
 );
 
 -- Create enum types for each table.
@@ -40,7 +48,7 @@ CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 -- @block
 CREATE TABLE Sections
 (
-    section_id VARCHAR(2) PRIMARY KEY,
+    section_id SERIAL PRIMARY KEY,
     teacher    INT NULL,
     room INT,
     grade_level INT NOT NULL,
@@ -58,7 +66,7 @@ CREATE TABLE Students
     last_name        VARCHAR(255),
     grade_level      INT,
     sex              VARCHAR(6),
-    section_id       VARCHAR(2),
+    section_id INT,
     address          TEXT,
     birthdate DATE NOT NULL,
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),

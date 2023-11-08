@@ -5,7 +5,7 @@ import com.pshs.attendancesystem.entities.Section;
 public interface SectionService {
     Iterable<Section> getAllSection();
 
-    String deleteSectionById(String id);
+    String deleteSectionById(Integer id);
 
     String addSection(Section section);
 
@@ -13,7 +13,7 @@ public interface SectionService {
 
     Iterable<Section> getSectionByTeacherLastName(String lastName);
 
-    Section getSectionBySectionId(String sectionId);
+    Section getSectionBySectionId(Integer sectionId);
 
     String deleteSection(Section section);
 
