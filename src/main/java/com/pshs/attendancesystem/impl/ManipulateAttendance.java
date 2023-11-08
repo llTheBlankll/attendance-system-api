@@ -169,19 +169,23 @@ public class ManipulateAttendance {
      * @param status    the status to filter the attendance records by
      * @return an iterable collection of attendance records
      */
-    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
+    public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+    }
+
+    public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate) {
+        return attendanceRepository.findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
     }
 
     /**
      * Returns the total count of attendance records between the given start date and end date,
      * filtered by the specified attendance status.
      *
-     * @param  startDate the start date of the attendance records
-     * @param  endDate   the end date of the attendance records
-     * @param  status    the attendance status to filter by
+     * @param startDate the start date of the attendance records
+     * @param endDate   the end date of the attendance records
+     * @param status    the attendance status to filter by
      * @return the total count of attendance records between the start date and end date,
-     *                   filtered by the specified attendance status
+     * filtered by the specified attendance status
      */
     public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
@@ -191,24 +195,24 @@ public class ManipulateAttendance {
      * Retrieves the attendance records of a student between a specified start and end date,
      * filtered by the attendance status.
      *
-     * @param  studentLrn   the LRN (Learner Reference Number) of the student
-     * @param  startDate    the start date of the attendance records
-     * @param  endDate      the end date of the attendance records
-     * @param  status       the attendance status to filter the records by
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @param startDate  the start date of the attendance records
+     * @param endDate    the end date of the attendance records
+     * @param status     the attendance status to filter the records by
      * @return an iterable collection of Attendance objects representing
-     *                      the attendance records of the student
+     * the attendance records of the student
      */
     public Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn
-            , LocalDate startDate, LocalDate endDate, Status status) {
+        , LocalDate startDate, LocalDate endDate, Status status) {
         return attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
     }
 
     /**
      * Retrieves the attendance records of a student between the specified start and end dates.
      *
-     * @param  studentLrn    the LRN (Learner Reference Number) of the student
-     * @param  startDate     the start date of the attendance records
-     * @param  endDate       the end date of the attendance records
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @param startDate  the start date of the attendance records
+     * @param endDate    the end date of the attendance records
      * @return an iterable collection of Attendance objects representing the student's attendance between the specified dates
      */
     public Iterable<Attendance> getStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate) {
@@ -218,10 +222,10 @@ public class ManipulateAttendance {
     /**
      * Retrieves the total count of student attendance records between the specified dates.
      *
-     * @param  studentLrn  the LRN (Learner Reference Number) of the student
-     * @param  startDate   the start date of the range
-     * @param  endDate     the end date of the range
-     * @param  status      the attendance status to filter by
+     * @param studentLrn the LRN (Learner Reference Number) of the student
+     * @param startDate  the start date of the range
+     * @param endDate    the end date of the range
+     * @param status     the attendance status to filter by
      * @return the total count of student attendance records
      */
     public long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
@@ -231,10 +235,10 @@ public class ManipulateAttendance {
     /**
      * Retrieves the attendance records of a student in a specific section.
      *
-     * @param  sectionId  the ID of the section
+     * @param sectionId the ID of the section
      * @return an iterable of Attendance objects representing the student's attendance records
      */
-    public Iterable<Attendance> getStudentAttendanceInSectionId(String sectionId) {
+    public Iterable<Attendance> getStudentAttendanceInSectionId(Integer sectionId) {
         return attendanceRepository.findAttendancesByStudent_StudentSection_SectionId(sectionId);
     }
 
@@ -247,7 +251,7 @@ public class ManipulateAttendance {
      * @param endDate          the end date of the date range
      * @return an iterable collection of Attendance objects representing the student attendance records
      */
-    public Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(String sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
+    public Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.findAttendancesByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
     }
 
@@ -259,7 +263,7 @@ public class ManipulateAttendance {
      * @param date             the date of the attendance
      * @return the number of student attendances
      */
-    public long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(String sectionId, Status attendanceStatus, LocalDate date) {
+    public long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(sectionId, attendanceStatus, date);
     }
 
@@ -272,7 +276,15 @@ public class ManipulateAttendance {
      * @param endDate          the end date of the date range
      * @return the number of student attendance records that match the given criteria
      */
-    public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(String sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
+    public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
+    }
+
+    public long countAttendancesBetweenDate(LocalDate startDate, LocalDate endDate) {
+        return this.attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
+    }
+
+    public long countStudentAttendancesBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate) {
+        return this.attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
     }
 }

@@ -57,15 +57,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Iterable<Teacher> getTeacherBySubjectExpertiseName(String subjectName) {
-        if (subjectName.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return this.teacherRepository.findTeachersBySubjectExpertise_Name(subjectName);
-    }
-
-    @Override
     public void updateTeacher(Teacher teacher) {
         if (teacher.getId() == null) {
             logger.info(TeacherMessages.TEACHER_NULL);

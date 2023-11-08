@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,10 +15,6 @@ public class Subject {
 
     @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
-
-    @OneToOne(mappedBy = "subjectExpertise", fetch = FetchType.EAGER)
-    @JsonBackReference
-    private Teacher teachers;
 
     public Integer getId() {
         return id;
@@ -43,13 +38,5 @@ public class Subject {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Teacher getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(Teacher teachers) {
-        this.teachers = teachers;
     }
 }
