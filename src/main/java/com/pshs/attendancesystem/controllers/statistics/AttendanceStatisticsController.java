@@ -557,5 +557,26 @@ public class AttendanceStatisticsController {
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.LATE);
     }
+
+    @GetMapping("/month")
+    public Iterable<Attendance> getMonthAttendance() {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth);
+    }
+
+    @GetMapping("/month/ontime")
+    public Iterable<Attendance> getMonthOnTimeAttendance() {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.ONTIME);
+    }
+
+    @GetMapping("/month/late")
+    public Iterable<Attendance> getMonthLateAttendance() {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.LATE);
+    }
 }
 
