@@ -82,17 +82,11 @@ public class ManipulateAttendance {
         return false;
     }
 
-    /**
-     * Adds attendance for a student based on their LRN.
-     *
-     * @param studentLrn the LRN (Learner Reference Number) of the student
-     * @return true if the attendance is successfully added, false otherwise
-     */
-    public boolean createAttendance(Long studentLrn) {
+    public Status createAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
             logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
-            return false;
+            return null;
         }
 
         LocalTime lateArrivalTime;
@@ -115,21 +109,27 @@ public class ManipulateAttendance {
         if (student.isPresent()) {
             Attendance attendance = new Attendance();
             attendance.setStudent(student.get());
+            Status status;
 
             if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
                 attendance.setAttendanceStatus(Status.ONTIME);
+                status = Status.ONTIME;
             } else if (currentLocalTime.isAfter(lateArrivalTime)) {
                 attendance.setAttendanceStatus(Status.LATE);
-            } // ADD CODE HERE FOR EARLY ARRIVAL.
+                status = Status.LATE;
+            } else {
+                status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
+            }
 
             attendance.setTime(Time.valueOf(LocalTime.now()));
             attendance.setDate(LocalDate.now());
             this.attendanceRepository.save(attendance);
+
             logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
-            return true;
+            return status;
         }
 
-        return false;
+        return null;
     }
 
     /**
