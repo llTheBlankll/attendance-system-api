@@ -58,6 +58,12 @@ public class ManipulateAttendance {
         return LocalDate.now().getDayOfWeek().equals(DayOfWeek.MONDAY);
     }
 
+    /**
+     * Checks if the student with the given LRN has already checked out for the day.
+     *
+     * @param  studentLrn  the LRN (Learner Reference Number) of the student
+     * @return             true if the student has already checked out, false otherwise
+     */
     public boolean checkIfAlreadyOut(Long studentLrn) {
         Attendance attendance = this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
         if (attendance.getTimeOut() != null) {
@@ -68,6 +74,12 @@ public class ManipulateAttendance {
         return false;
     }
 
+    /**
+     * Creates an attendance record for a student.
+     *
+     * @param  studentLrn  the LRN (Learner Reference Number) of the student
+     * @return             the status of the attendance record (ONTIME, LATE, or EARLY)
+     */
     public Status createAttendance(Long studentLrn) {
         // Check for the existence of Student LRN
         if (!studentRepository.existsById(studentLrn)) {
@@ -142,6 +154,12 @@ public class ManipulateAttendance {
         return true;
     }
 
+    /**
+     * Retrieves the attendance record for a student based on their LRN (Learner Reference Number) for today.
+     *
+     * @param  studentLrn  the LRN of the student
+     * @return             the attendance record for the student today, or null if the student does not exist
+     */
     public Attendance studentTodayAttendance(Long studentLrn) {
         if (!studentRepository.existsById(studentLrn)) {
             logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
@@ -162,6 +180,13 @@ public class ManipulateAttendance {
         return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
     }
 
+    /**
+     * Retrieves all attendance records between the specified start date and end date.
+     *
+     * @param  startDate the start date for the range of attendance records
+     * @param  endDate   the end date for the range of attendance records
+     * @return           an iterable collection of attendance records between the start and end dates
+     */
     public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate) {
         return attendanceRepository.findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
     }
@@ -269,10 +294,25 @@ public class ManipulateAttendance {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
     }
 
+    /**
+     * Counts the number of attendances between two given dates.
+     *
+     * @param  startDate  the start date of the period
+     * @param  endDate    the end date of the period
+     * @return            the number of attendances between the start and end dates
+     */
     public long countAttendancesBetweenDate(LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
     }
 
+    /**
+     * Counts the number of attendances for a student between two given dates.
+     *
+     * @param  studentLrn  the LRN (Learner Reference Number) of the student
+     * @param  startDate   the start date of the attendance period
+     * @param  endDate     the end date of the attendance period
+     * @return             the number of attendances for the student within the specified period
+     */
     public long countStudentAttendancesBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
     }
