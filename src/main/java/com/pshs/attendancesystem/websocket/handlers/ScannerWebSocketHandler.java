@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.websocket.handlers;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pshs.attendancesystem.AttendanceSystemConfiguration;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
@@ -15,6 +16,7 @@ import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
@@ -23,20 +25,26 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
     private final StudentRepository studentRepository;
     private final AttendanceRepository attendanceRepository;
     private final RfidCredentialsRepository rfidCredentialsRepository;
+    private final FrontEndWebSocketsCommunicationService communicationService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final List<WebSocketSession> frontEndSessions = new ArrayList<>();
 
-    public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
+    public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository, FrontEndWebSocketsCommunicationService communicationService) {
         this.studentRepository = studentRepository;
         this.attendanceRepository = attendanceRepository;
         this.rfidCredentialsRepository = rfidCredentialsRepository;
+        this.communicationService = communicationService;
     }
 
     private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
@@ -72,13 +80,19 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         String hashedLrn;
         RfidCredentials rfidCredentials;
         WebSocketResponse response = new WebSocketResponse();
-
         ManipulateAttendance attendanceManipulate = new ManipulateAttendance(attendanceRepository, studentRepository);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         try {
             WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
             hashedLrn = webSocketData.getHashedLrn();
+
+            rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+
+            // Check if student already arrived.
+            Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
 
             if (webSocketData.getMode().equals("in")) {
                 if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
@@ -87,10 +101,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     return;
                 }
 
-                rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
-
-                // Check if student already arrived.
-                Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
                 if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
                     session.sendMessage(new TextMessage("You've already arrived."));
                     return;
@@ -134,10 +144,15 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     response.setStatus(attendanceStatus);
                     response.setStudentLrn(rfidCredentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
+                    response.setStudent(student);
 
                     session.sendMessage(new TextMessage(
                         mapper.writeValueAsBytes(response)
                     ));
+
+                    communicationService.sendMessageToFrontEndHandlers(
+                        mapper.writeValueAsString(response)
+                    );
                 } else {
                     // Send a warning message, because there might be an error in scanner.
                     TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
@@ -145,31 +160,35 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
                 }
             } else if (webSocketData.getMode().equals("out")) {
-                ManipulateAttendance manipulateAttendance = new ManipulateAttendance(this.attendanceRepository, this.studentRepository);
                 rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
 
                 if (rfidCredentials != null && rfidCredentials.getLrn() != null) {
-                    Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
 
-                    if (student.getLrn() != null && manipulateAttendance.checkIfAlreadyOut(student)) {
+                    if (attendanceManipulate.checkIfAlreadyOut(rfidCredentials.getLrn())) {
                         TextMessage alreadyOutMessage = new TextMessage("You've already scanned out");
                         session.sendMessage(alreadyOutMessage);
                         return;
                     }
 
-                    if (!manipulateAttendance.attendanceOut(student.getLrn())) {
+                    if (!attendanceManipulate.attendanceOut(rfidCredentials.getLrn())) {
                         session.sendMessage(new TextMessage("Failed to mark attendance as out. Mode OUT"));
                     }
-                    logger.info("Student {} has left at {}", student.getLrn(), Time.valueOf(LocalTime.now()));
+                    logger.info("Student {} has left at {}", rfidCredentials.getLrn(), Time.valueOf(LocalTime.now()));
 
+                    // Get Attendance
                     response.setMessage("Bye Bye, ingat");
                     response.setStudentLrn(rfidCredentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStatus(Status.OUT);
+                    response.setStudent(student);
 
                     // Send response
                     session.sendMessage(new TextMessage(
                         mapper.writeValueAsBytes(response))
+                    );
+
+                    communicationService.sendMessageToFrontEndHandlers(
+                        mapper.writeValueAsString(response)
                     );
                 }
             }
