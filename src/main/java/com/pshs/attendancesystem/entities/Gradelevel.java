@@ -28,16 +28,16 @@ public class Gradelevel {
         return sections;
     }
 
+    public void setSections(Set<Section> sections) {
+        this.sections = sections;
+    }
+
     public Set<Student> getStudents() {
         return students;
     }
 
     public void setStudents(Set<Student> students) {
         this.students = students;
-    }
-
-    public void setSections(Set<Section> sections) {
-        this.sections = sections;
     }
 
     public Integer getId() {
