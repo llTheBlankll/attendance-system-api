@@ -3,7 +3,6 @@ package com.pshs.attendancesystem.websocket;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
-import com.pshs.attendancesystem.websocket.handlers.ScannerOutWebSocketHandler;
 import com.pshs.attendancesystem.websocket.handlers.ScannerWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -31,7 +30,6 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {
-        handlerRegistry.addHandler(new ScannerWebSocketHandler(rfidCredentialsRepository, attendanceRepository, studentRepository), "/websocket/scanner/in").setAllowedOrigins("*");
-        handlerRegistry.addHandler(new ScannerOutWebSocketHandler(rfidCredentialsRepository, attendanceRepository, studentRepository), "/websocket/scanner/out").setAllowedOrigins("*");
+        handlerRegistry.addHandler(new ScannerWebSocketHandler(rfidCredentialsRepository, attendanceRepository, studentRepository), "/websocket/scanner").setAllowedOrigins("*");
     }
 }
