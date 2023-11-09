@@ -519,12 +519,22 @@ public class AttendanceStatisticsController {
         }
     }
 
+    /**
+     * Retrieves the attendance records for today.
+     *
+     * @return  an iterable collection of Attendance objects representing the attendance records for today.
+     */
     @GetMapping("/today")
     public Iterable<Attendance> getTodayAttendance() {
         LocalDate now = LocalDate.now();
         return this.manipulateAttendance.getAllAttendanceBetweenDate(now, now);
     }
 
+    /**
+     * Retrieves the attendance records for the current week.
+     *
+     * @return         	an Iterable of Attendance objects representing the attendance records for the week
+     */
     @GetMapping("/week")
     public Iterable<Attendance> getWeekAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -532,12 +542,22 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
     }
 
+    /**
+     * Retrieves today's on-time attendance.
+     *
+     * @return an iterable collection of Attendance objects representing the on-time attendance for today.
+     */
     @GetMapping("/today/ontime")
     public Iterable<Attendance> getTodayOnTimeAttendance() {
         LocalDate now = LocalDate.now();
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.ONTIME);
     }
 
+    /**
+     * Retrieves the on-time attendance records for the current week.
+     *
+     * @return         	An iterable collection of Attendance objects representing the on-time attendance records.
+     */
     @GetMapping("/week/ontime")
     public Iterable<Attendance> getWeekOnTimeAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -545,12 +565,22 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.ONTIME);
     }
 
+    /**
+     * Retrieves the late attendance records for today.
+     *
+     * @return         an iterable collection of Attendance objects representing the late attendance records for today.
+     */
     @GetMapping("/today/late")
     public Iterable<Attendance> getTodayLateAttendance() {
         LocalDate now = LocalDate.now();
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.LATE);
     }
 
+    /**
+     * Retrieves the late attendance records for the current week.
+     *
+     * @return An iterable collection of Attendance objects representing the late attendance records for the week.
+     */
     @GetMapping("/week/late")
     public Iterable<Attendance> getWeekLateAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -558,6 +588,11 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.LATE);
     }
 
+    /**
+     * Retrieves the attendance records for the current month.
+     *
+     * @return  An iterable collection of Attendance objects representing the attendance records for the month.
+     */
     @GetMapping("/month")
     public Iterable<Attendance> getMonthAttendance() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
@@ -572,6 +607,11 @@ public class AttendanceStatisticsController {
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.ONTIME);
     }
 
+    /**
+     * Retrieves the late attendance records for the current month.
+     *
+     * @return         	An iterable collection of Attendance objects representing the late attendance records for the current month.
+     */
     @GetMapping("/month/late")
     public Iterable<Attendance> getMonthLateAttendance() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);

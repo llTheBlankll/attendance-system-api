@@ -19,6 +19,7 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -27,10 +28,9 @@ import java.io.IOException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+@Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
     private final StudentRepository studentRepository;
@@ -38,7 +38,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
     private final RfidCredentialsRepository rfidCredentialsRepository;
     private final FrontEndWebSocketsCommunicationService communicationService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final List<WebSocketSession> frontEndSessions = new ArrayList<>();
 
     public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository, FrontEndWebSocketsCommunicationService communicationService) {
         this.studentRepository = studentRepository;
@@ -52,23 +51,38 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * Overrides the handleTextMessage method from the WebSocketHandlerAdapter class.
-     * Handles a WebSocket text message received.
-     * This function processes the received text message and performs various operations based on its content.
-     * It follows the following steps:
-     * 1. Retrieves the payload of the text message using message.getPayload().
-     * 2. If the payload is empty, the function returns and does nothing.
-     * 3. Creates an instance of the ManipulateAttendance class, passing in the attendanceRepository and studentRepository as arguments.
-     * 4. Retrieves a Scan object from the scanRepository based on the hashed LRN (Learning Reference Number) obtained from the text message.
-     * 5. If a valid Scan object is found, and it has a valid LRN, the function proceeds with further processing.
-     * 6. Retrieves a Student object from the studentRepository based on the LRN obtained from the Scan object.
-     * 7. If the Student object has a valid LRN and the attendance for the student has already been marked as "out", it sends a text message back to the client with the content "You've already left," and the function returns.
-     * 8. If the above condition is not met, the function marks the attendance for the student as "out" using the manipulateAttendance.attendanceOut() method.
-     * 9. It logs a message indicating that the student has left, and sends a text message back to the client with the same information.
+     * Handles a text message received from a WebSocket session.
      *
-     * @param session the WebSocket session
-     * @param message the received text message
-     * @throws IOException if an I/O error occurs
+     * This method is responsible for processing text messages received from a WebSocket session. It takes the WebSocket
+     * session and the text message as parameters. If any I/O error occurs during the processing of the message, an
+     * IOException is thrown.
+     *
+     * The function starts by extracting the payload of the message using the getPayload() method of the message object.
+     * If the payload is empty, the function returns without performing any further processing.
+     *
+     * Next, the function initializes variables such as hashedLrn, rfidCredentials, response, and attendanceManipulate.
+     *
+     * An instance of the ObjectMapper class is created and configured to handle the deserialization of the text message.
+     * The text message is deserialized into a WebSocketData object using the ObjectMapper. If the deserialization is
+     * successful, the hashedLrn is obtained from the WebSocketData object.
+     *
+     * The function retrieves the rfidCredentials from the rfidCredentialsRepository based on the hashedLrn.
+     *
+     * If the mode of the WebSocketData object is "in", the function performs a series of checks and operations related
+     * to student attendance. It checks if the hashedLrn exists in the database and if the student has already arrived.
+     * It also adjusts the flag ceremony time based on the current day and sends appropriate messages to the WebSocket
+     * session.
+     *
+     * If the mode of the WebSocketData object is "out", the function performs checks and operations related to marking
+     * the student as "out". It checks if the student has already scanned out and marks the attendance as "out" if not.
+     * It also sends a goodbye message to the WebSocket session.
+     *
+     * Please note that this is just a summary of the function's logic. The actual implementation may involve additional
+     * details and complexities.
+     *
+     * @param session  the WebSocket session representing the connection
+     * @param message  the text message received from the session
+     * @throws IOException  if an I/O error occurs while processing the message
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
