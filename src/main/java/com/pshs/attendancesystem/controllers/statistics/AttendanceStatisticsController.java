@@ -21,6 +21,7 @@ import java.time.temporal.TemporalAdjusters;
 public class AttendanceStatisticsController {
 
     private final ManipulateAttendance manipulateAttendance;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     LocalDate today = LocalDate.now();
 
@@ -516,6 +517,45 @@ public class AttendanceStatisticsController {
                 return null;
             }
         }
+    }
+
+    @GetMapping("/today")
+    public Iterable<Attendance> getTodayAttendance() {
+        LocalDate now = LocalDate.now();
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(now, now);
+    }
+
+    @GetMapping("/week")
+    public Iterable<Attendance> getWeekAttendance() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
+    }
+
+    @GetMapping("/today/ontime")
+    public Iterable<Attendance> getTodayOnTimeAttendance() {
+        LocalDate now = LocalDate.now();
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.ONTIME);
+    }
+
+    @GetMapping("/week/ontime")
+    public Iterable<Attendance> getWeekOnTimeAttendance() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.ONTIME);
+    }
+
+    @GetMapping("/today/late")
+    public Iterable<Attendance> getTodayLateAttendance() {
+        LocalDate now = LocalDate.now();
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.LATE);
+    }
+
+    @GetMapping("/week/late")
+    public Iterable<Attendance> getWeekLateAttendance() {
+        LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.LATE);
     }
 }
 
