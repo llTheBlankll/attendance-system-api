@@ -58,25 +58,11 @@ public class ManipulateAttendance {
         return LocalDate.now().getDayOfWeek().equals(DayOfWeek.MONDAY);
     }
 
-    /**
-     * Checks if the student has already left.
-     *
-     * @param student the student object
-     * @return true if the student has already left, false otherwise
-     */
-    public boolean checkIfAlreadyOut(Student student) {
-        // Iterate eachAttendance and get theAttendance with the current date time,
-        // If a row exists, return false because the student has already left.
-        for (Attendance currentAttendance : student.getAttendances()) {
-            if (currentAttendance.getDate().equals(LocalDate.now())) {
-                // If the student has already left, return true
-                if (currentAttendance.getTimeOut() != null) {
-                    logger.info("Student {} already left", student.getLrn());
-                    return true;
-                }
-
-                return false;
-            }
+    public boolean checkIfAlreadyOut(Long studentLrn) {
+        Attendance attendance = this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
+        if (attendance.getTimeOut() != null) {
+            logger.info("Student {} already left", studentLrn);
+            return true;
         }
 
         return false;
@@ -145,20 +131,23 @@ public class ManipulateAttendance {
             return false;
         }
 
-        Optional<Student> student = this.studentRepository.findById(studentLrn);
-        if (student.isPresent()) {
-            Student studentData = student.get();
-            for (Attendance attendance : studentData.getAttendances()) {
-                if (attendance.getDate().equals(LocalDate.now()) && attendance.getTimeOut() == null) {
-                    this.attendanceRepository.studentAttendanceOut(LocalTime.now(), attendance.getId());
-                    logger.info("Student {} has left at {}", studentData.getLrn(), LocalTime.now());
-                    return true;
-                }
-            }
-            return true;
+        if (!studentRepository.existsById(studentLrn)) {
+            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
+            return false;
         }
+        Attendance attendance = this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
 
-        return false;
+        this.attendanceRepository.studentAttendanceOut(LocalTime.now(), attendance.getId());
+        logger.info("The student {} is out, Time left: {}", studentLrn, attendance.getTimeOut());
+        return true;
+    }
+
+    public Attendance studentTodayAttendance(Long studentLrn) {
+        if (!studentRepository.existsById(studentLrn)) {
+            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
+            return null;
+        }
+        return this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
     }
 
     /**

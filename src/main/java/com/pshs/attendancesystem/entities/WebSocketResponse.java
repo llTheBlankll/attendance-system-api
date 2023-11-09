@@ -10,6 +10,15 @@ public class WebSocketResponse {
     private Time time;
     private Long studentLrn;
     private Status status;
+    private Student student;
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public String getMessage() {
         return message;

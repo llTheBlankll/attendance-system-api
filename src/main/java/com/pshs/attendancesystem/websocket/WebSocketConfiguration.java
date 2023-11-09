@@ -3,6 +3,8 @@ package com.pshs.attendancesystem.websocket;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
+import com.pshs.attendancesystem.websocket.handlers.FrontEndWebSocketHandler;
 import com.pshs.attendancesystem.websocket.handlers.ScannerWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -16,11 +18,13 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     private final RfidCredentialsRepository rfidCredentialsRepository;
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
+    private final FrontEndWebSocketsCommunicationService communicationService;
 
-    public WebSocketConfiguration(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
+    public WebSocketConfiguration(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository, FrontEndWebSocketsCommunicationService communicationService) {
         this.rfidCredentialsRepository = rfidCredentialsRepository;
         this.attendanceRepository = attendanceRepository;
         this.studentRepository = studentRepository;
+        this.communicationService = communicationService;
     }
 
     /**
@@ -30,6 +34,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
      */
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {
-        handlerRegistry.addHandler(new ScannerWebSocketHandler(rfidCredentialsRepository, attendanceRepository, studentRepository), "/websocket/scanner").setAllowedOrigins("*");
+        handlerRegistry.addHandler(new ScannerWebSocketHandler(rfidCredentialsRepository, attendanceRepository, studentRepository, communicationService), "/websocket/scanner").setAllowedOrigins("*");
+        handlerRegistry.addHandler(new FrontEndWebSocketHandler(communicationService), "/websocket/frontend").setAllowedOrigins("*");
     }
 }

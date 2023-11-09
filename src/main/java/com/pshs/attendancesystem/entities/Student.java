@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -42,6 +43,7 @@ public class Student {
     private String address;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Attendance> attendances;
 
     public LocalDate getBirthdate() {
