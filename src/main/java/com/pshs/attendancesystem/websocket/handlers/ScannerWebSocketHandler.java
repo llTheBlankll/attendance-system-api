@@ -1,8 +1,13 @@
 package com.pshs.attendancesystem.websocket.handlers;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pshs.attendancesystem.AttendanceSystemConfiguration;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.entities.WebSocketData;
+import com.pshs.attendancesystem.entities.WebSocketResponse;
+import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.messages.RfidMessages;
@@ -23,15 +28,15 @@ import java.util.Calendar;
 
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
-    private final RfidCredentialsRepository rfidCredentialsRepository;
-    private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final RfidCredentialsRepository rfidCredentialsRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
-        this.rfidCredentialsRepository = rfidCredentialsRepository;
-        this.attendanceRepository = attendanceRepository;
         this.studentRepository = studentRepository;
+        this.attendanceRepository = attendanceRepository;
+        this.rfidCredentialsRepository = rfidCredentialsRepository;
     }
 
     private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
@@ -39,92 +44,137 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
     }
 
     /**
-     * Handles a text message in the WebSocket session.
-     * This method is responsible for handling incoming text messages in the WebSocket session. It performs the following steps:
-     * 1. Creates an instance of the ManipulateAttendance class, passing in the attendanceRepository and studentRepository as arguments.
-     * 2. Retrieves the payload of the text message using message.getPayload().
-     * 3. Checks if the payload is empty. If so, it sends a text message back to the client with the content "Empty LRN" and returns.
-     * 4. Looks for a student scan in the scanRepository based on the hashed LRN obtained from the text message.
-     * 5. Checks if the student has already arrived by retrieving the student from the studentRepository based on the LRN obtained from the scan object. If the student has already arrived, it sends a text message back to the client with the content "You've already arrived" and returns.
-     * 6. Checks if no matching LRN was found. If a matching LRN is found, it follows these steps:
-     * a. Determines the flag ceremony time based on the current day. If it is Monday, the flag ceremony time is set to 6:30 AM. Otherwise, it is set to 7:00 AM.
-     * b. Sets the earliest time to arrive as 5:30 AM.
-     * c. Retrieves the current time and stores it as currentTime.
-     * d. Compares the current time with the flag ceremony time and sends the appropriate text message back to the client based on the result.
-     * e. Adds the attendance by calling the createAttendance method of the attendanceManipulate object.
-     * 7. If no matching LRN is found, it sends a text message back to the client with the content "Invalid LRN", logs a warning message, and returns.
+     * Overrides the handleTextMessage method from the WebSocketHandlerAdapter class.
+     * Handles a WebSocket text message received.
+     * This function processes the received text message and performs various operations based on its content.
+     * It follows the following steps:
+     * 1. Retrieves the payload of the text message using message.getPayload().
+     * 2. If the payload is empty, the function returns and does nothing.
+     * 3. Creates an instance of the ManipulateAttendance class, passing in the attendanceRepository and studentRepository as arguments.
+     * 4. Retrieves a Scan object from the scanRepository based on the hashed LRN (Learning Reference Number) obtained from the text message.
+     * 5. If a valid Scan object is found, and it has a valid LRN, the function proceeds with further processing.
+     * 6. Retrieves a Student object from the studentRepository based on the LRN obtained from the Scan object.
+     * 7. If the Student object has a valid LRN and the attendance for the student has already been marked as "out", it sends a text message back to the client with the content "You've already left," and the function returns.
+     * 8. If the above condition is not met, the function marks the attendance for the student as "out" using the manipulateAttendance.attendanceOut() method.
+     * 9. It logs a message indicating that the student has left, and sends a text message back to the client with the same information.
      *
-     * @param session the WebSocket session in which the message was received
-     * @param message the text message received
-     * @throws IOException if an I/O error occurs while sending a response to the client
+     * @param session the WebSocket session
+     * @param message the received text message
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        ManipulateAttendance attendanceManipulate = new ManipulateAttendance(attendanceRepository, studentRepository);
-        String hashedLrn = message.getPayload();
-        // Check if empty
-        if (hashedLrn.isEmpty()) {
-            session.sendMessage(new TextMessage("Empty LRN"));
+        String textMessage = message.getPayload();
+        if (textMessage.isEmpty()) {
             return;
         }
 
-
-        // Look for student by their LRN.
+        String hashedLrn;
         RfidCredentials rfidCredentials;
-        if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
-            sendErrorMessage(session, new TextMessage("Invalid LRN"));
-            logger.warn("Hashed LRN does not exist in the database.");
-            return;
-        }
+        WebSocketResponse response = new WebSocketResponse();
 
-        rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+        ManipulateAttendance attendanceManipulate = new ManipulateAttendance(attendanceRepository, studentRepository);
 
-        // Check if student already arrived.
-        Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
-        if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
-            session.sendMessage(new TextMessage("You've already arrived."));
-            return;
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
+            hashedLrn = webSocketData.getHashedLrn();
 
-        // Check if no matching lrn was found.
-        if (rfidCredentials.getLrn() != null) {
-            // Change flag ceremony time if today is monday.
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(calendar.getTime());
-            boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
-            LocalTime lateTime;
+            if (webSocketData.getMode().equals("in")) {
+                if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
+                    sendErrorMessage(session, new TextMessage("Hashed LRN does not exist in the database. Mode IN"));
+                    logger.warn("Hashed LRN does not exist in the database.");
+                    return;
+                }
 
-            if (monday) {
-                lateTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
-            } else {
-                lateTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
+                rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+
+                // Check if student already arrived.
+                Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
+                if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
+                    session.sendMessage(new TextMessage("You've already arrived."));
+                    return;
+                }
+
+                // Check if no matching lrn was found.
+                if (rfidCredentials.getLrn() != null) {
+                    // Change flag ceremony time if today is monday.
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(calendar.getTime());
+                    boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+                    LocalTime lateTime;
+
+                    if (monday) {
+                        lateTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
+                    } else {
+                        lateTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
+                    }
+
+                    // Earliest time
+                    LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
+
+                    // Get the current time
+                    Time currentTime = new Time(System.currentTimeMillis());
+                    LocalTime currentLocalTime = currentTime.toLocalTime();
+
+                    if (currentLocalTime.isBefore(lateTime)) {
+                        TextMessage onTimeMessage = new TextMessage(AttendanceMessages.ATTENDANCE_ONTIME);
+                        session.sendMessage(onTimeMessage);
+                    } else if (currentLocalTime.isAfter(lateTime)) {
+                        TextMessage lateMessage = new TextMessage(AttendanceMessages.ATTENDANCE_LATE);
+                        session.sendMessage(lateMessage);
+                    } else if (currentLocalTime.isBefore(onTimeArrival)) {
+                        TextMessage earlyMessage = new TextMessage(AttendanceMessages.ATTENDANCE_EARLY);
+                        session.sendMessage(earlyMessage);
+                    }
+
+                    // Now add attendance.
+                    Status attendanceStatus = attendanceManipulate.createAttendance(rfidCredentials.getLrn());
+                    response.setMessage("You're " + attendanceStatus);
+                    response.setStatus(attendanceStatus);
+                    response.setStudentLrn(rfidCredentials.getLrn());
+                    response.setTime(Time.valueOf(LocalTime.now()));
+
+                    session.sendMessage(new TextMessage(
+                        mapper.writeValueAsBytes(response)
+                    ));
+                } else {
+                    // Send a warning message, because there might be an error in scanner.
+                    TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
+                    session.sendMessage(invalidLrnMessage);
+                    logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
+                }
+            } else if (webSocketData.getMode().equals("out")) {
+                ManipulateAttendance manipulateAttendance = new ManipulateAttendance(this.attendanceRepository, this.studentRepository);
+                rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+
+                if (rfidCredentials != null && rfidCredentials.getLrn() != null) {
+                    Student student = this.studentRepository.findStudentByLrn(rfidCredentials.getLrn());
+
+                    if (student.getLrn() != null && manipulateAttendance.checkIfAlreadyOut(student)) {
+                        TextMessage alreadyOutMessage = new TextMessage("You've already scanned out");
+                        session.sendMessage(alreadyOutMessage);
+                        return;
+                    }
+
+                    if (!manipulateAttendance.attendanceOut(student.getLrn())) {
+                        session.sendMessage(new TextMessage("Failed to mark attendance as out. Mode OUT"));
+                    }
+                    logger.info("Student {} has left at {}", student.getLrn(), Time.valueOf(LocalTime.now()));
+
+                    response.setMessage("Bye Bye, ingat");
+                    response.setStudentLrn(rfidCredentials.getLrn());
+                    response.setTime(Time.valueOf(LocalTime.now()));
+                    response.setStatus(Status.OUT);
+
+                    // Send response
+                    session.sendMessage(new TextMessage(
+                        mapper.writeValueAsBytes(response))
+                    );
+                }
             }
-
-            // Earliest time
-            LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
-
-            // Get the current time
-            Time currentTime = new Time(System.currentTimeMillis());
-            LocalTime currentLocalTime = currentTime.toLocalTime();
-
-            if (currentLocalTime.isBefore(lateTime)) {
-                TextMessage onTimeMessage = new TextMessage(AttendanceMessages.ATTENDANCE_ONTIME);
-                session.sendMessage(onTimeMessage);
-            } else if (currentLocalTime.isAfter(lateTime)) {
-                TextMessage lateMessage = new TextMessage(AttendanceMessages.ATTENDANCE_LATE);
-                session.sendMessage(lateMessage);
-            } else if (currentLocalTime.isBefore(onTimeArrival)) {
-                TextMessage earlyMessage = new TextMessage(AttendanceMessages.ATTENDANCE_EARLY);
-                session.sendMessage(earlyMessage);
-            }
-
-            // Now add attendance.
-            attendanceManipulate.createAttendance(rfidCredentials.getLrn());
-        } else {
-            // Send a warning message, because there might be an error in scanner.
-            TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
-            session.sendMessage(invalidLrnMessage);
-            logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
+        } catch (JsonParseException e) {
+            logger.error("Invalid JSON");
         }
     }
 }

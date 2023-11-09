@@ -110,6 +110,32 @@ ALTER TABLE Attendance
     ALTER COLUMN attendance_status TYPE CHARACTER VARYING;
 CREATE INDEX attendance_student_id_idx ON Attendance (student_id);
 
+-- CREATE TRIGGER AND NOTIFY --
+CREATE OR REPLACE FUNCTION notify_changes_attendance() RETURNS TRIGGER AS
+$$
+DECLARE
+    payload VARCHAR;
+    channel TEXT := 'attendance_channel';
+BEGIN
+    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+        SELECT json_build_object(
+                       'new', NEW,
+                       'old', OLD
+               )::text
+        INTO payload;
+        PERFORM pg_notify(channel, payload);
+        RETURN NEW;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_event_attendance
+    AFTER INSERT OR UPDATE
+    ON Attendance
+    FOR EACH ROW
+EXECUTE FUNCTION notify_changes_attendance();
+
 -- ==================== SELECT STATEMENTS =================== --
 
 -- show all sections.
