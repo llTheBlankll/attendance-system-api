@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
@@ -37,6 +39,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
     private final AttendanceRepository attendanceRepository;
     private final RfidCredentialsRepository rfidCredentialsRepository;
     private final FrontEndWebSocketsCommunicationService communicationService;
+    private List<WebSocketSession> frontEndSessions = new ArrayList<>();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, AttendanceRepository attendanceRepository, StudentRepository studentRepository, FrontEndWebSocketsCommunicationService communicationService) {
@@ -116,7 +119,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                 }
 
                 if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
-                    session.sendMessage(new TextMessage("You've already arrived."));
+//                    session.sendMessage(new TextMessage("You've already arrived."));
                     return;
                 }
 
@@ -143,18 +146,18 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
                     if (currentLocalTime.isBefore(lateTime)) {
                         TextMessage onTimeMessage = new TextMessage(AttendanceMessages.ATTENDANCE_ONTIME);
-                        session.sendMessage(onTimeMessage);
+//                        session.sendMessage(onTimeMessage);
                     } else if (currentLocalTime.isAfter(lateTime)) {
                         TextMessage lateMessage = new TextMessage(AttendanceMessages.ATTENDANCE_LATE);
-                        session.sendMessage(lateMessage);
+//                        session.sendMessage(lateMessage);
                     } else if (currentLocalTime.isBefore(onTimeArrival)) {
                         TextMessage earlyMessage = new TextMessage(AttendanceMessages.ATTENDANCE_EARLY);
-                        session.sendMessage(earlyMessage);
+//                        session.sendMessage(earlyMessage);
                     }
 
                     // Now add attendance.
                     Status attendanceStatus = attendanceManipulate.createAttendance(rfidCredentials.getLrn());
-                    response.setMessage("You're " + attendanceStatus);
+                    response.setMessage("You are " + attendanceStatus);
                     response.setStatus(attendanceStatus);
                     response.setStudentLrn(rfidCredentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
@@ -179,8 +182,8 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                 if (rfidCredentials != null && rfidCredentials.getLrn() != null) {
 
                     if (attendanceManipulate.checkIfAlreadyOut(rfidCredentials.getLrn())) {
-                        TextMessage alreadyOutMessage = new TextMessage("You've already scanned out");
-                        session.sendMessage(alreadyOutMessage);
+//                        TextMessage alreadyOutMessage = new TextMessage("You've already scanned out");
+//                        session.sendMessage(alreadyOutMessage);
                         return;
                     }
 

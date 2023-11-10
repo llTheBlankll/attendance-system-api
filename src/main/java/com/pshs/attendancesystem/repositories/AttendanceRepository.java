@@ -5,10 +5,12 @@ import com.pshs.attendancesystem.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
     Iterable<Attendance> findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
@@ -23,7 +25,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     Iterable<Attendance> findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(LocalDate startDate, LocalDate endDate);
 
-    Attendance findAttendanceByStudentLrnAndDate(Long studentLrn, LocalDate date);
+    @Query("SELECT a FROM Attendance a JOIN a.student s WHERE s.lrn = :studentLrn AND a.date = :date")
+    Optional<Attendance> findByStudent_LrnAndDate(@Param("studentLrn") Long studentLrn, @Param("date") LocalDate date);
 
     long countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
 

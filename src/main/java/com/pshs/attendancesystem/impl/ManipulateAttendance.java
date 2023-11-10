@@ -65,8 +65,8 @@ public class ManipulateAttendance {
      * @return             true if the student has already checked out, false otherwise
      */
     public boolean checkIfAlreadyOut(Long studentLrn) {
-        Attendance attendance = this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
-        if (attendance.getTimeOut() != null) {
+        Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
+        if (attendance.isPresent() && attendance.get().getTimeOut() != null) {
             logger.info("Student {} already left", studentLrn);
             return true;
         }
@@ -143,15 +143,16 @@ public class ManipulateAttendance {
             return false;
         }
 
-        if (!studentRepository.existsById(studentLrn)) {
-            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
-            return false;
-        }
-        Attendance attendance = this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
+        Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
 
-        this.attendanceRepository.studentAttendanceOut(LocalTime.now(), attendance.getId());
-        logger.info("The student {} is out, Time left: {}", studentLrn, attendance.getTimeOut());
-        return true;
+        if (attendance.isPresent() && attendance.get().getTimeOut() == null) {
+            Attendance getAttendance = attendance.get();
+            this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
+            logger.info("The student {} is out, Time left: {}", studentLrn, getAttendance.getTimeOut());
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -165,7 +166,9 @@ public class ManipulateAttendance {
             logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
             return null;
         }
-        return this.attendanceRepository.findAttendanceByStudentLrnAndDate(studentLrn, LocalDate.now());
+
+        Optional<Attendance> attendance =  this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
+        return attendance.orElse(null);
     }
 
     /**
