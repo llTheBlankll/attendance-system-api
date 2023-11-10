@@ -74,6 +74,11 @@ public class ManipulateAttendance {
         return false;
     }
 
+    public Status getAttendanceStatusToday(Long studentLrn) {
+        Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
+        return attendance.map(Attendance::getAttendanceStatus).orElse(null);
+    }
+
     /**
      * Creates an attendance record for a student.
      *
@@ -81,8 +86,9 @@ public class ManipulateAttendance {
      * @return             the status of the attendance record (ONTIME, LATE, or EARLY)
      */
     public Status createAttendance(Long studentLrn) {
+        Optional<Student> student = this.studentRepository.findById(studentLrn);
         // Check for the existence of Student LRN
-        if (!studentRepository.existsById(studentLrn)) {
+        if (student.isEmpty()) {
             logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
             return null;
         }
@@ -94,7 +100,6 @@ public class ManipulateAttendance {
         LocalTime currentLocalTime = currentTime.toLocalTime();
 
         // Get Student Data from the database.
-        Optional<Student> student = this.studentRepository.findById(studentLrn);
 
         // Flag Ceremony Time
         if (isTodayMonday()) {
@@ -104,30 +109,27 @@ public class ManipulateAttendance {
         }
 
         // Check if the data is valid.
-        if (student.isPresent()) {
-            Attendance attendance = new Attendance();
-            attendance.setStudent(student.get());
-            Status status;
+        Attendance attendance = new Attendance();
+        attendance.setStudent(student.get());
+        Status status;
 
-            if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
-                attendance.setAttendanceStatus(Status.ONTIME);
-                status = Status.ONTIME;
-            } else if (currentLocalTime.isAfter(lateArrivalTime)) {
-                attendance.setAttendanceStatus(Status.LATE);
-                status = Status.LATE;
-            } else {
-                status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
-            }
-
-            attendance.setTime(Time.valueOf(LocalTime.now()));
-            attendance.setDate(LocalDate.now());
-            this.attendanceRepository.save(attendance);
-
-            logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
-            return status;
+        if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
+            attendance.setAttendanceStatus(Status.ONTIME);
+            status = Status.ONTIME;
+        } else if (currentLocalTime.isAfter(lateArrivalTime)) {
+            attendance.setAttendanceStatus(Status.LATE);
+            status = Status.LATE;
+        } else {
+            status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
         }
 
-        return null;
+        attendance.setTime(Time.valueOf(LocalTime.now()));
+        attendance.setDate(LocalDate.now());
+        this.attendanceRepository.save(attendance);
+
+        logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
+        return status;
+
     }
 
     /**
@@ -293,8 +295,13 @@ public class ManipulateAttendance {
      * @param endDate          the end date of the date range
      * @return the number of student attendance records that match the given criteria
      */
-    public long countStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
+    public long countStudentAttendanceIBySectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
         return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
+    }
+
+    public long countStudentAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
+//        return this.attendanceRepository;
+        return 0;
     }
 
     /**

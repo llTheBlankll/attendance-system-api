@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pshs.attendancesystem.enums.Status;
 import jakarta.persistence.*;
 
@@ -27,8 +26,18 @@ public class Attendance {
     private Time timeOut;
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    @JsonBackReference
     private Student student;
+
+    @Transient
+    private Section section;
+
+    public Section getSection() {
+        if (student.getStudentSection() != null) {
+            return student.getStudentSection();
+        }
+
+        return null;
+    }
 
     public Student getStudent() {
         return student;
