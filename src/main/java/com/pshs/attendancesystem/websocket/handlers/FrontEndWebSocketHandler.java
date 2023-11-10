@@ -12,16 +12,14 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class FrontEndWebSocketHandler extends TextWebSocketHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final List<WebSocketSession> sessions = new ArrayList<>();
 
     private final FrontEndWebSocketsCommunicationService communicationService;
+    private WebSocketSession session;
 
     public FrontEndWebSocketHandler(FrontEndWebSocketsCommunicationService communicationService) {
         this.communicationService = communicationService;
@@ -36,7 +34,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
-        sessions.add(session);
+        this.session = session;
         logger.info("WebSocket Connection established: {}", session.getId());
         communicationService.registerFrontEndHandler(this);
     }
@@ -56,7 +54,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
-        sessions.remove(session);
+        session.close();
     }
 
     /**
@@ -66,9 +64,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
      */
     public void sendMessageToAllClients(String message) {
         try {
-            for (WebSocketSession session : sessions) {
-                session.sendMessage(new TextMessage(message));
-            }
+            this.session.sendMessage(new TextMessage(message));
         } catch (IOException exception) {
             logger.error(exception.getMessage());
         }
