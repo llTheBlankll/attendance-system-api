@@ -28,6 +28,17 @@ public class Attendance {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @Transient
+    private Section section;
+
+    public Section getSection() {
+        if (student.getStudentSection() != null) {
+            return student.getStudentSection();
+        }
+
+        return null;
+    }
+
     public Student getStudent() {
         return student;
     }

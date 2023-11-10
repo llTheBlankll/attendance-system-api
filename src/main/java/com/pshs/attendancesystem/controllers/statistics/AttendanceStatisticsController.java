@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1/attendance/statistics")
 public class AttendanceStatisticsController {
 
@@ -617,6 +617,13 @@ public class AttendanceStatisticsController {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
         return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.LATE);
+    }
+
+    @GetMapping("/section/today")
+    public Iterable<Attendance> getSectionTodayAttendance(@RequestParam("sectionId") Integer sectionId) {
+        LocalDate now = LocalDate.now();
+//        return this.manipulateAttendance.getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate();
+        return null;
     }
 }
 
