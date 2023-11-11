@@ -56,6 +56,7 @@ public class WebSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
+            .cors(AbstractHttpConfigurer::disable)
             .httpBasic(Customizer.withDefaults())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -68,8 +69,7 @@ public class WebSecurity {
                     .requestMatchers("/websocket/**")
                     .hasAnyRole(Privilege.RFID_DEVICE.name())
                     .anyRequest()
-                    .authenticated())
-            .cors(AbstractHttpConfigurer::disable);
+                    .permitAll());
 
         return httpSecurity.build();
     }

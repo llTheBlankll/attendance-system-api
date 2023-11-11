@@ -22,7 +22,7 @@ public class Teacher {
     @Column(name = "last_name", length = 32)
     private String lastName;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "teacher")
     @JsonIgnore
     private Set<Section> sections;
 
