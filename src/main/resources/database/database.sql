@@ -41,7 +41,7 @@ CREATE TABLE Teachers
     contact_number    VARCHAR(48),
     email             VARCHAR(255),
     PRIMARY KEY (teacher_id),
-    FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id)
+    FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id) ON DELETE SET NULL
 );
 CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 
@@ -71,8 +71,8 @@ CREATE TABLE Students
     section_id INT,
     address          TEXT,
     birthdate DATE NOT NULL,
-    FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
-    FOREIGN KEY (section_id) REFERENCES Sections (section_id)
+    FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level) ON DELETE SET NULL,
+    FOREIGN KEY (section_id) REFERENCES Sections (section_id) ON DELETE SET NULL
 );
 
 -- @block
@@ -92,7 +92,7 @@ CREATE TABLE Guardians
     student_lrn BIGINT,
     full_name      VARCHAR(255) NOT NULL,
     contact_number VARCHAR(32),
-    FOREIGN KEY (student_lrn) REFERENCES Students (lrn)
+    FOREIGN KEY (student_lrn) REFERENCES Students (lrn) ON DELETE CASCADE
 );
 CREATE INDEX guardian_student_id_idx ON Guardians (student_lrn);
 
