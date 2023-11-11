@@ -29,6 +29,7 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Optional;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
@@ -48,6 +49,11 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
     private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
         session.sendMessage(textMessage);
+    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        super.afterConnectionEstablished(session);
     }
 
     /**
@@ -84,9 +90,11 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         }
 
         String hashedLrn;
-        RfidCredentials rfidCredentials;
+        Optional<RfidCredentials> rfidCredentials;
         WebSocketResponse response = new WebSocketResponse();
         ManipulateAttendance attendanceManipulate = new ManipulateAttendance(attendanceRepository, studentRepository);
+        Student student;
+        RfidCredentials credentials;
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -96,9 +104,18 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             hashedLrn = webSocketData.getHashedLrn();
 
             rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+            if (rfidCredentials.isPresent()) {
+                student = rfidCredentials.get().getStudent();
+                credentials = rfidCredentials.get();
+            } else {
+                response.setMessage("Invalid");
+                session.sendMessage(new TextMessage(
+                        mapper.writeValueAsString(response)
+                ));
+                return;
+            }
 
             // Check if student already arrived.
-            Student student = rfidCredentials.getStudent();
 
             if (webSocketData.getMode().equals("in")) {
                 if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
@@ -109,8 +126,9 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
                 if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
                     Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(student.getLrn());
-                    response.setMessage("You've already arrived!");
-                    response.setStudentLrn(rfidCredentials.getLrn());
+//                    response.setMessage("Already arrived!");
+                    response.setMessage("You are " + attendanceStatus);
+                    response.setStudentLrn(credentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStudent(student);
                     response.setStatus(attendanceStatus);
@@ -121,7 +139,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                 }
 
                 // Check if no matching lrn was found.
-                if (rfidCredentials.getLrn() != null) {
+                if (credentials.getLrn() != null) {
                     // Change flag ceremony time if today is monday.
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(calendar.getTime());
@@ -153,10 +171,10 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     }
 
                     // Now add attendance.
-                    Status attendanceStatus = attendanceManipulate.createAttendance(rfidCredentials.getLrn());
+                    Status attendanceStatus = attendanceManipulate.createAttendance(credentials.getLrn());
                     response.setMessage("You are " + attendanceStatus);
                     response.setStatus(attendanceStatus);
-                    response.setStudentLrn(rfidCredentials.getLrn());
+                    response.setStudentLrn(credentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStudent(student);
                     response.setStatus(attendanceStatus);
@@ -175,14 +193,13 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
                 }
             } else if (webSocketData.getMode().equals("out")) {
-                rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
-
-                if (rfidCredentials != null && rfidCredentials.getLrn() != null) {
-                    if (attendanceManipulate.checkIfAlreadyOut(rfidCredentials.getLrn())) {
-                        Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(rfidCredentials.getLrn());
-                        response.setMessage("You've already scanned");
+                if (rfidCredentials != null && credentials.getLrn() != null) {
+                    if (attendanceManipulate.checkIfAlreadyOut(credentials.getLrn())) {
+                        Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(credentials.getLrn());
+//                        response.setMessage("Already scanned");
+                        response.setMessage("You are " + attendanceStatus);
                         response.setStatus(attendanceStatus);
-                        response.setStudentLrn(rfidCredentials.getLrn());
+                        response.setStudentLrn(credentials.getLrn());
                         response.setTime(Time.valueOf(LocalTime.now()));
                         response.setStudent(student);
                         session.sendMessage(new TextMessage(
@@ -191,18 +208,18 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                         return;
                     }
 
-                    if (!attendanceManipulate.attendanceOut(rfidCredentials.getLrn())) {
+                    if (!attendanceManipulate.attendanceOut(credentials.getLrn())) {
                         response.setMessage("You need to scan first.");
                         session.sendMessage(new TextMessage(
                             mapper.writeValueAsString(response)
                         ));
                         return;
                     }
-                    logger.info("Student {} has left at {}", rfidCredentials.getLrn(), Time.valueOf(LocalTime.now()));
+                    logger.info("Student {} has left at {}", credentials.getLrn(), Time.valueOf(LocalTime.now()));
 
                     // Get Attendance
-                    response.setMessage("Bye Bye, ingat :)");
-                    response.setStudentLrn(rfidCredentials.getLrn());
+                    response.setMessage("Bye Bye :)");
+                    response.setStudentLrn(credentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStatus(Status.OUT);
                     response.setStudent(student);
