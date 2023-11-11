@@ -2,6 +2,8 @@ package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -9,25 +11,40 @@ import java.util.Set;
 @Table(name = "sections")
 public class Section {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "section_id", nullable = false)
     private Integer sectionId;
 
     @Column(name = "room")
     private Integer room;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "grade_level")
     private Gradelevel gradeLevel;
 
     @Column(name = "section_name", nullable = false)
     private String sectionName;
 
-    @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "teacher")
     private Teacher teacher;
 
     @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Student> students;
+
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Strand.class, cascade = CascadeType.DETACH)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "strand")
+    private Strand strand;
+
+    public Strand getStrand() {
+        return strand;
+    }
+
+    public void setStrand(Strand strand) {
+        this.strand = strand;
+    }
 
     public Integer getSectionId() {
         return sectionId;
