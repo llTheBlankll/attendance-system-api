@@ -126,8 +126,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
                 if (student.getLrn() != null && (attendanceManipulate.checkIfAlreadyArrived(student))) {
                     Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(student.getLrn());
-//                    response.setMessage("Already arrived!");
-                    response.setMessage("You are " + attendanceStatus);
+                    response.setMessage("Already arrived!");
                     response.setStudentLrn(credentials.getLrn());
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStudent(student);
@@ -196,8 +195,8 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                 if (rfidCredentials != null && credentials.getLrn() != null) {
                     if (attendanceManipulate.checkIfAlreadyOut(credentials.getLrn())) {
                         Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(credentials.getLrn());
-//                        response.setMessage("Already scanned");
-                        response.setMessage("You are " + attendanceStatus);
+                        response.setMessage("Already scanned!");
+//                        response.setMessage("You are " + attendanceStatus);
                         response.setStatus(attendanceStatus);
                         response.setStudentLrn(credentials.getLrn());
                         response.setTime(Time.valueOf(LocalTime.now()));
