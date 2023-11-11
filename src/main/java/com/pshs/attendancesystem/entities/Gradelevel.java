@@ -10,6 +10,7 @@ import java.util.Set;
 @Table(name = "gradelevels")
 public class Gradelevel {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "grade_level", nullable = false)
     private Integer id;
 

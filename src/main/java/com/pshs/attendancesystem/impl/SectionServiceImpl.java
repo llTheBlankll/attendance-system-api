@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.services.SectionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -33,8 +34,12 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     public String addSection(Section section) {
-        if (this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_EXISTS;
+        Optional<Section> databaseSection = this.sectionRepository.findBySectionName(section.getSectionName());
+        if (databaseSection.isPresent()) {
+            Section existingSection = databaseSection.get();
+            if (existingSection.getSectionName().equals(section.getSectionName())) {
+                return SectionMessages.SECTION_EXISTS;
+            }
         }
 
         this.sectionRepository.save(section);
