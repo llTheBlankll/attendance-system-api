@@ -51,10 +51,12 @@ CREATE TABLE Sections
     section_id SERIAL PRIMARY KEY,
     teacher    INT NULL,
     room INT,
+    strand INT,
     grade_level INT NOT NULL,
     section_name VARCHAR(255) NOT NULL,
-    FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level),
-    FOREIGN KEY (teacher) REFERENCES Teachers (teacher_id)
+    FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level) ON DELETE SET NULL,
+    FOREIGN KEY (teacher) REFERENCES Teachers (teacher_id) ON DELETE SET NULL,
+    FOREIGN KEY (strand) REFERENCES Strand (strand_id) ON DELETE SET NULL
 );
 
 -- @block
