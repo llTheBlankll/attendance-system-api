@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RfidCredentialsServiceImpl implements RfidService {
 
@@ -24,7 +26,7 @@ public class RfidCredentialsServiceImpl implements RfidService {
     }
 
     @Override
-    public RfidCredentials getRfidCredentialByStudentLrn(Long lrn) {
+    public Optional<RfidCredentials> getRfidCredentialByStudentLrn(Long lrn) {
         if (!this.rfidCredentialsRepository.existsById(lrn)) {
             logger.info(RfidMessages.LRN_NOT_FOUND);
             return null;
@@ -33,7 +35,7 @@ public class RfidCredentialsServiceImpl implements RfidService {
     }
 
     @Override
-    public RfidCredentials getRfidCredentialByHashedLrn(String hashedLrn) {
+    public Optional<RfidCredentials> getRfidCredentialByHashedLrn(String hashedLrn) {
         if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
             logger.info(RfidMessages.HASHED_LRN_NOT_FOUND);
             return null;

@@ -5,6 +5,8 @@ import com.pshs.attendancesystem.services.RfidService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/rfid")
@@ -35,7 +37,7 @@ public class RfidCredentialsController {
      * @return the retrieved RfidCredentials object
      */
     @GetMapping("/get")
-    public RfidCredentials getStudent(@RequestParam String type, @RequestParam String data) {
+    public Optional<RfidCredentials> getStudent(@RequestParam String type, @RequestParam String data) {
         if (type.equals("hash")) {
             return this.rfidService.getRfidCredentialByHashedLrn(data);
         } else {
