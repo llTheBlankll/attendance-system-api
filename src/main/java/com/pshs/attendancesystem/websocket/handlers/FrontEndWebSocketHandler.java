@@ -35,8 +35,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
         this.session = session;
-        logger.info("WebSocket Connection established: {}", session.getId());
-        communicationService.registerFrontEndHandler(this);
+        this.communicationService.registerFrontEndWebSocket(session);
     }
 
     @Override
@@ -55,6 +54,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         session.close();
+        this.communicationService.removeWebSocketSession(session);
     }
 
     /**

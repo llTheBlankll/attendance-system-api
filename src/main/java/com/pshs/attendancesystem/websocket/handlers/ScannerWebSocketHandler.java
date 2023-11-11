@@ -182,7 +182,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                         mapper.writeValueAsBytes(response)
                     ));
 
-                    communicationService.sendMessageToFrontEndHandlers(
+                    communicationService.sendMessageToAllFrontEnd(
                         mapper.writeValueAsString(response)
                     );
                 } else {
@@ -228,7 +228,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                         mapper.writeValueAsBytes(response))
                     );
 
-                    communicationService.sendMessageToFrontEndHandlers(
+                    communicationService.sendMessageToAllFrontEnd(
                         mapper.writeValueAsString(response)
                     );
                 }
