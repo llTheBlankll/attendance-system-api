@@ -129,7 +129,6 @@ public class ManipulateAttendance {
 
         logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
         return status;
-
     }
 
     /**
@@ -152,6 +151,10 @@ public class ManipulateAttendance {
             this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
             logger.info("The student {} is out, Time left: {}", studentLrn, getAttendance.getTimeOut());
             return true;
+        } else {
+            logger.info("The student {} is already out", studentLrn);
+            Attendance attendanceData = attendance.get();
+            logger.info(attendanceData.getTimeOut().toString());
         }
 
         return false;
