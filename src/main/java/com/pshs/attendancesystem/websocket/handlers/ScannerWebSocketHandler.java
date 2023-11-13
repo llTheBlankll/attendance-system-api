@@ -3,11 +3,7 @@ package com.pshs.attendancesystem.websocket.handlers;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pshs.attendancesystem.AttendanceSystemConfiguration;
-import com.pshs.attendancesystem.entities.RfidCredentials;
-import com.pshs.attendancesystem.entities.Student;
-import com.pshs.attendancesystem.entities.WebSocketData;
-import com.pshs.attendancesystem.entities.WebSocketResponse;
+import com.pshs.attendancesystem.entities.*;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.ManipulateAttendance;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
@@ -17,6 +13,7 @@ import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
+import com.pshs.attendancesystem.threading.SMSThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -30,10 +27,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
-
     private final StudentRepository studentRepository;
     private final AttendanceRepository attendanceRepository;
     private final RfidCredentialsRepository rfidCredentialsRepository;
@@ -46,6 +43,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         this.rfidCredentialsRepository = rfidCredentialsRepository;
         this.communicationService = communicationService;
     }
+
 
     private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
         session.sendMessage(textMessage);
@@ -96,6 +94,10 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         Student student;
         RfidCredentials credentials;
 
+        // Get the current time
+        Time currentTime = new Time(System.currentTimeMillis());
+        LocalTime currentLocalTime = currentTime.toLocalTime();
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -142,32 +144,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     // Change flag ceremony time if today is monday.
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(calendar.getTime());
-                    boolean monday = calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
-                    LocalTime lateTime;
-
-                    if (monday) {
-                        lateTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
-                    } else {
-                        lateTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
-                    }
-
-                    // Earliest time
-                    LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
-
-                    // Get the current time
-                    Time currentTime = new Time(System.currentTimeMillis());
-                    LocalTime currentLocalTime = currentTime.toLocalTime();
-
-                    if (currentLocalTime.isBefore(lateTime)) {
-                        TextMessage onTimeMessage = new TextMessage(AttendanceMessages.ATTENDANCE_ONTIME);
-//                        session.sendMessage(onTimeMessage);
-                    } else if (currentLocalTime.isAfter(lateTime)) {
-                        TextMessage lateMessage = new TextMessage(AttendanceMessages.ATTENDANCE_LATE);
-//                        session.sendMessage(lateMessage);
-                    } else if (currentLocalTime.isBefore(onTimeArrival)) {
-                        TextMessage earlyMessage = new TextMessage(AttendanceMessages.ATTENDANCE_EARLY);
-//                        session.sendMessage(earlyMessage);
-                    }
 
                     // Now add attendance.
                     Status attendanceStatus = attendanceManipulate.createAttendance(credentials.getLrn());
@@ -177,6 +153,9 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     response.setTime(Time.valueOf(LocalTime.now()));
                     response.setStudent(student);
                     response.setStatus(attendanceStatus);
+
+                    String parentMessage = AttendanceMessages.onTimeAttendanceMessage(String.format("%s %s. %s", student.getFirstName(), student.getMiddleName(), student.getLastName()), currentLocalTime.toString());
+                    guardianSet(student, parentMessage);
 
                     session.sendMessage(new TextMessage(
                         mapper.writeValueAsBytes(response)
@@ -191,12 +170,10 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     session.sendMessage(invalidLrnMessage);
                     logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
                 }
-            } else if (webSocketData.getMode().equals("out")) {
-                if (rfidCredentials != null && credentials.getLrn() != null) {
+            } else if (webSocketData.getMode().equals("out") && credentials.getLrn() != null) {
                     if (attendanceManipulate.checkIfAlreadyOut(credentials.getLrn())) {
                         Status attendanceStatus = attendanceManipulate.getAttendanceStatusToday(credentials.getLrn());
                         response.setMessage("Already scanned!");
-//                        response.setMessage("You are " + attendanceStatus);
                         response.setStatus(attendanceStatus);
                         response.setStudentLrn(credentials.getLrn());
                         response.setTime(Time.valueOf(LocalTime.now()));
@@ -231,10 +208,26 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     communicationService.sendMessageToAllFrontEnd(
                         mapper.writeValueAsString(response)
                     );
-                }
+
+                String parentMessage = AttendanceMessages.StudentAttendedMessage(String.format("%s %s. %s", student.getFirstName(), student.getMiddleName(), student.getLastName()), currentLocalTime.toString());
+
+                guardianSet(student, parentMessage);
             }
         } catch (JsonParseException e) {
             logger.error("Invalid JSON");
+        }
+    }
+
+    private void guardianSet(Student student, String parentMessage) {
+        Set<Guardian> guardianSet = student.getGuardian();
+        for (Guardian guardian : guardianSet) {
+            if (guardian.getContactNumber().equals("null")) {
+                logger.error("No contact number found");
+                return;
+            }
+
+            SMSThread smsThread = new SMSThread(parentMessage, guardian);
+            smsThread.start();
         }
     }
 }

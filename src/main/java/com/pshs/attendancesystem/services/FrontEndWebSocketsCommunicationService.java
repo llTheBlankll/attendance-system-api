@@ -21,7 +21,6 @@ public class FrontEndWebSocketsCommunicationService {
     }
 
     public void sendMessageToAllFrontEnd(String message) {
-        logger.info("Sending Front End Servers Message: {}", message);
         try {
             for (WebSocketSession session : this.sessionList) {
                 session.sendMessage(new TextMessage(message));

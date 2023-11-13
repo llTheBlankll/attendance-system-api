@@ -12,6 +12,29 @@ public class AttendanceMessages {
     public static final String ATTENDANCE_NULL = "One of the field required is null or empty.";
 
     private AttendanceMessages() {
+    }
 
+    public static String onTimeAttendanceMessage(String studentName, String time) {
+        // * This message is for the parents.
+        return "Dear Parent,\n" +
+            "\n" +
+            "We are delighted to inform you that your child has successfully arrived on time at our facility. " +
+            "Time: " + time + "\nStudent Name: " + studentName;
+    }
+
+    public static String onLateAttendanceMessage(String studentName, String time) {
+        // * This message is for the parents.
+        return "Dear Parent,\n" +
+            "\n" +
+            "Regrettably, your child is currently running behind schedule." +
+            "\nTime: " + time + "\nStudent Name: " + studentName;
+    }
+
+    public static String StudentAttendedMessage(String studentName, String time) {
+        // * This message is for the parents.
+        return "Dear Parent,\n" +
+            "\n" +
+            "We are happy to confirm that your student has safely entered the school premises." +
+            "\nTime: " + time + "\nStudent Name: " + studentName;
     }
 }
