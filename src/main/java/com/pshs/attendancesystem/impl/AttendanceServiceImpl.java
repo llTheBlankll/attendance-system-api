@@ -17,6 +17,7 @@ import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -90,7 +91,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public String deleteAttendance(Integer attendanceId) {
-        if (this.attendanceRepository.existsById(attendanceId)) {
+        Optional<Attendance> attendanceOptional = this.attendanceRepository.findById(attendanceId);
+        if (attendanceOptional.isPresent()) {
             this.attendanceRepository.deleteById(attendanceId);
             return AttendanceMessages.ATTENDANCE_DELETED;
         }
