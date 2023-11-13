@@ -36,7 +36,7 @@ public class Student {
     @JoinColumn(name = "section_id")
     private Section studentSection;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Guardian.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, targetEntity = Guardian.class, fetch = FetchType.EAGER)
     private Set<Guardian> guardian;
 
     @Column(name = "address", length = Integer.MAX_VALUE)
