@@ -22,6 +22,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -154,8 +155,13 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     response.setStudent(student);
                     response.setStatus(attendanceStatus);
 
-                    String parentMessage = AttendanceMessages.onTimeAttendanceMessage(String.format("%s %s. %s", student.getFirstName(), student.getMiddleName(), student.getLastName()), currentLocalTime.toString());
-                    guardianSet(student, parentMessage);
+                    if (attendanceStatus == Status.LATE) {
+                        String parentMessage = AttendanceMessages.onLateAttendanceMessage(getFullName(student), currentLocalTime.toString());
+                        informGuardian(student, parentMessage);
+                    } else if (attendanceStatus == Status.ONTIME) {
+                        String parentMessage = AttendanceMessages.onTimeAttendanceMessage(getFullName(student), currentLocalTime.toString());
+                        informGuardian(student, parentMessage);
+                    }
 
                     session.sendMessage(new TextMessage(
                         mapper.writeValueAsBytes(response)
@@ -209,16 +215,17 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                         mapper.writeValueAsString(response)
                     );
 
-                String parentMessage = AttendanceMessages.StudentAttendedMessage(String.format("%s %s. %s", student.getFirstName(), student.getMiddleName(), student.getLastName()), currentLocalTime.toString());
-
-                guardianSet(student, parentMessage);
+                String parentMessage = AttendanceMessages.studentOutOfFacility(getFullName(student), currentLocalTime.toString());
+                informGuardian(student, parentMessage);
             }
         } catch (JsonParseException e) {
             logger.error("Invalid JSON");
+        } catch (SocketException exception) {
+            logger.error("Socket error: " + exception.getMessage());
         }
     }
 
-    private void guardianSet(Student student, String parentMessage) {
+    private void informGuardian(Student student, String parentMessage) {
         Set<Guardian> guardianSet = student.getGuardian();
         for (Guardian guardian : guardianSet) {
             if (guardian.getContactNumber().equals("null")) {
@@ -229,5 +236,9 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
             SMSThread smsThread = new SMSThread(parentMessage, guardian);
             smsThread.start();
         }
+    }
+
+    private String getFullName(Student student) {
+        return String.format("%s %s %s", student.getLastName(), student.getFirstName(), student.getMiddleName());
     }
 }

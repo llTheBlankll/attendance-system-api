@@ -16,19 +16,20 @@ public class AttendanceMessages {
 
     public static String onTimeAttendanceMessage(String studentName, String time) {
         // * This message is for the parents.
-        return "Dear Parent, your child has safely arrived at our facility and is not late. Time: " + time;
+        return studentName + " is on time. Time: " + time;
     }
 
     public static String onLateAttendanceMessage(String studentName, String time) {
         // * This message is for the parents.
-        return "Dear Parent,\n" +
-            "\n" +
-            "Regrettably, your child is currently running behind schedule." +
-            "\nTime: " + time + "\nStudent Name: " + studentName;
+        return studentName + " is late today. Time: " + time;
+    }
+
+    public static String studentOutOfFacility(String studentName, String time) {
+        return  studentName + " has been safely checked out of the facility. Time: " + time;
     }
 
     public static String StudentAttendedMessage(String studentName, String time) {
         // * This message is for the parents.
-        return "Dear Parent, your child has safely arrived at our facility. Time: " + time;
+        return "Your child " + studentName + " has safely arrived at our facility. Time: " + time;
     }
 }
