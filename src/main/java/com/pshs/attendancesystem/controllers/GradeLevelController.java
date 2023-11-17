@@ -57,4 +57,9 @@ public class GradeLevelController {
     public String deleteGradeLevelById(@PathVariable Integer id) {
         return this.gradeLevelService.deleteGradeLevelById(id);
     }
+
+    @PostMapping("/update")
+    public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
+        return this.gradeLevelService.updateGradeLevel(gradelevel);
+    }
 }
