@@ -32,17 +32,17 @@ public class Student {
     @Column(name = "sex", length = 6)
     private String sex;
 
-    @ManyToOne(targetEntity = Section.class, cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Section.class)
     @JoinColumn(name = "section_id")
     private Section studentSection;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Guardian.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", targetEntity = Guardian.class, fetch = FetchType.EAGER)
     private Set<Guardian> guardian;
 
     @Column(name = "address", length = Integer.MAX_VALUE)
     private String address;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, targetEntity = Attendance.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class, fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<Attendance> attendances;
 

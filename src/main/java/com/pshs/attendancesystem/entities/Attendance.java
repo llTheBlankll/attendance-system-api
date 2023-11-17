@@ -13,18 +13,15 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     @Enumerated(EnumType.STRING)
     private Status attendanceStatus;
-
     @Column(name = "date")
     private LocalDate date;
     @Column(name = "time")
     private Time time;
-
     @Column(name = "time_out")
     private Time timeOut;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
@@ -37,6 +34,10 @@ public class Attendance {
         }
 
         return null;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
     }
 
     public Student getStudent() {
