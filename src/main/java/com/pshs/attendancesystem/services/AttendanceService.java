@@ -54,4 +54,5 @@ public interface AttendanceService {
 
     Attendance studentTodayAttendance(Long studentLrn);
 
+    String deleteAllAttendance();
 }
