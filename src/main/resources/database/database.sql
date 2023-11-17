@@ -105,7 +105,7 @@ CREATE TABLE Attendance
     date              DATE DEFAULT CURRENT_DATE,
     time              TIME DEFAULT LOCALTIME,
     time_out          TIME DEFAULT LOCALTIME,
-    CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 ALTER TABLE Attendance
