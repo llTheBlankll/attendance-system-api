@@ -1,10 +1,7 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Gradelevel;
-import com.pshs.attendancesystem.messages.GradeLevelMessages;
-import com.pshs.attendancesystem.repositories.GradeLevelRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pshs.attendancesystem.services.GradeLevelService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,11 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/gradelevel")
 public class GradeLevelController {
 
-    private final GradeLevelRepository gradelevelRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final GradeLevelService gradeLevelService;
 
-    public GradeLevelController(GradeLevelRepository gradelevelRepository) {
-        this.gradelevelRepository = gradelevelRepository;
+    public GradeLevelController(GradeLevelService gradeLevelService) {
+        this.gradeLevelService = gradeLevelService;
     }
 
     /**
@@ -26,7 +22,7 @@ public class GradeLevelController {
      */
     @GetMapping("/gradelevels")
     public Iterable<Gradelevel> getAllGradeLevel() {
-        return this.gradelevelRepository.findAll();
+        return this.gradeLevelService.getAllGradeLevel();
     }
 
     /**
@@ -37,12 +33,7 @@ public class GradeLevelController {
      */
     @PostMapping("/create")
     public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
-        if (this.gradelevelRepository.existsById(gradelevel.getId())) {
-            return GradeLevelMessages.GRADELEVEL_EXISTS;
-        }
-
-        this.gradelevelRepository.save(gradelevel);
-        return GradeLevelMessages.GRADELEVEL_CREATED;
+        return this.gradeLevelService.addGradeLevel(gradelevel);
     }
 
     /**
@@ -53,13 +44,7 @@ public class GradeLevelController {
      */
     @PostMapping("/delete")
     public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
-        if (!this.gradelevelRepository.existsById(gradelevel.getId())) {
-            logger.info(GradeLevelMessages.GRADELEVEL_NOT_FOUND);
-            return GradeLevelMessages.GRADELEVEL_NOT_FOUND;
-        }
-
-        this.gradelevelRepository.delete(gradelevel);
-        return GradeLevelMessages.GRADELEVEL_DELETED;
+        return this.gradeLevelService.deleteGradeLevel(gradelevel);
     }
 
     /**
@@ -70,27 +55,6 @@ public class GradeLevelController {
      */
     @PostMapping("/delete/{id}")
     public String deleteGradeLevelById(@PathVariable Integer id) {
-        if (!this.gradelevelRepository.existsById(id)) {
-            return GradeLevelMessages.GRADELEVEL_NOT_FOUND;
-        }
-
-        this.gradelevelRepository.deleteById(id);
-        return GradeLevelMessages.GRADELEVEL_DELETED;
-    }
-
-    /**
-     * Update a grade level.
-     *
-     * @param gradelevel the grade level to update
-     * @return a message indicating if the grade level was successfully updated or if it was empty
-     */
-    @PostMapping("/update")
-    public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
-        if (gradelevel.getGradeName().isEmpty()) {
-            return GradeLevelMessages.GRADELEVEL_EMPTY;
-        }
-
-        this.gradelevelRepository.save(gradelevel);
-        return GradeLevelMessages.GRADELEVEL_UPDATED;
+        return this.gradeLevelService.deleteGradeLevelById(id);
     }
 }
