@@ -99,7 +99,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void handleInMode(WebSocketSession session, RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
+    private void handleInMode(WebSocketSession session, @Nonnull RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
         try {
             if (credentials.getHashedLrn() != null && !this.rfidCredentialsRepository.existsByHashedLrn(credentials.getHashedLrn())) {
                 response.setMessage("Invalid");
@@ -143,10 +143,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
                     String parentMessage = AttendanceMessages.onTimeAttendanceMessage(getFullName(student), currentLocalTime.toString());
                     informGuardian(student, parentMessage);
                 }
-
-                session.sendMessage(new TextMessage(
-                    mapper.writeValueAsBytes(response)
-                ));
 
                 sendMessage(session, mapper.writeValueAsString(response));
 
