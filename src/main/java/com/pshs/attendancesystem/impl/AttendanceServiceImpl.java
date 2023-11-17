@@ -98,49 +98,56 @@ public class AttendanceServiceImpl implements AttendanceService {
      */
     @Override
     public Status createAttendance(Long studentLrn) {
-        Optional<Student> student = this.studentRepository.findById(studentLrn);
-        // Check for the existence of Student LRN
-        if (student.isEmpty()) {
-            logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
+        try {
+            Optional<Student> student = this.studentRepository.findById(studentLrn);
+            // Check for the existence of Student LRN
+            if (student.isEmpty()) {
+                logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
+                return null;
+            }
+
+            LocalTime lateArrivalTime;
+            LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
+
+            Time currentTime = new Time(System.currentTimeMillis());
+            LocalTime currentLocalTime = currentTime.toLocalTime();
+
+            // Get Student Data from the database.
+
+            // Flag Ceremony Time
+            if (isTodayMonday()) {
+                lateArrivalTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
+            } else {
+                lateArrivalTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
+            }
+
+            // Check if the data is valid.
+            Attendance attendance = new Attendance();
+            attendance.setStudent(student.get());
+            Status status;
+
+            if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
+                attendance.setAttendanceStatus(Status.ONTIME);
+                status = Status.ONTIME;
+            } else if (currentLocalTime.isAfter(lateArrivalTime)) {
+                attendance.setAttendanceStatus(Status.LATE);
+                status = Status.LATE;
+            } else {
+                status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
+            }
+
+            attendance.setTime(Time.valueOf(LocalTime.now()));
+            attendance.setDate(LocalDate.now());
+            attendance.setSection(student.get().getStudentSection());
+
+            this.attendanceRepository.save(attendance);
+
+            logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
+            return status;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
-
-        LocalTime lateArrivalTime;
-        LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
-
-        Time currentTime = new Time(System.currentTimeMillis());
-        LocalTime currentLocalTime = currentTime.toLocalTime();
-
-        // Get Student Data from the database.
-
-        // Flag Ceremony Time
-        if (isTodayMonday()) {
-            lateArrivalTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
-        } else {
-            lateArrivalTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
-        }
-
-        // Check if the data is valid.
-        Attendance attendance = new Attendance();
-        attendance.setStudent(student.get());
-        Status status;
-
-        if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
-            attendance.setAttendanceStatus(Status.ONTIME);
-            status = Status.ONTIME;
-        } else if (currentLocalTime.isAfter(lateArrivalTime)) {
-            attendance.setAttendanceStatus(Status.LATE);
-            status = Status.LATE;
-        } else {
-            status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
-        }
-
-        attendance.setTime(Time.valueOf(LocalTime.now()));
-        attendance.setDate(LocalDate.now());
-        this.attendanceRepository.save(attendance);
-
-        logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
-        return status;
     }
 
     @Override
@@ -204,6 +211,12 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
 
         return null;
+    }
+
+    @Override
+    public String deleteAllAttendance() {
+        this.attendanceRepository.deleteAll();
+        return AttendanceMessages.ATTENDANCE_DELETED;
     }
 
     /**

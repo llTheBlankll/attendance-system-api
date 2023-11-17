@@ -53,4 +53,9 @@ public class AttendanceController {
     public String updateAttendance(@RequestBody Attendance attendance) {
         return this.attendanceServiceImpl.updateAttendance(attendance);
     }
+
+    @PostMapping("/delete/all")
+    public String deleteAllAttendance() {
+        return this.attendanceServiceImpl.deleteAllAttendance();
+    }
 }
