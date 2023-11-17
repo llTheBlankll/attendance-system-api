@@ -55,6 +55,7 @@ public class GradeLevelController {
     public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
         if (!this.gradelevelRepository.existsById(gradelevel.getId())) {
             logger.info(GradeLevelMessages.GRADELEVEL_NOT_FOUND);
+            return GradeLevelMessages.GRADELEVEL_NOT_FOUND;
         }
 
         this.gradelevelRepository.delete(gradelevel);
