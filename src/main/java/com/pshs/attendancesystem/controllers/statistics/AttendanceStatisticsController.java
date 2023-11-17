@@ -3,10 +3,11 @@ package com.pshs.attendancesystem.controllers.statistics;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.statistics.*;
 import com.pshs.attendancesystem.enums.Status;
-import com.pshs.attendancesystem.impl.ManipulateAttendance;
+import com.pshs.attendancesystem.impl.AttendanceServiceImpl;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
+import com.pshs.attendancesystem.services.AttendanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +21,13 @@ import java.time.temporal.TemporalAdjusters;
 @RequestMapping("/api/v1/attendance/statistics")
 public class AttendanceStatisticsController {
 
-    private final ManipulateAttendance manipulateAttendance;
-
+    private final AttendanceService attendanceService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     LocalDate today = LocalDate.now();
 
     public AttendanceStatisticsController(AttendanceRepository attendanceRepository,
                                           StudentRepository studentRepository) {
-        manipulateAttendance = new ManipulateAttendance(attendanceRepository, studentRepository);
+        attendanceService = new AttendanceServiceImpl(attendanceRepository, studentRepository);
     }
 
     /**
@@ -47,7 +47,7 @@ public class AttendanceStatisticsController {
         LocalDate lastDayOfYear = today.withDayOfYear(today.lengthOfYear());
 
 
-        return this.manipulateAttendance.getStudentAttendanceBetweenDate(
+        return this.attendanceService.getStudentAttendanceBetweenDate(
             studentLrn,
             firstDayOfYear,
             lastDayOfYear);
@@ -70,19 +70,19 @@ public class AttendanceStatisticsController {
         BetweenDate betweenDate = dateWithStatus.getDate();
 
         if (status == Status.LATE) {
-            return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+            return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.LATE
             );
         } else if (status == Status.ONTIME) {
-            return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+            return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.ONTIME
             );
         } else {
-            return this.manipulateAttendance.getAllAttendanceBetweenDate(betweenDate.getStartDate(), betweenDate.getEndDate());
+            return this.attendanceService.getAllAttendanceBetweenDate(betweenDate.getStartDate(), betweenDate.getEndDate());
         }
     }
 
@@ -111,53 +111,53 @@ public class AttendanceStatisticsController {
         switch (time) {
             case "month":
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth);
+                    return this.attendanceService.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth);
                 }
 
             case "week":
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
+                    return this.attendanceService.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
                 }
 
             case "today":
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+                    return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getAllAttendanceBetweenDate(LocalDate.now(), LocalDate.now());
+                    return this.attendanceService.getAllAttendanceBetweenDate(LocalDate.now(), LocalDate.now());
                 }
 
             default:
@@ -182,19 +182,19 @@ public class AttendanceStatisticsController {
         BetweenDate betweenDate = dateWithStatus.getDate();
 
         if (status == Status.LATE) {
-            return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+            return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.LATE
             );
         } else if (status == Status.ONTIME) {
-            return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+            return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.ONTIME
             );
         } else {
-            return this.manipulateAttendance.countAttendancesBetweenDate(betweenDate.getStartDate(), betweenDate.getEndDate());
+            return this.attendanceService.countAttendancesBetweenDate(betweenDate.getStartDate(), betweenDate.getEndDate());
         }
     }
 
@@ -223,55 +223,55 @@ public class AttendanceStatisticsController {
         switch (time) {
             case "month" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countAttendancesBetweenDate(firstDayOfMonth, lastDayOfMonth);
+                    return this.attendanceService.countAttendancesBetweenDate(firstDayOfMonth, lastDayOfMonth);
                 }
             }
 
             case "week" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countAttendancesBetweenDate(firstDayOfWeek, lastDayOfWeek);
+                    return this.attendanceService.countAttendancesBetweenDate(firstDayOfWeek, lastDayOfWeek);
                 }
             }
 
             case "today" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfAttendanceBetweenDate(
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countAttendancesBetweenDate(LocalDate.now(), LocalDate.now());
+                    return this.attendanceService.countAttendancesBetweenDate(LocalDate.now(), LocalDate.now());
                 }
             }
 
@@ -299,21 +299,21 @@ public class AttendanceStatisticsController {
         Long studentLrn = dateWithStatus.getStudentLrn();
 
         if (status == Status.LATE) {
-            return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+            return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                 studentLrn,
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.LATE
             );
         } else if (status == Status.ONTIME) {
-            return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+            return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                 studentLrn,
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.ONTIME
             );
         } else {
-            return this.manipulateAttendance.countStudentAttendancesBetweenDate(studentLrn, betweenDate.getStartDate(), betweenDate.getEndDate());
+            return this.attendanceService.countStudentAttendancesBetweenDate(studentLrn, betweenDate.getStartDate(), betweenDate.getEndDate());
         }
     }
 
@@ -341,61 +341,61 @@ public class AttendanceStatisticsController {
         switch (time) {
             case "month" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countStudentAttendancesBetweenDate(studentLrn, firstDayOfMonth, lastDayOfMonth);
+                    return this.attendanceService.countStudentAttendancesBetweenDate(studentLrn, firstDayOfMonth, lastDayOfMonth);
                 }
             }
 
             case "week" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countStudentAttendancesBetweenDate(studentLrn, firstDayOfWeek, lastDayOfWeek);
+                    return this.attendanceService.countStudentAttendancesBetweenDate(studentLrn, firstDayOfWeek, lastDayOfWeek);
                 }
             }
 
             case "today" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         now,
                         now,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getAllCountOfStudentAttendanceBetweenDate(
+                    return this.attendanceService.getAllCountOfStudentAttendanceBetweenDate(
                         studentLrn,
                         now,
                         now,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.countStudentAttendancesBetweenDate(studentLrn, LocalDate.now(), LocalDate.now());
+                    return this.attendanceService.countStudentAttendancesBetweenDate(studentLrn, LocalDate.now(), LocalDate.now());
                 }
             }
 
@@ -423,20 +423,20 @@ public class AttendanceStatisticsController {
         Long studentLrn = dateWithStatusLrn.getStudentLrn();
 
         if (status == Status.LATE) {
-            return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+            return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                 studentLrn,
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.LATE
             );
         } else if (status == Status.ONTIME) {
-            return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(
+            return this.attendanceService.getAllAttendanceBetweenDateWithStatus(
                 betweenDate.getStartDate(),
                 betweenDate.getEndDate(),
                 Status.ONTIME
             );
         } else {
-            return this.manipulateAttendance.getStudentAttendanceBetweenDate(studentLrn, betweenDate.getStartDate(), betweenDate.getEndDate());
+            return this.attendanceService.getStudentAttendanceBetweenDate(studentLrn, betweenDate.getStartDate(), betweenDate.getEndDate());
         }
     }
 
@@ -455,61 +455,61 @@ public class AttendanceStatisticsController {
         switch (time) {
             case "month" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         firstDayOfMonth,
                         lastDayOfMonth,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDate(studentLrn, firstDayOfMonth, lastDayOfMonth);
+                    return this.attendanceService.getStudentAttendanceBetweenDate(studentLrn, firstDayOfMonth, lastDayOfMonth);
                 }
             }
 
             case "week" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         firstDayOfWeek,
                         lastDayOfWeek,
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDate(studentLrn, firstDayOfWeek, lastDayOfWeek);
+                    return this.attendanceService.getStudentAttendanceBetweenDate(studentLrn, firstDayOfWeek, lastDayOfWeek);
                 }
             }
 
             case "today" -> {
                 if (status == Status.LATE) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.LATE
                     );
                 } else if (status == Status.ONTIME) {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDateWithAttendanceStatus(
+                    return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
                         studentLrn,
                         LocalDate.now(),
                         LocalDate.now(),
                         Status.ONTIME
                     );
                 } else {
-                    return this.manipulateAttendance.getStudentAttendanceBetweenDate(studentLrn, LocalDate.now(), LocalDate.now());
+                    return this.attendanceService.getStudentAttendanceBetweenDate(studentLrn, LocalDate.now(), LocalDate.now());
                 }
             }
 
@@ -527,7 +527,7 @@ public class AttendanceStatisticsController {
     @GetMapping("/today")
     public Iterable<Attendance> getTodayAttendance() {
         LocalDate now = LocalDate.now();
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(now, now);
+        return this.attendanceService.getAllAttendanceBetweenDate(now, now);
     }
 
     /**
@@ -539,7 +539,7 @@ public class AttendanceStatisticsController {
     public Iterable<Attendance> getWeekAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
+        return this.attendanceService.getAllAttendanceBetweenDate(firstDayOfWeek, lastDayOfWeek);
     }
 
     /**
@@ -550,7 +550,7 @@ public class AttendanceStatisticsController {
     @GetMapping("/today/ontime")
     public Iterable<Attendance> getTodayOnTimeAttendance() {
         LocalDate now = LocalDate.now();
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.ONTIME);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(now, now, Status.ONTIME);
     }
 
     /**
@@ -562,7 +562,7 @@ public class AttendanceStatisticsController {
     public Iterable<Attendance> getWeekOnTimeAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.ONTIME);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.ONTIME);
     }
 
     /**
@@ -573,7 +573,7 @@ public class AttendanceStatisticsController {
     @GetMapping("/today/late")
     public Iterable<Attendance> getTodayLateAttendance() {
         LocalDate now = LocalDate.now();
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(now, now, Status.LATE);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(now, now, Status.LATE);
     }
 
     /**
@@ -585,7 +585,7 @@ public class AttendanceStatisticsController {
     public Iterable<Attendance> getWeekLateAttendance() {
         LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.LATE);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(firstDayOfWeek, lastDayOfWeek, Status.LATE);
     }
 
     /**
@@ -597,14 +597,14 @@ public class AttendanceStatisticsController {
     public Iterable<Attendance> getMonthAttendance() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        return this.manipulateAttendance.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth);
+        return this.attendanceService.getAllAttendanceBetweenDate(firstDayOfMonth, lastDayOfMonth);
     }
 
     @GetMapping("/month/ontime")
     public Iterable<Attendance> getMonthOnTimeAttendance() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.ONTIME);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.ONTIME);
     }
 
     /**
@@ -616,13 +616,12 @@ public class AttendanceStatisticsController {
     public Iterable<Attendance> getMonthLateAttendance() {
         LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        return this.manipulateAttendance.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.LATE);
+        return this.attendanceService.getAllAttendanceBetweenDateWithStatus(firstDayOfMonth, lastDayOfMonth, Status.LATE);
     }
 
+    // TODO: implement this.
     @GetMapping("/section/today")
     public Iterable<Attendance> getSectionTodayAttendance(@RequestParam("sectionId") Integer sectionId) {
-        LocalDate now = LocalDate.now();
-//        return this.manipulateAttendance.getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate();
         return null;
     }
 }
