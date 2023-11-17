@@ -24,7 +24,7 @@ public class Attendance {
 
     @Column(name = "time_out")
     private Time timeOut;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
