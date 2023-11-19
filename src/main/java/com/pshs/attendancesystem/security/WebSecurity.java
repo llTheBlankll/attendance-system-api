@@ -69,7 +69,7 @@ public class WebSecurity {
                     .requestMatchers("/websocket/**")
                     .hasAnyRole(Privilege.RFID_DEVICE.name())
                     .anyRequest()
-                    .permitAll());
+                    .authenticated());
 
         return httpSecurity.build();
     }
