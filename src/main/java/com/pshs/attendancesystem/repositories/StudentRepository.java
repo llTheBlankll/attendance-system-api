@@ -2,7 +2,9 @@ package com.pshs.attendancesystem.repositories;
 
 import com.pshs.attendancesystem.entities.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Student findStudentByLrn(Long studentLrn);
 
