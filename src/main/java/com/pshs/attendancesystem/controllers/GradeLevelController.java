@@ -5,7 +5,6 @@ import com.pshs.attendancesystem.services.GradeLevelService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/gradelevel")
 public class GradeLevelController {
 

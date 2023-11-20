@@ -3,12 +3,14 @@ package com.pshs.attendancesystem.controllers;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/rfid")
 @PreAuthorize("hasRole('RFID_DEVICE')")
 public class RfidCredentialsController {

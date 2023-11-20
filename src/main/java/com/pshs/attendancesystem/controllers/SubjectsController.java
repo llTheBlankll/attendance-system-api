@@ -5,7 +5,6 @@ import com.pshs.attendancesystem.services.SubjectService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/subject")
 public class SubjectsController {
     private final SubjectService subjectService;
