@@ -6,7 +6,6 @@ import com.pshs.attendancesystem.services.GuardianService;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/guardian")
-@CrossOrigin
 @RestController
 public class GuardianController {
 

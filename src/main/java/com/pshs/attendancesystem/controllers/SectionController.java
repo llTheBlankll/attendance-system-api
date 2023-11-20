@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/section")
 public class SectionController {
 

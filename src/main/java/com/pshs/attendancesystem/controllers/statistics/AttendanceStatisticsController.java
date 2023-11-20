@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/attendance/statistics")
 public class AttendanceStatisticsController {
 

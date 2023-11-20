@@ -5,7 +5,6 @@ import com.pshs.attendancesystem.services.TeacherService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/teacher")
 public class TeacherController {
 
