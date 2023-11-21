@@ -4,19 +4,19 @@ import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Student;
 
 public interface GuardianService {
-    long getGuardiansCount();
+	long getGuardiansCount();
 
-    Iterable<Guardian> getStudentGuardians(Student student);
+	Iterable<Guardian> getStudentGuardians(Student student);
 
-    Iterable<Guardian> getStudentGuardiansByLrn(Long lrn);
+	Iterable<Guardian> getStudentGuardiansByLrn(Long lrn);
 
-    Iterable<Guardian> searchGuardianByFullName(String fullName);
+	Iterable<Guardian> searchGuardianByFullName(String fullName);
 
-    boolean createGuardian(Guardian guardian);
+	boolean createGuardian(Guardian guardian);
 
-    boolean deleteGuardian(Guardian guardian);
+	boolean deleteGuardian(Guardian guardian);
 
-    void deleteGuardianById(Integer guardianId);
+	void deleteGuardianById(Integer guardianId);
 
-    boolean updateGuardian(Guardian guardian);
+	boolean updateGuardian(Guardian guardian);
 }

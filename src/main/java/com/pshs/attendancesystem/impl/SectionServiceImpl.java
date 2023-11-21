@@ -6,82 +6,95 @@ import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.services.SectionService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
 public class SectionServiceImpl implements SectionService {
-    private final SectionRepository sectionRepository;
+	private final SectionRepository sectionRepository;
 
-    public SectionServiceImpl(SectionRepository sectionRepository) {
-        this.sectionRepository = sectionRepository;
-    }
+	public SectionServiceImpl(SectionRepository sectionRepository) {
+		this.sectionRepository = sectionRepository;
+	}
 
-    @Override
-    public Iterable<Section> getAllSection() {
-        return this.sectionRepository.findAll();
-    }
+	@Override
+	public Iterable<Section> getAllSection() {
+		return this.sectionRepository.findAll();
+	}
 
-    @Override
-    public String deleteSectionById(Integer id) {
-        if (!this.sectionRepository.existsById(id)) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
+	@Override
+	public String deleteSectionById(Integer id) {
+		if (id == null) {
+			return SectionMessages.SECTION_NULL;
+		}
 
-        this.sectionRepository.deleteById(id);
-        return SectionMessages.SECTION_DELETED(id);
-    }
+		if (!this.sectionRepository.existsById(id)) {
+			return SectionMessages.SECTION_NOT_FOUND;
+		}
 
-    @Override
-    public String addSection(Section section) {
-        if (this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_EXISTS;
-        }
+		this.sectionRepository.deleteById(id);
+		return SectionMessages.SECTION_DELETED(id);
+	}
 
-        this.sectionRepository.save(section);
-        return SectionMessages.SECTION_CREATED;
-    }
+	@Override
+	public String addSection(Section section) {
+		Optional<Section> databaseSection = this.sectionRepository.findBySectionName(section.getSectionName());
+		if (databaseSection.isPresent()) {
+			Section existingSection = databaseSection.get();
+			if (existingSection.getSectionName().equals(section.getSectionName())) {
+				return SectionMessages.SECTION_EXISTS;
+			}
+		}
 
-    @Override
-    public String updateSection(Section section) {
-        if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
+		this.sectionRepository.save(section);
+		return SectionMessages.SECTION_CREATED;
+	}
 
-        this.sectionRepository.save(section);
-        return SectionMessages.SECTION_UPDATED;
-    }
+	@Override
+	public String updateSection(Section section) {
+		if (section.getSectionId() == null) {
+			return SectionMessages.SECTION_NULL;
+		}
 
-    @Override
-    public Iterable<Section> getSectionByTeacherLastName(String lastName) {
-        if (!this.sectionRepository.existsByTeacherLastNameIgnoreCaseContaining(lastName)) {
-            Stream<Section> emptyStream = Stream.empty();
-            return emptyStream::iterator;
-        }
+		if (!this.sectionRepository.existsById(section.getSectionId())) {
+			return SectionMessages.SECTION_NOT_FOUND;
+		}
 
-        return this.sectionRepository.findByTeacherLastNameIgnoreCaseContaining(lastName);
-    }
+		this.sectionRepository.save(section);
+		return SectionMessages.SECTION_UPDATED;
+	}
 
-    @Override
-    public Section getSectionBySectionId(Integer sectionId) {
-        return this.sectionRepository.findBySectionId(sectionId);
-    }
+	@Override
+	public Iterable<Section> getSectionByTeacherLastName(String lastName) {
+		if (!this.sectionRepository.existsByTeacherLastNameIgnoreCaseContaining(lastName)) {
+			Stream<Section> emptyStream = Stream.empty();
+			return emptyStream::iterator;
+		}
 
-    @Override
-    public String deleteSection(Section section) {
-        if (section.getSectionId() == null) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
+		return this.sectionRepository.findByTeacherLastNameIgnoreCaseContaining(lastName);
+	}
 
-        if (!this.sectionRepository.existsById(section.getSectionId())) {
-            return SectionMessages.SECTION_NOT_FOUND;
-        }
+	@Override
+	public Section getSectionBySectionId(Integer sectionId) {
+		return this.sectionRepository.findBySectionId(sectionId);
+	}
 
-        this.sectionRepository.delete(section);
-        return SectionMessages.SECTION_DELETED(section.getSectionId());
-    }
+	@Override
+	public String deleteSection(Section section) {
+		if (section.getSectionId() == null) {
+			return SectionMessages.SECTION_NOT_FOUND;
+		}
 
-    @Override
-    public Iterable<Section> searchSectionByName(String sectionName) {
-        return this.sectionRepository.findSectionsBySectionNameIgnoreCaseContaining(sectionName);
-    }
+		if (!this.sectionRepository.existsById(section.getSectionId())) {
+			return SectionMessages.SECTION_NOT_FOUND;
+		}
+
+		this.sectionRepository.delete(section);
+		return SectionMessages.SECTION_DELETED(section.getSectionId());
+	}
+
+	@Override
+	public Iterable<Section> searchSectionByName(String sectionName) {
+		return this.sectionRepository.findSectionsBySectionNameIgnoreCaseContaining(sectionName);
+	}
 }
