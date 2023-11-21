@@ -2,57 +2,58 @@ package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.entities.statistics.BetweenDate;
 import com.pshs.attendancesystem.enums.Status;
 
 import java.time.LocalDate;
 
 public interface AttendanceService {
 
-    Iterable<Attendance> getAllAttendances();
+	Iterable<Attendance> getAllAttendances();
 
-    Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status);
+	Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status);
 
-    Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate);
+	Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate);
 
-    Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn
-        , LocalDate startDate, LocalDate endDate, Status status);
+	Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn, BetweenDate dateRange, Status status);
 
-    Iterable<Attendance> getStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate);
+	Iterable<Attendance> getAttendanceBetweenDate(long studentLrn, BetweenDate dateRange);
 
-    Iterable<Attendance> getStudentAttendanceInSectionId(Integer sectionId);
+	Iterable<Attendance> getAttendanceInSectionId(Integer sectionId);
 
-    Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate);
+	Iterable<Attendance> getAttendanceInSectionByStatusBetweenDate(Integer sectionId, Status attendanceStatus, BetweenDate dateRange);
 
+	Iterable<Attendance> getStudentAttendanceInSectionBetweenDate(Integer sectionId, BetweenDate betweenDate);
 
-    long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
+	// TODO: Implement this and point them to the repository and make them endpoints.
+	Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date);
 
-    long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
+	Iterable<Attendance> getAttendanceInSection(Integer sectionId, BetweenDate dateRange, Status status);
 
-    long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date);
+	Iterable<Attendance> getAttendanceInSection(Integer sectionId, BetweenDate dateRange);
 
-    long countStudentAttendanceIBySectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate);
+	long countAttendanceInSection(Integer sectionId, BetweenDate dateRange, Status status);
 
-    long countStudentAttendanceInSectionByDate(Integer sectionId, LocalDate date);
+	long countAttendanceInSectionByStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date);
 
-    long countAttendancesBetweenDate(LocalDate startDate, LocalDate endDate);
+	long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date);
+	long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
 
-    long countStudentAttendancesBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate);
+	long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
 
-    Status createAttendance(Long studentLrn);
+	long countAttendanceInSectionByStatusAndBetweenDate(Integer sectionId, Status attendanceStatus, BetweenDate dateRange);
 
-    String deleteAttendance(Integer attendanceId);
+	long countAttendanceBetweenDate(BetweenDate dateRange);
 
-    String updateAttendance(Attendance attendance);
+	long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange);
+	Status createAttendance(Long studentLrn);
+	String deleteAttendance(Integer attendanceId);
+	String updateAttendance(Attendance attendance);
+	Status getAttendanceStatusToday(Long studentLrn);
+	boolean attendanceOut(Long studentLrn);
+	boolean checkIfAlreadyArrived(Student student);
+	boolean checkIfAlreadyOut(Long studentLrn);
 
-    Status getAttendanceStatusToday(Long studentLrn);
-
-    boolean attendanceOut(Long studentLrn);
-
-    boolean checkIfAlreadyArrived(Student student);
-
-    boolean checkIfAlreadyOut(Long studentLrn);
-
-    Attendance studentTodayAttendance(Long studentLrn);
-
-    String deleteAllAttendance();
+	Attendance getStudentAttendanceToday(Long studentLrn);
+	String deleteAllAttendance();
 }

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Integer> {
-    Iterable<Subject> findSubjectsByNameIgnoreCaseContaining(String subjectName);
+	Iterable<Subject> findSubjectsByNameIgnoreCaseContaining(String subjectName);
 
-    Iterable<Subject> findSubjectsByDescriptionIgnoreCaseContaining(String subjectDescription);
+	Iterable<Subject> findSubjectsByDescriptionIgnoreCaseContaining(String subjectDescription);
 
-    Subject findSubjectByNameIgnoreCase(String subjectName);
+	Subject findSubjectByNameIgnoreCase(String subjectName);
 }
