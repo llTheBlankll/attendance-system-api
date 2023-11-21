@@ -1,8 +1,9 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.AttendanceSystemConfiguration;
+import com.pshs.attendancesystem.Configuration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.entities.statistics.BetweenDate;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
@@ -11,6 +12,9 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
@@ -86,8 +90,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public Iterable<Attendance> getAllAttendances() {
-		return attendanceRepository.findAll();
+	public Page<Attendance> getAllAttendances() {
+		return attendanceRepository.findAll(PageRequest.of(1, Configuration.Pagination.DEFAULT_PAGE_SIZE));
 	}
 
 	/**
@@ -107,7 +111,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 			}
 
 			LocalTime lateArrivalTime;
-			LocalTime onTimeArrival = AttendanceSystemConfiguration.Attendance.onTimeArrival;
+			LocalTime onTimeArrival = Configuration.Attendance.onTimeArrival;
 
 			Time currentTime = new Time(System.currentTimeMillis());
 			LocalTime currentLocalTime = currentTime.toLocalTime();
@@ -116,9 +120,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 			// Flag Ceremony Time
 			if (isTodayMonday()) {
-				lateArrivalTime = AttendanceSystemConfiguration.Attendance.flagCeremonyTime;
+				lateArrivalTime = Configuration.Attendance.flagCeremonyTime;
 			} else {
-				lateArrivalTime = AttendanceSystemConfiguration.Attendance.lateTimeArrival;
+				lateArrivalTime = Configuration.Attendance.lateTimeArrival;
 			}
 
 			// Check if the data is valid.
@@ -179,6 +183,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	public boolean attendanceOut(Long studentLrn) {
+		if (studentLrn == null) {
+			return false;
+		}
 		// Check for the existence of Student LRN
 		if (!studentRepository.existsById(studentLrn)) {
 			logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
@@ -189,8 +196,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 		if (attendance.isPresent() && attendance.get().getTimeOut() == null) {
 			Attendance getAttendance = attendance.get();
+			logger.info("The student {} is out, Time left: {}", studentLrn, LocalTime.now());
 			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
-			logger.info("The student {} is out, Time left: {}", studentLrn, getAttendance.getTimeOut());
 			return true;
 		}
 
@@ -204,7 +211,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the attendance record for the student today, or null if the student does not exist
 	 */
 	@Override
-	public Attendance studentTodayAttendance(Long studentLrn) {
+	public Attendance getStudentAttendanceToday(Long studentLrn) {
 		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
 		if (attendance.isPresent()) {
 			return attendance.orElse(null);
@@ -241,7 +248,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate) {
-		return attendanceRepository.findAttendancesByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
+		return attendanceRepository.findAttendancesByDateBetween(startDate, endDate);
 	}
 
 	/**
@@ -256,7 +263,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+		return attendanceRepository.countByDateBetweenAndAttendanceStatus(startDate, endDate, status);
 	}
 
 	/**
@@ -264,29 +271,26 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * filtered by the attendance status.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param startDate  the start date of the attendance records
-	 * @param endDate    the end date of the attendance records
+	 * @param dateRange  the range of dates to filter the records by
 	 * @param status     the attendance status to filter the records by
 	 * @return an iterable collection of Attendance objects representing
 	 * the attendance records of the student
 	 */
 	@Override
-	public Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn
-		, LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
+	public Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn, BetweenDate dateRange, Status status) {
+		return attendanceRepository.findByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
 
 	/**
 	 * Retrieves the attendance records of a student between the specified start and end dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param startDate  the start date of the attendance records
-	 * @param endDate    the end date of the attendance records
+	 * @param dateRange      the start and end dates of the range
 	 * @return an iterable collection of Attendance objects representing the student's attendance between the specified dates
 	 */
 	@Override
-	public Iterable<Attendance> getStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate) {
-		return this.attendanceRepository.findByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
+	public Iterable<Attendance> getAttendanceBetweenDate(long studentLrn, BetweenDate dateRange) {
+		return this.attendanceRepository.findByStudentLrnAndDateBetween(studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
 	}
 
 	/**
@@ -299,8 +303,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the total count of student attendance records
 	 */
 	@Override
-	public long getAllCountOfStudentAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(studentLrn, startDate, endDate, status);
+	public long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
+		return attendanceRepository.countByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, startDate, endDate, status);
 	}
 
 	/**
@@ -310,7 +314,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return an iterable of Attendance objects representing the student's attendance records
 	 */
 	@Override
-	public Iterable<Attendance> getStudentAttendanceInSectionId(Integer sectionId) {
+	public Iterable<Attendance> getAttendanceInSectionId(Integer sectionId) {
 		return attendanceRepository.findAttendancesByStudent_StudentSection_SectionId(sectionId);
 	}
 
@@ -319,13 +323,61 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *
 	 * @param sectionId        the ID of the section
 	 * @param attendanceStatus the desired attendance status
-	 * @param startDate        the start date of the date range
-	 * @param endDate          the end date of the date range
+	 * @param dateRange            the date range
 	 * @return an iterable collection of Attendance objects representing the student attendance records
 	 */
 	@Override
-	public Iterable<Attendance> getStudentAttendanceInSectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
-		return this.attendanceRepository.findAttendancesByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
+	public Iterable<Attendance> getAttendanceInSectionByStatusBetweenDate(Integer sectionId, Status attendanceStatus, BetweenDate dateRange) {
+		return this.attendanceRepository.findAttendancesByStudent_StudentSection_SectionIdAndDateBetweenAndAttendanceStatus(sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
+	}
+
+	@Override
+	public Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
+		return null;
+	}
+
+	@Override
+	public Iterable<Attendance> getStudentAttendanceInSectionBetweenDate(@NonNull Integer sectionId, BetweenDate betweenDate) {
+		return this.attendanceRepository.findByStudent_StudentSection_SectionIdAndDateBetween(sectionId, betweenDate.getStartDate(), betweenDate.getEndDate());
+	}
+
+	@Override
+	public Iterable<Attendance> getAttendanceInSection(@NonNull Integer sectionId, @NonNull BetweenDate dateRange, Status status) {
+		switch (status) {
+			case ONTIME -> {
+				return this.getAttendanceInSectionByStatusBetweenDate(sectionId, Status.ONTIME, dateRange);
+			}
+
+			case LATE -> {
+				return this.getAttendanceInSectionByStatusBetweenDate(sectionId, Status.LATE, dateRange);
+			}
+
+			default -> {
+				return this.getStudentAttendanceInSectionBetweenDate(sectionId, dateRange);
+			}
+		}
+	}
+
+	@Override
+	public Iterable<Attendance> getAttendanceInSection(Integer sectionId, BetweenDate dateRange) {
+		return this.getStudentAttendanceInSectionBetweenDate(sectionId, dateRange);
+	}
+
+	@Override
+	public long countAttendanceInSection(@NonNull Integer sectionId, BetweenDate dateRange, Status status) {
+		switch (status) {
+			case ONTIME -> {
+				return this.countAttendanceInSectionByStatusAndBetweenDate(sectionId, Status.ONTIME, dateRange);
+			}
+
+			case LATE -> {
+				return this.countAttendanceInSectionByStatusAndBetweenDate(sectionId, Status.LATE, dateRange);
+			}
+
+			default -> {
+				return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateBetween(sectionId, dateRange.getStartDate(), dateRange.getEndDate());
+			}
+		}
 	}
 
 	/**
@@ -337,7 +389,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the number of student attendances
 	 */
 	@Override
-	public long countStudentAttendanceInSectionIdByAttendanceStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date) {
+	public long countAttendanceInSectionByStatusAndDate(@NonNull Integer sectionId, Status attendanceStatus, LocalDate date) {
 		return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(sectionId, attendanceStatus, date);
 	}
 
@@ -346,43 +398,39 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *
 	 * @param sectionId        the ID of the section to count attendance records for
 	 * @param attendanceStatus the attendance status to filter by
-	 * @param startDate        the start date of the date range
-	 * @param endDate          the end date of the date range
+	 * @param dateRange        the date range to filter by
 	 * @return the number of student attendance records that match the given criteria
 	 */
 	@Override
-	public long countStudentAttendanceIBySectionIdByAttendanceStatusBetweenDate(Integer sectionId, Status attendanceStatus, LocalDate startDate, LocalDate endDate) {
-		return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(sectionId, startDate, endDate, attendanceStatus);
+	public long countAttendanceInSectionByStatusAndBetweenDate(@NonNull Integer sectionId, Status attendanceStatus, BetweenDate dateRange) {
+		return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDateBetweenAndAttendanceStatus(sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
 	}
 
-	// TODO: implement this.
 	@Override
-	public long countStudentAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
-		return 0;
+	public long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date) {
+		return this.attendanceRepository.countByStudent_StudentSection_SectionIdAndDate(sectionId, date);
 	}
 
 	/**
 	 * Counts the number of attendances between two given dates.
 	 *
-	 * @param startDate the start date of the period
-	 * @param endDate   the end date of the period
+	 * @param dateRange The start and end dates of the range
 	 * @return the number of attendances between the start and end dates
 	 */
 	@Override
-	public long countAttendancesBetweenDate(LocalDate startDate, LocalDate endDate) {
-		return this.attendanceRepository.countByDateGreaterThanEqualAndDateLessThanEqual(startDate, endDate);
+	public long countAttendanceBetweenDate(BetweenDate dateRange) {
+		return this.attendanceRepository.countByDateBetween(dateRange.getStartDate(), dateRange.getEndDate());
 	}
 
 	/**
 	 * Counts the number of attendances for a student between two given dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param startDate  the start date of the attendance period
-	 * @param endDate    the end date of the attendance period
+	 * @param dateRange  the start and end dates of the range
 	 * @return the number of attendances for the student within the specified period
 	 */
 	@Override
-	public long countStudentAttendancesBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate) {
-		return this.attendanceRepository.countByStudentLrnAndDateGreaterThanEqualAndDateLessThanEqual(studentLrn, startDate, endDate);
+	public long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange) {
+		return this.attendanceRepository.countByStudentLrnAndDateBetween(studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
 	}
 }

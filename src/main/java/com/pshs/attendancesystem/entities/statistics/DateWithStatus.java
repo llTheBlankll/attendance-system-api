@@ -4,15 +4,15 @@ import com.pshs.attendancesystem.enums.Status;
 
 public class DateWithStatus {
 
-	private BetweenDate date;
+	private BetweenDate dateRange;
 	private Status status;
 
-	public BetweenDate getDate() {
-		return date;
+	public BetweenDate getDateRange() {
+		return dateRange;
 	}
 
-	public void setDate(BetweenDate date) {
-		this.date = date;
+	public void setDateRange(BetweenDate dateRange) {
+		this.dateRange = dateRange;
 	}
 
 	public Status getStatus() {
