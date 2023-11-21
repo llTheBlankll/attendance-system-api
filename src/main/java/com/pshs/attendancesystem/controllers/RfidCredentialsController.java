@@ -2,6 +2,8 @@ package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,10 @@ public class RfidCredentialsController {
 	 *
 	 * @return an iterable collection of Scan objects representing all the scans
 	 */
+	@Operation(
+		summary = "Retrieves all the rfid credentials",
+		description = "Retrieves all"
+	)
 	@GetMapping("/credentials")
 	public Iterable<RfidCredentials> getAllScan() {
 		return this.rfidService.getAllRfidCredentials();
@@ -40,6 +46,14 @@ public class RfidCredentialsController {
 	 * @param data the data to search for (hashed value or studentLrn)
 	 * @return the retrieved RfidCredentials object
 	 */
+	@Operation(
+		summary = "Retrieves an RfidCredentials object based on the provided type and data",
+		description = "Retrieves an RfidCredentials object based on the provided type and data",
+		parameters = {
+			@Parameter(name = "type", description = "The type of data to search for (hash or studentLrn)"),
+			@Parameter(name = "data", description = "The data to search for (hashed value or studentLrn)")
+		}
+	)
 	@GetMapping("/get")
 	public Optional<RfidCredentials> getStudent(@RequestParam String type, @RequestParam String data) {
 		if (type.equals("hash")) {
