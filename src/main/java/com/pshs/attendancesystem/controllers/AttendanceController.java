@@ -3,6 +3,7 @@ package com.pshs.attendancesystem.controllers;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.AttendanceServiceImpl;
+import com.pshs.attendancesystem.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/attendance")
 public class AttendanceController {
 
-	private final AttendanceServiceImpl attendanceServiceImpl;
+	private final AttendanceService attendanceService;
 
-	public AttendanceController(AttendanceServiceImpl attendanceServiceImpl) {
-		this.attendanceServiceImpl = attendanceServiceImpl;
+	public AttendanceController(AttendanceServiceImpl attendanceService) {
+		this.attendanceService = attendanceService;
 	}
 
 	/**
@@ -31,7 +32,7 @@ public class AttendanceController {
 	)
 	@GetMapping("/attendances")
 	public Iterable<Attendance> getAllAttendance() {
-		return this.attendanceServiceImpl.getAllAttendances();
+		return this.attendanceService.getAllAttendances();
 	}
 
 	@Operation(
@@ -40,7 +41,7 @@ public class AttendanceController {
 	)
 	@PostMapping("/create")
 	public Status addAttendance(@RequestParam("student_lrn") Long studentLrn) {
-		return this.attendanceServiceImpl.createAttendance(studentLrn);
+		return this.attendanceService.createAttendance(studentLrn);
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class AttendanceController {
 	)
 	@PostMapping("/delete")
 	public String deleteAttendance(@RequestParam Integer id) {
-		return this.attendanceServiceImpl.deleteAttendance(id);
+		return this.attendanceService.deleteAttendance(id);
 	}
 
 	/**
@@ -70,7 +71,7 @@ public class AttendanceController {
 	)
 	@PostMapping("/update")
 	public String updateAttendance(@RequestBody Attendance attendance) {
-		return this.attendanceServiceImpl.updateAttendance(attendance);
+		return this.attendanceService.updateAttendance(attendance);
 	}
 
 	@Operation(
@@ -80,6 +81,6 @@ public class AttendanceController {
 	@PreAuthorize("hasRole('PRINCIPAL')")
 	@PostMapping("/delete/all")
 	public String deleteAllAttendance() {
-		return this.attendanceServiceImpl.deleteAllAttendance();
+		return this.attendanceService.deleteAllAttendance();
 	}
 }

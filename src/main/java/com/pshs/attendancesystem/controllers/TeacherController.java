@@ -3,6 +3,7 @@ package com.pshs.attendancesystem.controllers;
 import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,10 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Get Teacher by Last Name",
-		description = "Get Teacher by Last Name in the database."
+		description = "Get Teacher by Last Name in the database.",
+		parameters = {
+			@Parameter(name = "last-name", description = "The Last Name of the Teacher object to be retrieved")
+		}
 	)
 	@GetMapping("/get/last-name/{last-name}")
 	public Iterable<Teacher> getTeachersByLastName(@PathVariable("last-name") String lastName) {
@@ -37,7 +41,10 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Create Teacher",
-		description = "Create Teacher in the database."
+		description = "Create Teacher in the database.",
+		parameters = {
+			@Parameter(name = "teacher", description = "The Teacher object to be created")
+		}
 	)
 	@PostMapping("/create")
 	public boolean createTeacher(@RequestBody Teacher teacher) {
@@ -46,7 +53,10 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Update Teacher",
-		description = "Update Teacher in the database."
+		description = "Update Teacher in the database.",
+		parameters = {
+			@Parameter(name = "teacher", description = "The Teacher object to be updated")
+		}
 	)
 	@PostMapping("/update")
 	public void updateTeacher(@RequestBody Teacher teacher) {
@@ -55,7 +65,10 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Delete Teacher",
-		description = "Delete Teacher in the database."
+		description = "Delete Teacher in the database.",
+		parameters = {
+			@Parameter(name = "teacher", description = "The Teacher object to be deleted")
+		}
 	)
 	@PostMapping("/delete")
 	public void deleteTeacher(@RequestBody Teacher teacher) {
@@ -64,7 +77,10 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Get Teacher by ID",
-		description = "Get Teacher by ID in the database."
+		description = "Get Teacher by ID in the database.",
+		parameters = {
+			@Parameter(name = "teacher-id", description = "The ID of the Teacher object to be retrieved")
+		}
 	)
 	@GetMapping("/get/{teacher-id}")
 	public Teacher getTeacher(@PathVariable("teacher-id") Integer teacherId) {

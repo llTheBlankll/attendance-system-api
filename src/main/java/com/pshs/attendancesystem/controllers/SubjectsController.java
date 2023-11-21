@@ -2,6 +2,8 @@ package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.entities.Subject;
 import com.pshs.attendancesystem.services.SubjectService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,10 @@ public class SubjectsController {
 	 *
 	 * @return an iterable of Subject objects representing all subjects
 	 */
+	@Operation(
+		summary = "Retrieves all subjects",
+		description = "Retrieves all subjects"
+	)
 	@GetMapping("/all")
 	public Iterable<Subject> getAllSubjects() {
 		return this.subjectService.getAllSubjects();
@@ -42,6 +48,13 @@ public class SubjectsController {
 	 * @param subjectDescription the description of the subject to search for
 	 * @return an Iterable collection of Subject objects
 	 */
+	@Operation(
+		summary = "Retrieves a collection of Subject objects based on the provided subject description",
+		description = "Retrieves a collection of Subject objects based on the provided subject description",
+		parameters = {
+			@Parameter(name = "subject-description", description = "The description of the subject to search for")
+		}
+	)
 	@GetMapping("/search/subject-description/{subject-description}")
 	public Iterable<Subject> searchSubjectsByDescription(@PathVariable("subject-description") String subjectDescription) {
 		return this.subjectService.searchSubjectsByDescription(subjectDescription);
@@ -52,6 +65,13 @@ public class SubjectsController {
 	 *
 	 * @param subject the Subject object containing the details of the subject to be created
 	 */
+	@Operation(
+		summary = "Create Subject",
+		description = "Create Subject in the database.",
+		parameters = {
+			@Parameter(name = "subject", description = "The Subject object to be created")
+		}
+	)
 	@PostMapping("/create")
 	public void createSubject(@RequestBody Subject subject) {
 		this.subjectService.createSubject(subject);
@@ -63,6 +83,13 @@ public class SubjectsController {
 	 * @param subject the subject object to be updated
 	 * @return void
 	 */
+	@Operation(
+		summary = "Update Subject",
+		description = "Update Subject in the database.",
+		parameters = {
+			@Parameter(name = "subject", description = "The Subject object to be updated")
+		}
+	)
 	@PutMapping("/update")
 	public void updateSubject(@RequestBody Subject subject) {
 		this.subjectService.updateSubject(subject);
@@ -74,6 +101,13 @@ public class SubjectsController {
 	 * @param subject the subject to be deleted
 	 * @return void
 	 */
+	@Operation(
+		summary = "Delete Subject",
+		description = "Delete Subject in the database.",
+		parameters = {
+			@Parameter(name = "subject", description = "The Subject object to be deleted")
+		}
+	)
 	@DeleteMapping("/delete")
 	public void deleteSubject(@RequestBody Subject subject) {
 		this.subjectService.deleteSubject(subject);
@@ -85,6 +119,13 @@ public class SubjectsController {
 	 * @param subjectId the ID of the subject
 	 * @return the subject with the given ID
 	 */
+	@Operation(
+		summary = "Get Subject by ID",
+		description = "Get Subject by ID in the database.",
+		parameters = {
+			@Parameter(name = "subject-id", description = "The ID of the Subject object to be retrieved")
+		}
+	)
 	@GetMapping("/get/{subject-id}")
 	public Subject getSubjectById(@PathVariable("subject-id") Integer subjectId) {
 		return this.subjectService.getSubject(subjectId);
@@ -96,6 +137,13 @@ public class SubjectsController {
 	 * @param subjectName the name of the subject to retrieve
 	 * @return the subject with the given name
 	 */
+	@Operation(
+		summary = "Get Subject by Name",
+		description = "Get Subject by Name in the database.",
+		parameters = {
+			@Parameter(name = "subject-name", description = "The Name of the Subject object to be retrieved")
+		}
+	)
 	@GetMapping("/get-by-name/{subject-name}")
 	public Subject getSubjectByName(@PathVariable("subject-name") String subjectName) {
 		return this.subjectService.getSubjectByName(subjectName);
@@ -106,6 +154,13 @@ public class SubjectsController {
 	 *
 	 * @param id the ID of the subject to be deleted
 	 */
+	@Operation(
+		summary = "Delete Subject by ID",
+		description = "Delete Subject by ID in the database.",
+		parameters = {
+			@Parameter(name = "id", description = "The ID of the Subject object to be deleted")
+		}
+	)
 	@PostMapping("/delete/{id}")
 	public void deleteSubjectById(@PathVariable("id") Integer id) {
 		this.subjectService.deleteSubjectById(id);
