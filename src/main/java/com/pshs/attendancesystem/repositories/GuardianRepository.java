@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GuardianRepository extends JpaRepository<Guardian, Integer> {
-    Iterable<Guardian> findByStudent(Student student);
+	Iterable<Guardian> findByStudent(Student student);
 
-    Iterable<Guardian> findByStudentLrn(Long studentLrn);
+	Iterable<Guardian> findByStudentLrn(Long studentLrn);
 
-    Iterable<Guardian> findGuardiansByFullNameIgnoreCase(String fullName);
+	Iterable<Guardian> findGuardiansByFullNameIgnoreCase(String fullName);
 
-    boolean existsByStudentLrn(long studentLrn);
+	boolean existsByStudentLrn(long studentLrn);
 }

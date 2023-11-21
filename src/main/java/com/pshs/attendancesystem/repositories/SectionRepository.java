@@ -8,10 +8,13 @@ import java.util.Optional;
 
 @Repository
 public interface SectionRepository extends JpaRepository<Section, Integer> {
-    boolean existsByTeacherLastNameIgnoreCaseContaining(String lastName);
-    Section findBySectionId(Integer sectionId);
+	boolean existsByTeacherLastNameIgnoreCaseContaining(String lastName);
 
-    Optional<Section> findBySectionName(String sectionName);
-    Iterable<Section> findSectionsBySectionNameIgnoreCaseContaining(String sectionName);
-    Iterable<Section> findByTeacherLastNameIgnoreCaseContaining(String lastName);
+	Section findBySectionId(Integer sectionId);
+
+	Optional<Section> findBySectionName(String sectionName);
+
+	Iterable<Section> findSectionsBySectionNameIgnoreCaseContaining(String sectionName);
+
+	Iterable<Section> findByTeacherLastNameIgnoreCaseContaining(String lastName);
 }
