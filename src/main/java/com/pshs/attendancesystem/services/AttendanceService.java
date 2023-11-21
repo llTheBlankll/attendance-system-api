@@ -37,6 +37,7 @@ public interface AttendanceService {
 	long countAttendanceInSectionByStatusAndDate(Integer sectionId, Status attendanceStatus, LocalDate date);
 
 	long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date);
+
 	long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
 
 	long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
@@ -46,14 +47,22 @@ public interface AttendanceService {
 	long countAttendanceBetweenDate(BetweenDate dateRange);
 
 	long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange);
+
 	Status createAttendance(Long studentLrn);
+
 	String deleteAttendance(Integer attendanceId);
+
 	String updateAttendance(Attendance attendance);
+
 	Status getAttendanceStatusToday(Long studentLrn);
+
 	boolean attendanceOut(Long studentLrn);
+
 	boolean checkIfAlreadyArrived(Student student);
+
 	boolean checkIfAlreadyOut(Long studentLrn);
 
 	Attendance getStudentAttendanceToday(Long studentLrn);
+
 	String deleteAllAttendance();
 }

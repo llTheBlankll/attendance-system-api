@@ -285,7 +285,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Retrieves the attendance records of a student between the specified start and end dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param dateRange      the start and end dates of the range
+	 * @param dateRange  the start and end dates of the range
 	 * @return an iterable collection of Attendance objects representing the student's attendance between the specified dates
 	 */
 	@Override
@@ -323,7 +323,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *
 	 * @param sectionId        the ID of the section
 	 * @param attendanceStatus the desired attendance status
-	 * @param dateRange            the date range
+	 * @param dateRange        the date range
 	 * @return an iterable collection of Attendance objects representing the student attendance records
 	 */
 	@Override

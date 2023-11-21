@@ -19,6 +19,7 @@ import java.util.Optional;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
 	Page<Attendance> findAll(@NonNull Pageable pageable);
+
 	Iterable<Attendance> findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
 
 	Iterable<Attendance> findByStudentLrnAndDateBetweenAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
@@ -39,6 +40,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	long countByDateBetweenAndAttendanceStatus(LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
 	long countByStudentLrnAndDateBetweenAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
+
 	long countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(Integer studentSectionId, Status status, LocalDate date);
 
 	long countByStudent_StudentSection_SectionIdAndDateBetweenAndAttendanceStatus(Integer studentSectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
