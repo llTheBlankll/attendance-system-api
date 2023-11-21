@@ -85,6 +85,10 @@ public class StudentServiceImpl implements StudentService {
 	 * @return a message indicating the success of the operation
 	 */
 	public String addStudent(@RequestBody Student student) {
+		if (student.getLrn() == null) {
+			return StudentMessages.STUDENT_INVALID_LRN;
+		}
+
 		if (this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_EXISTS;
 		} else if (!this.sectionService.existsById(student.getStudentSection().getSectionId())) {

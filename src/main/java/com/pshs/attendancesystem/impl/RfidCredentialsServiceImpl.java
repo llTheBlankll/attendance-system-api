@@ -27,18 +27,27 @@ public class RfidCredentialsServiceImpl implements RfidService {
 
 	@Override
 	public Optional<RfidCredentials> getRfidCredentialByStudentLrn(Long lrn) {
+		if (lrn == null) {
+			return Optional.empty();
+		}
+
 		if (!this.rfidCredentialsRepository.existsById(lrn)) {
 			logger.info(RfidMessages.LRN_NOT_FOUND);
-			return null;
+			return Optional.empty();
 		}
+
 		return this.rfidCredentialsRepository.findByLrn(lrn);
 	}
 
 	@Override
 	public Optional<RfidCredentials> getRfidCredentialByHashedLrn(String hashedLrn) {
+		if (hashedLrn == null) {
+			return Optional.empty();
+		}
+
 		if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
 			logger.info(RfidMessages.HASHED_LRN_NOT_FOUND);
-			return null;
+			return Optional.empty();
 		}
 
 		return this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);

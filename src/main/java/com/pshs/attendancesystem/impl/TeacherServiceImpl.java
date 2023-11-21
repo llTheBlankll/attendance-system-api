@@ -23,6 +23,11 @@ public class TeacherServiceImpl implements TeacherService {
 
 	@Override
 	public void deleteTeacher(Integer teacherId) {
+		if (teacherId == null) {
+			logger.info(TeacherMessages.TEACHER_NULL);
+			return;
+		}
+
 		if (!this.teacherRepository.existsById(teacherId)) {
 			logger.info("Teacher with ID {} doesn't exists.", teacherId);
 			return;
@@ -53,7 +58,8 @@ public class TeacherServiceImpl implements TeacherService {
 		if (lastName.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return this.teacherRepository.findTeachersByLastNameIgnoreCase(lastName);
+
+		return this.teacherRepository.findByLastNameIgnoreCase(lastName);
 	}
 
 	@Override
