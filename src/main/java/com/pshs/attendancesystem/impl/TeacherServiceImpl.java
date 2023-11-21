@@ -14,59 +14,65 @@ import java.util.Optional;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private final TeacherRepository teacherRepository;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final TeacherRepository teacherRepository;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public TeacherServiceImpl(TeacherRepository teacherRepository) {
-        this.teacherRepository = teacherRepository;
-    }
+	public TeacherServiceImpl(TeacherRepository teacherRepository) {
+		this.teacherRepository = teacherRepository;
+	}
 
-    @Override
-    public void deleteTeacher(Integer teacherId) {
-        if (!this.teacherRepository.existsById(teacherId)) {
-            logger.info("Teacher with ID {} doesn't exists.", teacherId);
-            return;
-        }
+	@Override
+	public void deleteTeacher(Integer teacherId) {
+		if (teacherId == null) {
+			logger.info(TeacherMessages.TEACHER_NULL);
+			return;
+		}
 
-        this.teacherRepository.deleteById(teacherId);
-    }
+		if (!this.teacherRepository.existsById(teacherId)) {
+			logger.info("Teacher with ID {} doesn't exists.", teacherId);
+			return;
+		}
 
-    @Override
-    public boolean createTeacher(Teacher teacher) {
-        if (teacher.getId() == null) {
-            logger.info(TeacherMessages.TEACHER_NULL);
-            return false;
-        }
+		this.teacherRepository.deleteById(teacherId);
+	}
 
-        this.teacherRepository.save(teacher);
-        return true;
-    }
+	@Override
+	public boolean createTeacher(Teacher teacher) {
+		if (teacher.getId() == null) {
+			logger.info(TeacherMessages.TEACHER_NULL);
+			return false;
+		}
 
-    @Override
-    public Teacher getTeacher(Integer teacherId) {
-        Optional<Teacher> teacher = this.teacherRepository.findById(teacherId);
-        return teacher.orElseGet(Teacher::new);
-    }
+		this.teacherRepository.save(teacher);
+		return true;
+	}
 
-    @Override
-    public Iterable<Teacher> getTeacherByLastName(String lastName) {
-        if (lastName.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return this.teacherRepository.findTeachersByLastNameIgnoreCase(lastName);
-    }
+	@Override
+	public Teacher getTeacher(Integer teacherId) {
+		Optional<Teacher> teacher = this.teacherRepository.findById(teacherId);
+		return teacher.orElseGet(Teacher::new);
+	}
 
-    @Override
-    public void updateTeacher(Teacher teacher) {
-        if (teacher.getId() == null) {
-            logger.info(TeacherMessages.TEACHER_NULL);
-        }
+	@Override
+	public Iterable<Teacher> getTeacherByLastName(String lastName) {
+		if (lastName.isEmpty()) {
+			return Collections.emptyList();
+		}
 
-        this.teacherRepository.save(teacher);
-    }
+		return this.teacherRepository.findByLastNameIgnoreCase(lastName);
+	}
 
-    @Override
-    public Iterable<Teacher> getAllTeachers() {
-        return this.teacherRepository.findAll();
-    }
+	@Override
+	public void updateTeacher(Teacher teacher) {
+		if (teacher.getId() == null) {
+			logger.info(TeacherMessages.TEACHER_NULL);
+		}
+
+		this.teacherRepository.save(teacher);
+	}
+
+	@Override
+	public Iterable<Teacher> getAllTeachers() {
+		return this.teacherRepository.findAll();
+	}
 }

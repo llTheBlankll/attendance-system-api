@@ -6,50 +6,59 @@ import java.sql.Time;
 
 public class WebSocketResponse {
 
-    private String message;
-    private Time time;
-    private Long studentLrn;
-    private Status status;
+	private String message;
+	private Time time;
+	private Long studentLrn;
+	private Status status;
+	private Student student;
 
-    public String getMessage() {
-        return message;
-    }
+	public Student getStudent() {
+		return student;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
-    public Time getTime() {
-        return time;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setTime(Time time) {
-        this.time = time;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public Long getStudentLrn() {
-        return studentLrn;
-    }
+	public Time getTime() {
+		return time;
+	}
 
-    public void setStudentLrn(Long studentLrn) {
-        this.studentLrn = studentLrn;
-    }
+	public void setTime(Time time) {
+		this.time = time;
+	}
 
-    public Status getStatus() {
-        return status;
-    }
+	public Long getStudentLrn() {
+		return studentLrn;
+	}
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+	public void setStudentLrn(Long studentLrn) {
+		this.studentLrn = studentLrn;
+	}
 
-    @Override
-    public String toString() {
-        return "WebSocketResponse{" +
-            "message='" + message + '\'' +
-            ", time=" + time +
-            ", studentLrn=" + studentLrn +
-            ", status=" + status +
-            '}';
-    }
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "WebSocketResponse{" +
+			"message='" + message + '\'' +
+			", time=" + time +
+			", studentLrn=" + studentLrn +
+			", status=" + status +
+			'}';
+	}
 }

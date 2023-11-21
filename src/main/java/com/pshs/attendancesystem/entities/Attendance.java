@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pshs.attendancesystem.enums.Status;
 import jakarta.persistence.*;
 
@@ -10,90 +9,82 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "attendance")
 public class Attendance {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
+	@Enumerated(EnumType.STRING)
+	private Status attendanceStatus;
+	@Column(name = "date")
+	private LocalDate date;
+	@Column(name = "time")
+	private Time time;
+	@Column(name = "time_out")
+	private Time timeOut;
+	@ManyToOne
+	@JoinColumn(name = "student_id", nullable = false)
+	private Student student;
 
-    @Enumerated(EnumType.STRING)
-    private Status attendanceStatus;
+	@Transient
+	private Section section;
 
-    @Column(name = "date")
-    private LocalDate date;
-    @Column(name = "time")
-    private Time time;
+	public Section getSection() {
+		if (student.getStudentSection() != null) {
+			return student.getStudentSection();
+		}
 
-    @Column(name = "time_out")
-    private Time timeOut;
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    @JsonBackReference
-    private Student student;
+		return null;
+	}
 
-    @Transient
-    private String message;
+	public void setSection(Section section) {
+		this.section = section;
+	}
 
-    public Attendance() {
+	public Student getStudent() {
+		return student;
+	}
 
-    }
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
-    public Attendance(String message) {
-        this.message = message;
-    }
+	public Status getAttendanceStatus() {
+		return attendanceStatus;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public void setAttendanceStatus(Status attendanceStatus) {
+		this.attendanceStatus = attendanceStatus;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public Time getTimeOut() {
+		return timeOut;
+	}
 
-    public Student getStudent() {
-        return student;
-    }
+	public void setTimeOut(Time timeOut) {
+		this.timeOut = timeOut;
+	}
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public Status getAttendanceStatus() {
-        return attendanceStatus;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setAttendanceStatus(Status attendanceStatus) {
-        this.attendanceStatus = attendanceStatus;
-    }
+	public LocalDate getDate() {
+		return date;
+	}
 
-    public Time getTimeOut() {
-        return timeOut;
-    }
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
 
-    public void setTimeOut(Time timeOut) {
-        this.timeOut = timeOut;
-    }
+	public Time getTime() {
+		return time;
+	}
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
+	public void setTime(Time time) {
+		this.time = time;
+	}
 }
