@@ -6,6 +6,14 @@ public class BetweenDate {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
+	public BetweenDate(LocalDate startDate, LocalDate endDate) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public BetweenDate() {
+	}
+
 	public LocalDate getStartDate() {
 		return startDate;
 	}
