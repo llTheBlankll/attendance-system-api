@@ -24,6 +24,10 @@ public class SectionServiceImpl implements SectionService {
 
 	@Override
 	public String deleteSectionById(Integer id) {
+		if (id == null) {
+			return SectionMessages.SECTION_NULL;
+		}
+
 		if (!this.sectionRepository.existsById(id)) {
 			return SectionMessages.SECTION_NOT_FOUND;
 		}
@@ -48,6 +52,10 @@ public class SectionServiceImpl implements SectionService {
 
 	@Override
 	public String updateSection(Section section) {
+		if (section.getSectionId() == null) {
+			return SectionMessages.SECTION_NULL;
+		}
+
 		if (!this.sectionRepository.existsById(section.getSectionId())) {
 			return SectionMessages.SECTION_NOT_FOUND;
 		}

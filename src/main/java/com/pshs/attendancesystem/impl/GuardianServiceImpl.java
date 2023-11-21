@@ -34,9 +34,14 @@ public class GuardianServiceImpl implements GuardianService {
 
 	@Override
 	public Iterable<Guardian> getStudentGuardiansByLrn(Long lrn) {
+		if (lrn == null) {
+			return Collections.emptyList();
+		}
+
 		if (this.guardianRepository.existsByStudentLrn(lrn)) {
 			return this.guardianRepository.findByStudentLrn(lrn);
 		}
+
 		return Collections.emptyList();
 	}
 
