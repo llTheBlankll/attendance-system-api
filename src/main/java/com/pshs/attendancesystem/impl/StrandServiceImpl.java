@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class StrandServiceImpl implements StrandService {
 
-    private final StrandRepository strandRepository;
+	private final StrandRepository strandRepository;
 
-    public StrandServiceImpl(StrandRepository strandRepository) {
-        this.strandRepository = strandRepository;
-    }
+	public StrandServiceImpl(StrandRepository strandRepository) {
+		this.strandRepository = strandRepository;
+	}
 
-    @Override
-    public Iterable<Strand> getAllStrand() {
-        return this.strandRepository.findAll();
-    }
+	@Override
+	public Iterable<Strand> getAllStrand() {
+		return this.strandRepository.findAll();
+	}
 }

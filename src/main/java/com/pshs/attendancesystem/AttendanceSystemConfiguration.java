@@ -6,7 +6,6 @@ import java.time.LocalTime;
 public class AttendanceSystemConfiguration {
 
     private AttendanceSystemConfiguration() {
-
     }
 
     public static class Attendance {
@@ -19,4 +18,5 @@ public class AttendanceSystemConfiguration {
 
         }
     }
+
 }
