@@ -4,7 +4,7 @@ CREATE TABLE Strand
     strand_name VARCHAR(255) NOT NULL
 );
 
--- @block
+-- * GRADE LEVELS TABLE
 CREATE TABLE GradeLevels(
                             grade_level  SERIAL PRIMARY KEY,
                             grade_name   VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE GradeLevels(
                             CONSTRAINT gradelevels_grade_strand_fk FOREIGN KEY (grade_strand) REFERENCES Strand (strand_id)
 );
 
--- Create enum types for each table.
+-- * Create enum types for each table.
 CREATE TYPE Status AS ENUM ('LATE','ONTIME');
 
 -- CREATE A CAST, The CREATE CAST solution does not seem to work when the enum
@@ -20,14 +20,14 @@ CREATE TYPE Status AS ENUM ('LATE','ONTIME');
 -- Entity findByMyEnum(MyEnum myEnum)
 CREATE CAST (CHARACTER VARYING as Status) WITH INOUT AS IMPLICIT;
 
--- Creates Subjects Table.
+-- * Creates Subjects Table.
 CREATE TABLE Subjects
 (
     subject_id  SERIAL PRIMARY KEY,
     name        VARCHAR(128),
     description TEXT
 );
--- Creates Teachers Table.
+-- * Creates Teachers Table.
 CREATE TABLE Teachers
 (
     teacher_id        SERIAL,
@@ -45,7 +45,7 @@ CREATE TABLE Teachers
 );
 CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 
--- @block
+-- * SECTIONS TABLE
 CREATE TABLE Sections
 (
     section_id SERIAL PRIMARY KEY,
@@ -59,7 +59,7 @@ CREATE TABLE Sections
     FOREIGN KEY (strand) REFERENCES Strand (strand_id) ON DELETE SET NULL
 );
 
--- @block
+-- * STUDENTS TABLE
 CREATE TABLE Students
 (
     lrn              BIGINT PRIMARY KEY,
@@ -75,7 +75,7 @@ CREATE TABLE Students
     FOREIGN KEY (section_id) REFERENCES Sections (section_id) ON DELETE SET NULL
 );
 
--- @block
+-- * RFID CREDENTIALS
 CREATE TABLE rfid_credentials
 (
     lrn        BIGINT NOT NULL PRIMARY KEY,
@@ -85,7 +85,7 @@ CREATE TABLE rfid_credentials
 );
 CREATE INDEX rfid_credentials_lrn_idx ON rfid_credentials (lrn);
 
--- @block
+-- * GUARDIANS TABLE
 CREATE TABLE Guardians
 (
     guardian_id             SERIAL PRIMARY KEY,
@@ -96,7 +96,7 @@ CREATE TABLE Guardians
 );
 CREATE INDEX guardian_student_id_idx ON Guardians (student_lrn);
 
--- @block
+-- * ATTENDANCE TABLE
 CREATE TABLE Attendance
 (
     id SERIAL PRIMARY KEY,
@@ -108,9 +108,22 @@ CREATE TABLE Attendance
     CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+-- * MAKE ATTENDANCE ENUM TYPE CHARACTER VARYING
 ALTER TABLE Attendance
     ALTER COLUMN attendance_status TYPE CHARACTER VARYING;
+
+-- * CREATE STUDENT ID INDEX
 CREATE INDEX attendance_student_id_idx ON Attendance (student_id);
+
+-- * CREATE FINGERPRINT TABLE
+CREATE TABLE Fingerprint
+(
+    id             SERIAL PRIMARY KEY,
+    fingerprint_id VARCHAR(255) NOT NULL,
+    student        BIGINT,
+    template_data  TEXT,
+    CONSTRAINT fk_student_lrn FOREIGN KEY (student) REFERENCES students (lrn) ON DELETE SET NULL
+);
 
 -- CREATE TRIGGER AND NOTIFY --
 CREATE OR REPLACE FUNCTION notify_changes_attendance() RETURNS TRIGGER AS

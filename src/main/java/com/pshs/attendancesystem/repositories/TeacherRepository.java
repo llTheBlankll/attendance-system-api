@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
-    Iterable<Teacher> findTeachersByLastNameIgnoreCase(String lastName);
+	Iterable<Teacher> findTeachersByLastNameIgnoreCase(String lastName);
 }

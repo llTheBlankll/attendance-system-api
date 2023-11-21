@@ -8,9 +8,10 @@ import java.util.Optional;
 
 @Repository
 public interface RfidCredentialsRepository extends JpaRepository<RfidCredentials, Long> {
-    Optional<RfidCredentials> findByHashedLrn(String hashedLrn);
-    Optional<RfidCredentials> findByLrn(Long lrn);
+	Optional<RfidCredentials> findByHashedLrn(String hashedLrn);
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    boolean existsByHashedLrn(String hashedLrn);
+	Optional<RfidCredentials> findByLrn(Long lrn);
+
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+	boolean existsByHashedLrn(String hashedLrn);
 }

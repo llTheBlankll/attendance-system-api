@@ -3,19 +3,19 @@ package com.pshs.attendancesystem.services;
 import com.pshs.attendancesystem.entities.Fingerprint;
 
 public interface FingerprintService {
-    Fingerprint getFingerprintByFingerprintId(String fingerprintId);
+	Fingerprint getFingerprintByFingerprintId(String fingerprintId);
 
-    Fingerprint getFingerprintByStudentLrn(Long lrn);
+	Fingerprint getFingerprintByStudentLrn(Long lrn);
 
-    Iterable<Fingerprint> getAllFingerprint();
+	Iterable<Fingerprint> getAllFingerprint();
 
-    String addFingerprint(Fingerprint fingerprint);
+	String addFingerprint(Fingerprint fingerprint);
 
-    String deleteFingerprint(Fingerprint fingerprint);
+	String deleteFingerprint(Fingerprint fingerprint);
 
-    String deleteFingerprintByFingerprintId(String fingerprintId);
+	String deleteFingerprintByFingerprintId(String fingerprintId);
 
-    String deleteFingerprintByStudentLrn(Long lrn);
+	String deleteFingerprintByStudentLrn(Long lrn);
 
-    String updateFingerprintByFingerprintId(Fingerprint fingerprintId);
+	String updateFingerprintByFingerprintId(Fingerprint fingerprintId);
 }

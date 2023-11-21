@@ -13,24 +13,24 @@ import java.util.List;
 @Service
 public class FrontEndWebSocketsCommunicationService {
 
-    private final List<WebSocketSession> sessionList = new ArrayList<>();
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final List<WebSocketSession> sessionList = new ArrayList<>();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public void registerFrontEndWebSocket(WebSocketSession session) {
-        sessionList.add(session);
-    }
+	public void registerFrontEndWebSocket(WebSocketSession session) {
+		sessionList.add(session);
+	}
 
-    public void sendMessageToAllFrontEnd(String message) {
-        try {
-            for (WebSocketSession session : this.sessionList) {
-                session.sendMessage(new TextMessage(message));
-            }
-        } catch (IOException exception) {
-            logger.error(exception.getMessage());
-        }
-    }
+	public void sendMessageToAllFrontEnd(String message) {
+		try {
+			for (WebSocketSession session : this.sessionList) {
+				session.sendMessage(new TextMessage(message));
+			}
+		} catch (IOException exception) {
+			logger.error(exception.getMessage());
+		}
+	}
 
-    public void removeWebSocketSession(WebSocketSession session) {
-        this.sessionList.remove(session);
-    }
+	public void removeWebSocketSession(WebSocketSession session) {
+		this.sessionList.remove(session);
+	}
 }

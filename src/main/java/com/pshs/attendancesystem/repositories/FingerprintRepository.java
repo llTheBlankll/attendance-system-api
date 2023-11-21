@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface FingerprintRepository extends JpaRepository<Fingerprint, Integer> {
-    Optional<Fingerprint> findFingerprintByFingerprintId(String fingerprintId);
+	Optional<Fingerprint> findFingerprintByFingerprintId(String fingerprintId);
 
-    Optional<Fingerprint> findFingerprintByStudent_Lrn(Long studentLrn);
+	Optional<Fingerprint> findFingerprintByStudent_Lrn(Long studentLrn);
 }
