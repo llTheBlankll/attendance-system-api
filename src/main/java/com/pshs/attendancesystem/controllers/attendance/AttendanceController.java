@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.attendance;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.enums.Status;
@@ -54,7 +54,7 @@ public class AttendanceController {
 		summary = "Delete attendance",
 		description = "Delete attendance of a student using attendance id"
 	)
-	@PostMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteAttendance(@RequestParam Integer id) {
 		return this.attendanceService.deleteAttendance(id);
 	}
@@ -69,7 +69,7 @@ public class AttendanceController {
 		summary = "Update attendance",
 		description = "Update attendance of a student using attendance id"
 	)
-	@PostMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateAttendance(@RequestBody Attendance attendance) {
 		return this.attendanceService.updateAttendance(attendance);
 	}
@@ -79,7 +79,7 @@ public class AttendanceController {
 		description = "Use this endpoint to delete all attendance, please use with care as there is no confirmation. Principal only."
 	)
 	@PreAuthorize("hasRole('PRINCIPAL')")
-	@PostMapping("/delete/all")
+	@PostMapping(value = "/delete/all", produces = "text/plain")
 	public String deleteAllAttendance() {
 		return this.attendanceService.deleteAllAttendance();
 	}

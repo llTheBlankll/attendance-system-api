@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.fingerprint;
 
 import com.pshs.attendancesystem.entities.Fingerprint;
 import com.pshs.attendancesystem.services.FingerprintService;

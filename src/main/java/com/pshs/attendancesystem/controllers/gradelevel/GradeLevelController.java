@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.gradelevel;
 
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.services.GradeLevelService;

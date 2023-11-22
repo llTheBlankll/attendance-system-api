@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.guardian;
 
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Student;
