@@ -24,9 +24,8 @@ import java.util.Collections;
 
 @Tag(name = "Attendance Statistics", description = "Manages attendance statistics.")
 @RestController
-@RequestMapping("/api/v1/attendance/statistics")
+@RequestMapping("/v1/attendance/stats/")
 public class AttendanceStatisticsController {
-
 	private final AttendanceService attendanceService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	LocalDate today = LocalDate.now();
@@ -80,8 +79,8 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "date", description = "The date to filter the attendance records"),
 		}
 	)
-	@GetMapping("/get/date")
-	public Iterable<Attendance> getStudentsAttendanceByDate(@RequestBody DateWithStatus dateStatus) {
+	@PostMapping("/get/date")
+	public Iterable<Attendance> getStudentsAttendanceByDate(@RequestBody DateRangeWithStatus dateStatus) {
 		if (dateStatus.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return null;
@@ -120,7 +119,7 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "time", description = "The time period to filter the attendance. This can either be 'month', 'week', or 'today'"),
 		}
 	)
-	@GetMapping("/get/time")
+	@PostMapping("/get/time")
 	public Iterable<Attendance> getStudentsAttendanceByTime(@RequestBody TimeWithStatus timeStatus) {
 		Status status = timeStatus.getStatus();
 		String time = timeStatus.getTime();
@@ -201,13 +200,10 @@ public class AttendanceStatisticsController {
 	 */
 	@Operation(
 		summary = "Get Attendance Count",
-		description = "Retrieves the attendance count by date. Returns -3 if the date range is null.",
-		parameters = {
-			@Parameter(name = "date", description = "The date to filter the attendance."),
-		}
+		description = "Retrieves the attendance count by date. Returns -3 if the date range is null."
 	)
-	@GetMapping("/count/date")
-	public long getAttendanceCountByDate(@RequestBody DateWithStatus dateStatus) {
+	@PostMapping("/count/date")
+	public long getAttendanceCountByDate(@RequestBody DateRangeWithStatus dateStatus) {
 		if (dateStatus.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return -3;
@@ -236,26 +232,26 @@ public class AttendanceStatisticsController {
 	/**
 	 * Retrieves the attendance count based on the given time and status.
 	 *
-	 * @param timeWithStatus The time and status to filter the attendance count.
+	 * @param timeStatus The time and status to filter the attendance count.
 	 * @return The count of attendance based on the given time and status.
 	 */
 	@Operation(
 		summary = "Get Attendance Count",
 		description = "Retrieves the attendance count based on the given time and status. Returns -3 if the time or status is null.",
 		parameters = {
-			@Parameter(name = "time", description = "The time period to filter the attendance."),
+			@Parameter(name = "timeStatus", description = "The time to filter the attendance."),
 		}
 	)
-	@GetMapping("/count/time")
-	public long getAttendanceCountByTime(@RequestBody TimeWithStatus timeWithStatus) {
+	@PostMapping(value = "/count/time")
+	public long getAttendanceCountByTime(@RequestBody TimeWithStatus timeStatus) {
 		LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
 		LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
 		LocalDate firstDayOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 		LocalDate lastDayOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
-		Status status = timeWithStatus.getStatus();
-		String time = timeWithStatus.getTime();
+		Status status = timeStatus.getStatus();
+		String time = timeStatus.getTime();
 
 		if (status == null || time == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
@@ -264,39 +260,11 @@ public class AttendanceStatisticsController {
 
 		switch (time) {
 			case "month" -> {
-				if (status == Status.LATE) {
-					return this.attendanceService.getAllCountOfAttendanceBetweenDate(
-						firstDayOfMonth,
-						lastDayOfMonth,
-						Status.LATE
-					);
-				} else if (status == Status.ONTIME) {
-					return this.attendanceService.getAllCountOfAttendanceBetweenDate(
-						firstDayOfMonth,
-						lastDayOfMonth,
-						Status.ONTIME
-					);
-				} else {
-					return this.attendanceService.countAttendanceBetweenDate(new BetweenDate(firstDayOfMonth, lastDayOfMonth));
-				}
+				return countOfAttendanceByTime(firstDayOfMonth, lastDayOfMonth, status);
 			}
 
 			case "week" -> {
-				if (status == Status.LATE) {
-					return this.attendanceService.getAllCountOfAttendanceBetweenDate(
-						firstDayOfWeek,
-						lastDayOfWeek,
-						Status.LATE
-					);
-				} else if (status == Status.ONTIME) {
-					return this.attendanceService.getAllCountOfAttendanceBetweenDate(
-						firstDayOfWeek,
-						lastDayOfWeek,
-						Status.ONTIME
-					);
-				} else {
-					return this.attendanceService.countAttendanceBetweenDate(new BetweenDate(firstDayOfWeek, lastDayOfWeek));
-				}
+				return countOfAttendanceByTime(firstDayOfWeek, lastDayOfWeek, status);
 			}
 
 			case "today" -> {
@@ -323,6 +291,24 @@ public class AttendanceStatisticsController {
 		}
 	}
 
+	private long countOfAttendanceByTime(LocalDate firstDayOfMonth, LocalDate lastDayOfMonth, Status status) {
+		if (status == Status.LATE) {
+			return this.attendanceService.getAllCountOfAttendanceBetweenDate(
+				firstDayOfMonth,
+				lastDayOfMonth,
+				Status.LATE
+			);
+		} else if (status == Status.ONTIME) {
+			return this.attendanceService.getAllCountOfAttendanceBetweenDate(
+				firstDayOfMonth,
+				lastDayOfMonth,
+				Status.ONTIME
+			);
+		} else {
+			return this.attendanceService.countAttendanceBetweenDate(new BetweenDate(firstDayOfMonth, lastDayOfMonth));
+		}
+	}
+
 	/**
 	 * Retrieves the count of students based on the given date and status.
 	 *
@@ -336,8 +322,8 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "date", description = "The date to filter the student count"),
 		}
 	)
-	@GetMapping("/student/date")
-	public long getStudentCountByDate(@RequestBody DateWithStatusLrn dateStatus) {
+	@PostMapping("/student/date")
+	public long getStudentCountByDate(@RequestBody DateRangeWithStatusLrn dateStatus) {
 		if (dateStatus.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return -2;
@@ -378,7 +364,7 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "time", description = "The time period to filter the attendance count"),
 		}
 	)
-	@GetMapping("/student/time")
+	@PostMapping("/student/time")
 	public long getStudentCountByTime(@RequestBody TimeWithStatusLrn timeStatus) {
 		Status status = timeStatus.getStatus();
 		String time = timeStatus.getTime();
@@ -446,7 +432,7 @@ public class AttendanceStatisticsController {
 	/**
 	 * Retrieves the student attendance between two dates with a specific attendance status.
 	 *
-	 * @param dateWithStatusLrn the object containing the start and end dates, attendance status, and student LRN
+	 * @param dateRangeWithStatusLrn the object containing the start and end dates, attendance status, and student LRN
 	 * @return an iterable collection of Attendance objects representing the student attendance
 	 */
 	@Operation(
@@ -456,16 +442,16 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "Date with Status and LRN", description = "The start and end dates, attendance status, and student LRN. Need to pass DateWithStatusLrn Object."),
 		}
 	)
-	@GetMapping("/student/get/date")
-	public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody DateWithStatusLrn dateWithStatusLrn) {
-		if (dateWithStatusLrn.getDateRange() == null) {
+	@PostMapping("/student/get/date")
+	public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestBody DateRangeWithStatusLrn dateRangeWithStatusLrn) {
+		if (dateRangeWithStatusLrn.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return null;
 		}
 
-		Status status = dateWithStatusLrn.getStatus();
-		BetweenDate dateRange = dateWithStatusLrn.getDateRange();
-		Long studentLrn = dateWithStatusLrn.getStudentLrn();
+		Status status = dateRangeWithStatusLrn.getStatus();
+		BetweenDate dateRange = dateRangeWithStatusLrn.getDateRange();
+		Long studentLrn = dateRangeWithStatusLrn.getStudentLrn();
 
 		if (status == Status.LATE) {
 			return this.attendanceService.getStudentAttendanceBetweenDateWithAttendanceStatus(
@@ -491,7 +477,7 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "Time with Status and LRN", description = "The start and end dates, attendance status, and student LRN. Need to pass TimeWithStatusLrn Object."),
 		}
 	)
-	@GetMapping("/student/get/time")
+	@PostMapping("/student/get/time")
 	public Iterable<Attendance> getStudentAttendanceByTime(@RequestBody TimeWithStatusLrn timeWithStatus) {
 		Status status = timeWithStatus.getStatus();
 		String time = timeWithStatus.getTime();
@@ -706,7 +692,7 @@ public class AttendanceStatisticsController {
 		summary = "Get Today's Section Attendance",
 		description = "Retrieves the attendance records for today."
 	)
-	@GetMapping("/section/today")
+	@PostMapping("/section/today")
 	public Iterable<Attendance> getSectionAttendanceToday(@NonNull @RequestBody Section section) {
 		LocalDate dateNow = LocalDate.now();
 		return (section.getSectionId() <= 0) ? Collections.emptyList() : this.attendanceService.getAttendanceInSection(section.getSectionId(), new BetweenDate(dateNow, dateNow));
@@ -716,7 +702,7 @@ public class AttendanceStatisticsController {
 		summary = "Get Week's Section Attendance",
 		description = "Retrieves the attendance records for the current week."
 	)
-	@GetMapping("/section/week")
+	@PostMapping("/section/week")
 	public Iterable<Attendance> getSectionAttendanceWeek(@NonNull @RequestBody Section section) {
 		LocalDate firstDayWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 		LocalDate lastDayWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -727,11 +713,64 @@ public class AttendanceStatisticsController {
 		summary = "Get Month's Section Attendance",
 		description = "Retrieves the attendance records for the current month."
 	)
-	@GetMapping("/section/month")
+	@PostMapping("/section/month")
 	public Iterable<Attendance> getSectionAttendanceMonth(@NonNull @RequestBody Section section) {
 		LocalDate firstDayMonth = today.withDayOfMonth(1);
 		LocalDate lastDayMonth = today.withDayOfMonth(today.lengthOfMonth());
 		return this.attendanceService.getAttendanceInSection(section.getSectionId(), new BetweenDate(firstDayMonth, lastDayMonth));
+	}
+
+	@Operation(
+		summary = "Get Section's Attendance with date range",
+		description = "Retrieves the attendance records for between the date you provided with Status filtering.",
+		parameters = {
+			@Parameter(name = "sectionId", description = "The ID of the section.", required = true),
+			@Parameter(name = "status", description = "The status to filter the attendance. If provided null, no late and on time filtering."),
+			@Parameter(name = "dateRange", description = "The date range to filter the attendance.", required = true),
+		}
+	)
+	@PostMapping("/section")
+	public Iterable<Attendance> getAttendanceInSection(@RequestParam Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+		if (status == null) {
+			return this.attendanceService.getAttendanceInSection(sectionId, dateRange);
+		} else {
+			return this.attendanceService.getAttendanceInSection(sectionId, dateRange, status);
+		}
+	}
+
+	@Operation(
+		summary = "Get Section's Attendance Count with date range",
+		description = "Retrieves the attendance records for between the date you provided with Status filtering.",
+		parameters = {
+			@Parameter(name = "sectionId", description = "The ID of the section.", required = true),
+			@Parameter(name = "status", description = "The status to filter the attendance.", required = true)
+		}
+	)
+	@PostMapping("/count/section")
+	public long getAttendanceCountInSection(@RequestParam Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+		return this.attendanceService.countAttendanceInSection(sectionId, dateRange, status);
+	}
+
+	@Operation(
+		summary = "Get Section's Attendance Count between date",
+		description = "Retrieves the attendance records for the date you provided. NOTE: If status is null, " +
+			"the attendance count will be returned without the filter of ONTIME or LATE and date should not be null.",
+		parameters = {
+			@Parameter(name = "sectionId", description = "The ID of the section.")
+		}
+	)
+	@PostMapping("/count/section/date")
+	public long getAttendanceCountInSectionByStatusAndDate(@RequestParam Integer sectionId, @RequestBody DateWithStatus dateStatus) {
+		if (dateStatus.getDate() == null) {
+			logger.info(AttendanceMessages.ATTENDANCE_NULL);
+			return -2;
+		}
+
+		if (dateStatus.getStatus() == null) {
+			return this.attendanceService.countAttendanceBySectionAndDate(sectionId, dateStatus.getDate());
+		} else {
+			return this.attendanceService.countAttendanceInSectionByStatusAndDate(sectionId, dateStatus.getStatus(), dateStatus.getDate());
+		}
 	}
 }
 

@@ -332,7 +332,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
-		return null;
+		return attendanceRepository.findByStudent_StudentSection_SectionIdAndDateBetween(sectionId, date, date);
 	}
 
 	@Override
