@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name = "Attendance", description = "The Attendance Endpoints")
-@RequestMapping("/api/v1/attendance")
+@RequestMapping("/v1/attendance")
 public class AttendanceController {
 
 	private final AttendanceService attendanceService;
@@ -30,7 +30,7 @@ public class AttendanceController {
 		summary = "Retrieves all attendance records",
 		description = "Retrieves all attendance records"
 	)
-	@GetMapping("/attendances")
+	@GetMapping("/all")
 	public Iterable<Attendance> getAllAttendance() {
 		return this.attendanceService.getAllAttendances();
 	}

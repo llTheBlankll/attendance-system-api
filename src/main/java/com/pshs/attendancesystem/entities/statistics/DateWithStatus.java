@@ -2,17 +2,27 @@ package com.pshs.attendancesystem.entities.statistics;
 
 import com.pshs.attendancesystem.enums.Status;
 
-public class DateWithStatus {
+import java.time.LocalDate;
 
-	private BetweenDate dateRange;
+public class DateWithStatus {
+	private LocalDate date;
 	private Status status;
 
-	public BetweenDate getDateRange() {
-		return dateRange;
+	public DateWithStatus(LocalDate date, Status status) {
+		this.date = date;
+		this.status = status;
 	}
 
-	public void setDateRange(BetweenDate dateRange) {
-		this.dateRange = dateRange;
+	public DateWithStatus() {
+
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 	public Status getStatus() {

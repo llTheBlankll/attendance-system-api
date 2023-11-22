@@ -11,7 +11,7 @@ import java.util.Collections;
 
 @Tag(name = "Section", description = "The Section Endpoints")
 @RestController
-@RequestMapping("/api/v1/section")
+@RequestMapping("/v1/section")
 public class SectionController {
 
 	private final SectionService sectionService;

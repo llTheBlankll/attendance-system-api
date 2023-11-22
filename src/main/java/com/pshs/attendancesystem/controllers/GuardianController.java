@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Guardian", description = "The Guardian Endpoints")
-@RequestMapping("/api/v1/guardian")
+@RequestMapping("/v1/guardian")
 @RestController
 public class GuardianController {
 
@@ -100,6 +100,7 @@ public class GuardianController {
 	public boolean deleteGuardian(@RequestBody Guardian guardian) {
 		return guardianService.deleteGuardian(guardian);
 	}
+
 	@Operation(
 		summary = "Delete Guardian",
 		description = "Delete Guardian in the database.",
