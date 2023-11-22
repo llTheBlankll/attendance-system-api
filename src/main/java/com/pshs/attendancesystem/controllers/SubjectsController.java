@@ -90,7 +90,7 @@ public class SubjectsController {
 			@Parameter(name = "subject", description = "The Subject object to be updated")
 		}
 	)
-	@PutMapping("/update")
+	@PostMapping("/update")
 	public void updateSubject(@RequestBody Subject subject) {
 		this.subjectService.updateSubject(subject);
 	}
@@ -108,7 +108,7 @@ public class SubjectsController {
 			@Parameter(name = "subject", description = "The Subject object to be deleted")
 		}
 	)
-	@DeleteMapping("/delete")
+	@PostMapping("/delete")
 	public void deleteSubject(@RequestBody Subject subject) {
 		this.subjectService.deleteSubject(subject);
 	}
