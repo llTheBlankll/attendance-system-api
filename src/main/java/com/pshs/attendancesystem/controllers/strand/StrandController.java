@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.strand;
 
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.services.StrandService;

@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.rfid;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@Tag(name = "RFID Controller", description = "The RFID Controller Endpoints")
+@Tag(name = "RFID Credentials", description = "The RFID Controller Endpoints")
 @RestController
 @RequestMapping("/v1/rfid")
 @PreAuthorize("hasRole('RFID_DEVICE')")

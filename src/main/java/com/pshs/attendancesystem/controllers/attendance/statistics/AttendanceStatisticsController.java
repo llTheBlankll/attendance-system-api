@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers.statistics;
+package com.pshs.attendancesystem.controllers.attendance.statistics;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Section;

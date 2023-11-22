@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.section;
 
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.services.SectionService;

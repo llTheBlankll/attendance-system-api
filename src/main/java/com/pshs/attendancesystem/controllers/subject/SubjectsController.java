@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.subject;
 
 import com.pshs.attendancesystem.entities.Subject;
 import com.pshs.attendancesystem.services.SubjectService;
