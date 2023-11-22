@@ -95,11 +95,11 @@ public class GuardianController {
 			@Parameter(name = "guardian", description = "The Guardian object to be deleted")
 		}
 	)
-	@DeleteMapping("/delete")
+
+	@PostMapping("/delete")
 	public boolean deleteGuardian(@RequestBody Guardian guardian) {
 		return guardianService.deleteGuardian(guardian);
 	}
-
 	@Operation(
 		summary = "Delete Guardian",
 		description = "Delete Guardian in the database.",
@@ -107,7 +107,8 @@ public class GuardianController {
 			@Parameter(name = "guardian", description = "The Guardian object to be deleted")
 		}
 	)
-	@DeleteMapping("/delete/{guardianId}")
+
+	@PostMapping("/delete/{guardianId}")
 	public void deleteGuardianById(@PathVariable Integer guardianId) {
 		guardianService.deleteGuardianById(guardianId);
 	}
