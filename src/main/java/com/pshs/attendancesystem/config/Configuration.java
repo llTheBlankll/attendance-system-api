@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem;
+package com.pshs.attendancesystem.config;
 
 import java.sql.Time;
 import java.time.LocalTime;
