@@ -297,14 +297,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Retrieves the total count of student attendance records between the specified dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param startDate  the start date of the range
-	 * @param endDate    the end date of the range
+	 * @param dateRange  the start and end dates of the range
 	 * @param status     the attendance status to filter by
 	 * @return the total count of student attendance records
 	 */
 	@Override
-	public long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.countByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, startDate, endDate, status);
+	public long getAllCountOfAttendanceBetweenDate(long studentLrn, BetweenDate dateRange, Status status) {
+		return attendanceRepository.countByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
 
 	/**

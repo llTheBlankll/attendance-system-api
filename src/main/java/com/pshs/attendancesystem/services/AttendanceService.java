@@ -40,7 +40,7 @@ public interface AttendanceService {
 
 	long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
 
-	long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
+	long getAllCountOfAttendanceBetweenDate(long studentLrn, BetweenDate dateRange, Status status);
 
 	long countAttendanceInSectionByStatusAndBetweenDate(Integer sectionId, Status attendanceStatus, BetweenDate dateRange);
 
