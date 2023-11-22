@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Subjects", description = "The Operations related to Subjects")
 @RestController
-@RequestMapping("/api/v1/subject")
+@RequestMapping("/v1/subject")
 public class SubjectsController {
 	private final SubjectService subjectService;
 
@@ -81,7 +81,6 @@ public class SubjectsController {
 	 * Updates a subject.
 	 *
 	 * @param subject the subject object to be updated
-	 * @return void
 	 */
 	@Operation(
 		summary = "Update Subject",
@@ -99,7 +98,6 @@ public class SubjectsController {
 	 * Deletes a subject.
 	 *
 	 * @param subject the subject to be deleted
-	 * @return void
 	 */
 	@Operation(
 		summary = "Delete Subject",
