@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.Configuration;
+import com.pshs.attendancesystem.config.Configuration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
@@ -12,8 +12,6 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -90,8 +88,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public Page<Attendance> getAllAttendances() {
-		return attendanceRepository.findAll(PageRequest.of(1, Configuration.Pagination.DEFAULT_PAGE_SIZE));
+	public Iterable<Attendance> getAllAttendances() {
+		return attendanceRepository.findAll();
 	}
 
 	/**
