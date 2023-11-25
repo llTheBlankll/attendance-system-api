@@ -37,8 +37,8 @@ public class SubjectsController {
 	 * @param subjectName the name of the subject to search for
 	 * @return an iterable collection of subjects matching the given name
 	 */
-	@GetMapping("/search/subject-name/{subject-name}")
-	public Iterable<Subject> searchSubjects(@PathVariable("subject-name") String subjectName) {
+	@GetMapping("/search/subject-name")
+	public Iterable<Subject> searchSubjects(@RequestParam("name") String subjectName) {
 		return subjectService.searchSubjectsByName(subjectName);
 	}
 
@@ -55,8 +55,8 @@ public class SubjectsController {
 			@Parameter(name = "subject-description", description = "The description of the subject to search for")
 		}
 	)
-	@GetMapping("/search/subject-description/{subject-description}")
-	public Iterable<Subject> searchSubjectsByDescription(@PathVariable("subject-description") String subjectDescription) {
+	@GetMapping("/search/subject-description")
+	public Iterable<Subject> searchSubjectsByDescription(@RequestParam("description") String subjectDescription) {
 		return subjectService.searchSubjectsByDescription(subjectDescription);
 	}
 
@@ -124,8 +124,8 @@ public class SubjectsController {
 			@Parameter(name = "subject-id", description = "The ID of the Subject object to be retrieved")
 		}
 	)
-	@GetMapping("/get/{subject-id}")
-	public Subject getSubjectById(@PathVariable("subject-id") Integer subjectId) {
+	@GetMapping("/get/subject-id")
+	public Subject getSubjectById(@RequestParam("id") Integer subjectId) {
 		return subjectService.getSubject(subjectId);
 	}
 
@@ -142,8 +142,8 @@ public class SubjectsController {
 			@Parameter(name = "subject-name", description = "The Name of the Subject object to be retrieved")
 		}
 	)
-	@GetMapping("/get-by-name/{subject-name}")
-	public Subject getSubjectByName(@PathVariable("subject-name") String subjectName) {
+	@GetMapping("/get-by-name")
+	public Subject getSubjectByName(@RequestParam("name") String subjectName) {
 		return subjectService.getSubjectByName(subjectName);
 	}
 
@@ -159,8 +159,8 @@ public class SubjectsController {
 			@Parameter(name = "id", description = "The ID of the Subject object to be deleted")
 		}
 	)
-	@PostMapping("/delete/{id}")
-	public void deleteSubjectById(@PathVariable("id") Integer id) {
+	@PostMapping("/delete/id")
+	public void deleteSubjectById(@RequestParam("id") Integer id) {
 		subjectService.deleteSubjectById(id);
 	}
 }
