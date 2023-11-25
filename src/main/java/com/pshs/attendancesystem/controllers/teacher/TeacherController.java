@@ -34,8 +34,8 @@ public class TeacherController {
 			@Parameter(name = "last-name", description = "The Last Name of the Teacher object to be retrieved")
 		}
 	)
-	@GetMapping("/get/last-name/{last-name}")
-	public Iterable<Teacher> getTeachersByLastName(@PathVariable("last-name") String lastName) {
+	@GetMapping("/get/last-name")
+	public Iterable<Teacher> getTeachersByLastName(@RequestParam("name") String lastName) {
 		return teacherService.getTeacherByLastName(lastName);
 	}
 
@@ -82,8 +82,8 @@ public class TeacherController {
 			@Parameter(name = "teacher-id", description = "The ID of the Teacher object to be retrieved")
 		}
 	)
-	@GetMapping("/get/{teacher-id}")
-	public Teacher getTeacher(@PathVariable("teacher-id") Integer teacherId) {
+	@GetMapping("/get/id")
+	public Teacher getTeacher(@RequestParam("id") Integer teacherId) {
 		return teacherService.getTeacher(teacherId);
 	}
 }

@@ -19,7 +19,7 @@ public class AttendanceController {
     private static final String PRINCIPAL_ROLE = "PRINCIPAL";
 
     public AttendanceController(AttendanceServiceImpl attendanceService) {
-        attendanceService = attendanceService;
+        this.attendanceService = attendanceService;
     }
 
     /**
