@@ -96,4 +96,12 @@ public class SpringDocsConfiguration {
 			.packagesToScan("com.pshs.attendancesystem.controllers.gradelevel")
 			.build();
 	}
+
+	@Bean
+	public GroupedOpenApi subjectControllerGroup() {
+		return GroupedOpenApi.builder()
+			.group("Subject")
+			.packagesToScan("com.pshs.attendancesystem.controllers.subject")
+			.build();
+	}
 }

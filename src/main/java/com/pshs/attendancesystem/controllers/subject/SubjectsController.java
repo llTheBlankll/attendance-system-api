@@ -50,10 +50,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Retrieves a collection of Subject objects based on the provided subject description",
-		description = "Retrieves a collection of Subject objects based on the provided subject description",
-		parameters = {
-			@Parameter(name = "subject-description", description = "The description of the subject to search for")
-		}
+		description = "Retrieves a collection of Subject objects based on the provided subject description"
 	)
 	@GetMapping("/search/subject-description")
 	public Iterable<Subject> searchSubjectsByDescription(@RequestParam("description") String subjectDescription) {
