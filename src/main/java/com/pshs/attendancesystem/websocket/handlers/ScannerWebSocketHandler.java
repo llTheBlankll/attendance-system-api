@@ -10,7 +10,7 @@ import com.pshs.attendancesystem.messages.RfidMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
-import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
+import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.threading.SMSThread;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
