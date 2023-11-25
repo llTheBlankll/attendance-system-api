@@ -27,9 +27,4 @@ public class AttendanceMessages {
 	public static String studentOutOfFacility(String studentName, String time) {
 		return studentName + " has been safely checked out of the facility. Time: " + time;
 	}
-
-	public static String StudentAttendedMessage(String studentName, String time) {
-		// * This message is for the parents.
-		return "Your child " + studentName + " has safely arrived at our facility. Time: " + time;
-	}
 }
