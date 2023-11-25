@@ -11,9 +11,9 @@ public interface AttendanceService {
 
 	Iterable<Attendance> getAllAttendances();
 
-	Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status);
+	Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(BetweenDate dateRange, Status status);
 
-	Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate);
+	Iterable<Attendance> getAllAttendanceBetweenDate(BetweenDate dateRange);
 
 	Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn, BetweenDate dateRange, Status status);
 
@@ -37,7 +37,7 @@ public interface AttendanceService {
 
 	long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date);
 
-	long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
+	long getAllCountOfAttendanceBetweenDate(BetweenDate dateRange, Status status);
 
 	long getAllCountOfAttendanceBetweenDate(long studentLrn, BetweenDate dateRange, Status status);
 

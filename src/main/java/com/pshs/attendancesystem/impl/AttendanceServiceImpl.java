@@ -211,41 +211,38 @@ public class AttendanceServiceImpl implements AttendanceService {
 	/**
 	 * Retrieves all attendance records between a given start date and end date, filtered by status.
 	 *
-	 * @param startDate the start date of the attendance records to retrieve
-	 * @param endDate   the end date of the attendance records to retrieve
+	 * @param dateRange the date range to filter the attendance records by
 	 * @param status    the status to filter the attendance records by
 	 * @return an iterable collection of attendance records
 	 */
 	@Override
-	public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(startDate, endDate, status);
+	public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(BetweenDate dateRange, Status status) {
+		return attendanceRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(dateRange.getStartDate(), dateRange.getEndDate() , status);
 	}
 
 	/**
 	 * Retrieves all attendance records between the specified start date and end date.
 	 *
-	 * @param startDate the start date for the range of attendance records
-	 * @param endDate   the end date for the range of attendance records
+	 * @param dateRange the date range to filter the attendance records by
 	 * @return an iterable collection of attendance records between the start and end dates
 	 */
 	@Override
-	public Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate) {
-		return attendanceRepository.findAttendancesByDateBetween(startDate, endDate);
+	public Iterable<Attendance> getAllAttendanceBetweenDate(BetweenDate dateRange) {
+		return attendanceRepository.findAttendancesByDateBetween(dateRange.getStartDate(), dateRange.getEndDate());
 	}
 
 	/**
 	 * Returns the total count of attendance records between the given start date and end date,
 	 * filtered by the specified attendance status.
 	 *
-	 * @param startDate the start date of the attendance records
-	 * @param endDate   the end date of the attendance records
+	 * @param dateRange The date range between two time.
 	 * @param status    the attendance status to filter by
 	 * @return the total count of attendance records between the start date and end date,
 	 * filtered by the specified attendance status
 	 */
 	@Override
-	public long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.countByDateBetweenAndAttendanceStatus(startDate, endDate, status);
+	public long getAllCountOfAttendanceBetweenDate(BetweenDate dateRange, Status status) {
+		return attendanceRepository.countByDateBetweenAndAttendanceStatus(dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
 
 	/**
