@@ -16,7 +16,7 @@ public interface GuardianService {
 
 	boolean deleteGuardian(Guardian guardian);
 
-	void deleteGuardianById(Integer guardianId);
+	String deleteGuardianById(Integer guardianId);
 
 	boolean updateGuardian(Guardian guardian);
 }

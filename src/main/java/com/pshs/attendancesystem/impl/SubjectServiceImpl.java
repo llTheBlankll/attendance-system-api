@@ -19,19 +19,20 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	public void createSubject(Subject subject) {
+	public String createSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
-			return;
+			return SubjectMessages.SUBJECT_NULL;
 		}
 
 		// Check if subject already exists
 		if (this.subjectRepository.existsById(subject.getId())) {
 			logger.info(SubjectMessages.SUBJECT_ALREADY_EXISTS);
-			return;
+			return SubjectMessages.SUBJECT_ALREADY_EXISTS;
 		}
 
 		this.subjectRepository.save(subject);
+		return SubjectMessages.SUBJECT_CREATED;
 	}
 
 	@Override
@@ -55,48 +56,52 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	public void deleteSubject(Subject subject) {
+	public String deleteSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
-			return;
+			return SubjectMessages.SUBJECT_NULL;
 		}
 
 		if (!this.subjectRepository.existsById(subject.getId())) {
 			logger.info(SubjectMessages.SUBJECT_NOT_FOUND);
-			return;  // Subject doesn't exist. Nothing to delete.
+			return SubjectMessages.SUBJECT_NOT_FOUND;
 		}
 
 		this.subjectRepository.delete(subject);
+		return SubjectMessages.SUBJECT_DELETED;
 	}
 
 	@Override
-	public void updateSubject(Subject subject) {
+	public String updateSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
-			return;
+			return SubjectMessages.SUBJECT_NULL;
 		}
 
 		if (!this.subjectRepository.existsById(subject.getId())) {
 			logger.info(SubjectMessages.SUBJECT_NOT_FOUND);
-			return;
+			return SubjectMessages.SUBJECT_NOT_FOUND;
 		}
 
 		this.subjectRepository.save(subject);
+		return SubjectMessages.SUBJECT_UPDATED;
 	}
 
 	@Override
-	public void deleteSubjectById(Integer subjectId) {
+	public String deleteSubjectById(Integer subjectId) {
 		if (subjectId < 0) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
-			return;
+			return SubjectMessages.SUBJECT_NULL;
 		}
 
 
 		if (!this.subjectRepository.existsById(subjectId)) {
 			logger.info(SubjectMessages.SUBJECT_NOT_FOUND);
+			return SubjectMessages.SUBJECT_NOT_FOUND;
 		}
 
 		this.subjectRepository.deleteById(subjectId);
+		return SubjectMessages.SUBJECT_DELETED;
 	}
 
 	@Override

@@ -22,18 +22,19 @@ public class TeacherServiceImpl implements TeacherService {
 	}
 
 	@Override
-	public void deleteTeacher(Integer teacherId) {
+	public String deleteTeacher(Integer teacherId) {
 		if (teacherId == null) {
 			logger.info(TeacherMessages.TEACHER_NULL);
-			return;
+			return TeacherMessages.TEACHER_NULL;
 		}
 
 		if (!this.teacherRepository.existsById(teacherId)) {
 			logger.info("Teacher with ID {} doesn't exists.", teacherId);
-			return;
+			return TeacherMessages.TEACHER_NOT_FOUND;
 		}
 
 		this.teacherRepository.deleteById(teacherId);
+		return TeacherMessages.TEACHER_DELETED;
 	}
 
 	@Override
@@ -63,12 +64,14 @@ public class TeacherServiceImpl implements TeacherService {
 	}
 
 	@Override
-	public void updateTeacher(Teacher teacher) {
+	public String updateTeacher(Teacher teacher) {
 		if (teacher.getId() == null) {
 			logger.info(TeacherMessages.TEACHER_NULL);
+			return TeacherMessages.TEACHER_NULL;
 		}
 
 		this.teacherRepository.save(teacher);
+		return TeacherMessages.TEACHER_UPDATED;
 	}
 
 	@Override
