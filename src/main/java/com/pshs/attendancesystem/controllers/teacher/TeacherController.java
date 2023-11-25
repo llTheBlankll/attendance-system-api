@@ -24,7 +24,7 @@ public class TeacherController {
 	)
 	@GetMapping("/all")
 	public Iterable<Teacher> getAllTeachers() {
-		return this.teacherService.getAllTeachers();
+		return teacherService.getAllTeachers();
 	}
 
 	@Operation(
@@ -36,7 +36,7 @@ public class TeacherController {
 	)
 	@GetMapping("/get/last-name/{last-name}")
 	public Iterable<Teacher> getTeachersByLastName(@PathVariable("last-name") String lastName) {
-		return this.teacherService.getTeacherByLastName(lastName);
+		return teacherService.getTeacherByLastName(lastName);
 	}
 
 	@Operation(
@@ -48,7 +48,7 @@ public class TeacherController {
 	)
 	@PostMapping("/create")
 	public boolean createTeacher(@RequestBody Teacher teacher) {
-		return this.teacherService.createTeacher(teacher);
+		return teacherService.createTeacher(teacher);
 	}
 
 	@Operation(
@@ -60,7 +60,7 @@ public class TeacherController {
 	)
 	@PostMapping("/update")
 	public void updateTeacher(@RequestBody Teacher teacher) {
-		this.teacherService.updateTeacher(teacher);
+		teacherService.updateTeacher(teacher);
 	}
 
 	@Operation(
@@ -72,7 +72,7 @@ public class TeacherController {
 	)
 	@PostMapping("/delete")
 	public void deleteTeacher(@RequestBody Teacher teacher) {
-		this.teacherService.deleteTeacher(teacher.getId());
+		teacherService.deleteTeacher(teacher.getId());
 	}
 
 	@Operation(
@@ -84,6 +84,6 @@ public class TeacherController {
 	)
 	@GetMapping("/get/{teacher-id}")
 	public Teacher getTeacher(@PathVariable("teacher-id") Integer teacherId) {
-		return this.teacherService.getTeacher(teacherId);
+		return teacherService.getTeacher(teacherId);
 	}
 }
