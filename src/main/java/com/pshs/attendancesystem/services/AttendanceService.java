@@ -25,7 +25,6 @@ public interface AttendanceService {
 
 	Iterable<Attendance> getStudentAttendanceInSectionBetweenDate(Integer sectionId, BetweenDate betweenDate);
 
-	// TODO: Implement this and point them to the repository and make them endpoints.
 	Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date);
 
 	Iterable<Attendance> getAttendanceInSection(Integer sectionId, BetweenDate dateRange, Status status);
@@ -61,8 +60,6 @@ public interface AttendanceService {
 	boolean checkIfAlreadyArrived(Student student);
 
 	boolean checkIfAlreadyOut(Long studentLrn);
-
-	Attendance getStudentAttendanceToday(Long studentLrn);
 
 	String deleteAllAttendance();
 }

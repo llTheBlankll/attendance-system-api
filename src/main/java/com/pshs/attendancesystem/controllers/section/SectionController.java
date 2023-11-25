@@ -31,7 +31,7 @@ public class SectionController {
 	)
 	@GetMapping("/all")
 	public Iterable<Section> getAllSection() {
-		return this.sectionService.getAllSection();
+		return sectionService.getAllSection();
 	}
 
 	/**
@@ -47,9 +47,9 @@ public class SectionController {
 			@Parameter(name = "id", description = "The ID of the section to be deleted")
 		}
 	)
-	@GetMapping("/delete/id/{id}")
-	public String deleteSectionById(@PathVariable Integer id) {
-		return this.sectionService.deleteSectionById(id);
+	@GetMapping(value = "/delete/id", produces = "text/plain")
+	public String deleteSectionById(@RequestParam("id") Integer id) {
+		return sectionService.deleteSectionById(id);
 	}
 
 	/**
@@ -60,14 +60,11 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Delete section",
-		description = "Delete section by section object, containing the section ID to be deleted and returns a message.",
-		parameters = {
-			@Parameter(name = "section", description = "The section object containing the section ID to be deleted")
-		}
+		description = "Delete section by section object, containing the section ID to be deleted and returns a message."
 	)
-	@PostMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteSection(@RequestBody Section section) {
-		return this.sectionService.deleteSection(section);
+		return sectionService.deleteSection(section);
 	}
 
 	/**
@@ -78,14 +75,11 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Add section",
-		description = "Add section to the database. Returns a string if section is created or if it already exists.",
-		parameters = {
-			@Parameter(name = "section", description = "The section object to be added.")
-		}
+		description = "Add section to the database. Returns a string if section is created or if it already exists."
 	)
-	@PostMapping("/create")
+	@PostMapping(value = "/create", produces = "text/plain")
 	public String addSection(@RequestBody Section section) {
-		return this.sectionService.addSection(section);
+		return sectionService.addSection(section);
 	}
 
 	/**
@@ -96,14 +90,11 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Update section",
-		description = "Update section in the database. Returns a string if section is not found.",
-		parameters = {
-			@Parameter(name = "section", description = "The section object to be updated")
-		}
+		description = "Update section in the database. Returns a string if section is not found."
 	)
-	@PostMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateSection(@RequestBody Section section) {
-		return this.sectionService.updateSection(section);
+		return sectionService.updateSection(section);
 	}
 
 	// SEARCH FUNCTION
@@ -112,6 +103,7 @@ public class SectionController {
 		description = "Search Section in the database. Returns empty list if search is empty.",
 		parameters = {
 			@Parameter(name = "type", description = "The type of search to be performed"),
+			@Parameter(name = "search", description = "The search string")
 		}
 	)
 	@GetMapping("/search")
@@ -121,9 +113,9 @@ public class SectionController {
 		}
 
 		if (type.equals("teacher")) {
-			return this.sectionService.getSectionByTeacherLastName(search);
+			return sectionService.getSectionByTeacherLastName(search);
 		} else if (type.equals("section name")) {
-			return this.sectionService.searchSectionByName(search);
+			return sectionService.searchSectionByName(search);
 		}
 
 		return Collections.emptyList();
@@ -138,6 +130,6 @@ public class SectionController {
 	)
 	@GetMapping("/get")
 	public Section getSection(@RequestParam("sectionId") Integer sectionId) {
-		return this.sectionService.getSectionBySectionId(sectionId);
+		return sectionService.getSectionBySectionId(sectionId);
 	}
 }
