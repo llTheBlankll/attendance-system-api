@@ -2,13 +2,10 @@ package com.pshs.attendancesystem.repositories;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.enums.Status;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
-	Page<Attendance> findAll(@NonNull Pageable pageable);
+
 	Iterable<Attendance> findByDateGreaterThanEqualAndDateLessThanEqualAndAttendanceStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
 
 	Iterable<Attendance> findByStudentLrnAndDateBetweenAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
@@ -39,6 +36,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	long countByDateBetweenAndAttendanceStatus(LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
 	long countByStudentLrnAndDateBetweenAndAttendanceStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
+
 	long countByStudent_StudentSection_SectionIdAndAttendanceStatusAndDate(Integer studentSectionId, Status status, LocalDate date);
 
 	long countByStudent_StudentSection_SectionIdAndDateBetweenAndAttendanceStatus(Integer studentSectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);

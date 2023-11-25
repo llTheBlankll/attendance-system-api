@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.strand;
 
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.services.StrandService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Strand", description = "The Strand Endpoints")
 @RestController
-@RequestMapping("/api/v1/strand")
+@RequestMapping("/v1/strand")
 public class StrandController {
 
 	private final StrandService strandService;
@@ -25,43 +25,34 @@ public class StrandController {
 	)
 	@GetMapping("/all")
 	public Iterable<Strand> getAllStrand() {
-		return this.strandService.getAllStrand();
+		return strandService.getAllStrand();
 	}
 
 	@Operation(
 		summary = "Create Strand",
-		description = "Create Strand in the database. Returns a message if it successful or already exists.",
-		parameters = {
-			@Parameter(name = "strand", description = "The Strand object to be created")
-		}
+		description = "Create Strand in the database. Returns a message if it successful or already exists."
 	)
-	@PostMapping("/create")
+	@PostMapping(value = "/create", produces = "text/plain")
 	public String createStrand(@RequestBody Strand strand) {
-		return this.strandService.createStrand(strand);
+		return strandService.createStrand(strand);
 	}
 
 	@Operation(
 		summary = "Update Strand",
-		description = "Update Strand in the database. Returns a message if it successful or not.",
-		parameters = {
-			@Parameter(name = "strand", description = "The Strand object to be updated")
-		}
+		description = "Update Strand in the database. Returns a message if it successful or not."
 	)
-	@PostMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateStrand(@RequestBody Strand strand) {
-		return this.strandService.updateStrand(strand);
+		return strandService.updateStrand(strand);
 	}
 
 	@Operation(
 		summary = "Delete Strand",
-		description = "Delete Strand in the database. Returns a message if it successful or not.",
-		parameters = {
-			@Parameter(name = "strand", description = "The Strand object to be deleted")
-		}
+		description = "Delete Strand in the database. Returns a message if it successful or not."
 	)
-	@PostMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteStrand(@RequestBody Strand strand) {
-		return this.strandService.deleteStrand(strand);
+		return strandService.deleteStrand(strand);
 	}
 
 	@Operation(
@@ -71,8 +62,8 @@ public class StrandController {
 			@Parameter(name = "strand-name", description = "The Strand Name of the Strand object to be retrieved")
 		}
 	)
-	@GetMapping("/search/strand-name/{strand-name}")
-	public Iterable<Strand> searchStrandByStrandName(@PathVariable("strand-name") String strandName) {
-		return this.strandService.searchStrandByName(strandName);
+	@GetMapping("/search/strand-name")
+	public Iterable<Strand> searchStrandByStrandName(@RequestParam("name") String name) {
+		return strandService.searchStrandByName(name);
 	}
 }

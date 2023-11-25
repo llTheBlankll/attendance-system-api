@@ -13,7 +13,6 @@ import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.MessageDigest;
@@ -139,7 +138,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param id the ID of the student to delete
 	 * @return a message indicating if the student was deleted or if they do not exist
 	 */
-	public String deleteStudentById(@PathVariable Long id) {
+	public String deleteStudentById(Long id) {
 		if (!this.studentRepository.existsById(id)) {
 			return StudentMessages.STUDENT_NOT_FOUND;
 		}
@@ -156,7 +155,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param gradeName the name of the grade level to search for
 	 * @return an iterable collection of Student objects
 	 */
-	public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
+	public Iterable<Student> getStudentByGradeLevel(String gradeName) {
 		if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
 			Stream<Student> empty = Stream.empty();
 			return empty::iterator; // Return empty.
@@ -171,7 +170,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param lrn the learning resource number of the student
 	 * @return the student with the specified LRN, or null if not found
 	 */
-	public Student getStudentById(@PathVariable("lrn") Long lrn) {
+	public Student getStudentById(Long lrn) {
 		if (!this.studentRepository.existsById(lrn)) {
 			return new Student();
 		}
@@ -194,11 +193,11 @@ public class StudentServiceImpl implements StudentService {
 		return StudentMessages.STUDENT_UPDATED;
 	}
 
-	public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") Integer sectionId) {
+	public Iterable<Student> getAllStudentWithSectionId(Integer sectionId) {
 		return this.studentRepository.findStudentsByStudentSection_SectionId(sectionId);
 	}
 
-	public long countStudentsBySectionId(@PathVariable("section_id") Integer sectionId) {
+	public long countStudentsBySectionId(Integer sectionId) {
 		return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
 	}
 

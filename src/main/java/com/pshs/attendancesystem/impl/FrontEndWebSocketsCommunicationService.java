@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.services;
+package com.pshs.attendancesystem.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

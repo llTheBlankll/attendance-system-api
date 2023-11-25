@@ -3,6 +3,7 @@ package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.messages.GuardianMessages;
 import com.pshs.attendancesystem.repositories.GuardianRepository;
 import com.pshs.attendancesystem.services.GuardianService;
 import org.springframework.stereotype.Service;
@@ -75,8 +76,15 @@ public class GuardianServiceImpl implements GuardianService {
 	}
 
 	@Override
-	public void deleteGuardianById(Integer guardianId) {
-		this.guardianRepository.deleteById(guardianId);
+	public String deleteGuardianById(Integer guardianId) {
+		if (guardianId == null) {
+			return GuardianMessages.GUARDIAN_NULL;
+		} else if (!guardianRepository.existsById(guardianId)) {
+			return GuardianMessages.GUARDIAN_NOT_FOUND;
+		}
+
+		guardianRepository.deleteById(guardianId);
+		return GuardianMessages.GUARDIAN_DELETED;
 	}
 
 	@Override

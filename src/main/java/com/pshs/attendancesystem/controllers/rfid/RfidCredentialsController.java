@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.rfid;
 
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@Tag(name = "RFID Controller", description = "The RFID Controller Endpoints")
+@Tag(name = "RFID Credentials", description = "The RFID Controller Endpoints")
 @RestController
-@RequestMapping("/api/v1/rfid")
+@RequestMapping("/v1/rfid")
 @PreAuthorize("hasRole('RFID_DEVICE')")
 public class RfidCredentialsController {
 
@@ -32,11 +32,12 @@ public class RfidCredentialsController {
 	 */
 	@Operation(
 		summary = "Retrieves all the rfid credentials",
-		description = "Retrieves all"
+		description = "Retrieves all the rfid credentials. " +
+			"Returns an empty list if there are no rfid credentials in the database."
 	)
-	@GetMapping("/credentials")
+	@GetMapping("/all")
 	public Iterable<RfidCredentials> getAllScan() {
-		return this.rfidService.getAllRfidCredentials();
+		return rfidService.getAllRfidCredentials();
 	}
 
 	/**
@@ -48,18 +49,20 @@ public class RfidCredentialsController {
 	 */
 	@Operation(
 		summary = "Retrieves an RfidCredentials object based on the provided type and data",
-		description = "Retrieves an RfidCredentials object based on the provided type and data",
+		description = "Retrieves an RfidCredentials object based on the provided type and data. " +
+			"If it is hash, you should provide appropriate hashed value. " +
+			"If it is studentLrn, you should provide appropriate student lrn. ",
 		parameters = {
-			@Parameter(name = "type", description = "The type of data to search for (hash or studentLrn)"),
-			@Parameter(name = "data", description = "The data to search for (hashed value or studentLrn)")
+			@Parameter(name = "type", description = "The type of data to search for (hash or student lrn)"),
+			@Parameter(name = "data", description = "The data to search for (hashed value or student lrn)")
 		}
 	)
 	@GetMapping("/get")
 	public Optional<RfidCredentials> getStudent(@RequestParam String type, @RequestParam String data) {
 		if (type.equals("hash")) {
-			return this.rfidService.getRfidCredentialByHashedLrn(data);
+			return rfidService.getRfidCredentialByHashedLrn(data);
 		} else {
-			return this.rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
+			return rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
 		}
 	}
 }

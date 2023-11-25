@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.Configuration;
+import com.pshs.attendancesystem.config.Configuration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
@@ -12,8 +12,6 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -90,8 +88,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public Page<Attendance> getAllAttendances() {
-		return attendanceRepository.findAll(PageRequest.of(1, Configuration.Pagination.DEFAULT_PAGE_SIZE));
+	public Iterable<Attendance> getAllAttendances() {
+		return attendanceRepository.findAll();
 	}
 
 	/**
@@ -204,22 +202,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return false;
 	}
 
-	/**
-	 * Retrieves the attendance record for a student based on their LRN (Learner Reference Number) for today.
-	 *
-	 * @param studentLrn the LRN of the student
-	 * @return the attendance record for the student today, or null if the student does not exist
-	 */
-	@Override
-	public Attendance getStudentAttendanceToday(Long studentLrn) {
-		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
-		if (attendance.isPresent()) {
-			return attendance.orElse(null);
-		}
-
-		return null;
-	}
-
 	@Override
 	public String deleteAllAttendance() {
 		this.attendanceRepository.deleteAll();
@@ -285,7 +267,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Retrieves the attendance records of a student between the specified start and end dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param dateRange      the start and end dates of the range
+	 * @param dateRange  the start and end dates of the range
 	 * @return an iterable collection of Attendance objects representing the student's attendance between the specified dates
 	 */
 	@Override
@@ -297,14 +279,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Retrieves the total count of student attendance records between the specified dates.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @param startDate  the start date of the range
-	 * @param endDate    the end date of the range
+	 * @param dateRange  the start and end dates of the range
 	 * @param status     the attendance status to filter by
 	 * @return the total count of student attendance records
 	 */
 	@Override
-	public long getAllCountOfAttendanceBetweenDate(long studentLrn, LocalDate startDate, LocalDate endDate, Status status) {
-		return attendanceRepository.countByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, startDate, endDate, status);
+	public long getAllCountOfAttendanceBetweenDate(long studentLrn, BetweenDate dateRange, Status status) {
+		return attendanceRepository.countByStudentLrnAndDateBetweenAndAttendanceStatus(studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
 
 	/**
@@ -323,7 +304,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *
 	 * @param sectionId        the ID of the section
 	 * @param attendanceStatus the desired attendance status
-	 * @param dateRange            the date range
+	 * @param dateRange        the date range
 	 * @return an iterable collection of Attendance objects representing the student attendance records
 	 */
 	@Override
@@ -333,7 +314,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
-		return null;
+		return attendanceRepository.findByStudent_StudentSection_SectionIdAndDateBetween(sectionId, date, date);
 	}
 
 	@Override
