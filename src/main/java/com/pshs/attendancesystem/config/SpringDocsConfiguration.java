@@ -1,11 +1,21 @@
 package com.pshs.attendancesystem.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SpringDocsConfiguration {
+
+	@Bean
+	public OpenAPI openAPI() {
+		Info info = new Info();
+		info.setTitle(APIConfiguration.SPRING_DOCS_TITLE);
+		info.setDescription(APIConfiguration.SPRING_DOCS_DESCRIPTION);
+		return new OpenAPI().info(info);
+	}
 
 	@Bean
 	public GroupedOpenApi allControllersGroup() {

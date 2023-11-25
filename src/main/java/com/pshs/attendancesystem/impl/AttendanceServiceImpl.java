@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.config.Configuration;
+import com.pshs.attendancesystem.config.APIConfiguration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
@@ -109,7 +109,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 			}
 
 			LocalTime lateArrivalTime;
-			LocalTime onTimeArrival = Configuration.Attendance.onTimeArrival;
+			LocalTime onTimeArrival = APIConfiguration.Attendance.onTimeArrival;
 
 			Time currentTime = new Time(System.currentTimeMillis());
 			LocalTime currentLocalTime = currentTime.toLocalTime();
@@ -118,9 +118,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 			// Flag Ceremony Time
 			if (isTodayMonday()) {
-				lateArrivalTime = Configuration.Attendance.flagCeremonyTime;
+				lateArrivalTime = APIConfiguration.Attendance.flagCeremonyTime;
 			} else {
-				lateArrivalTime = Configuration.Attendance.lateTimeArrival;
+				lateArrivalTime = APIConfiguration.Attendance.lateTimeArrival;
 			}
 
 			// Check if the data is valid.
