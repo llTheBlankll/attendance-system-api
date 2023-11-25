@@ -31,7 +31,7 @@ public class SectionController {
 	)
 	@GetMapping("/all")
 	public Iterable<Section> getAllSection() {
-		return this.sectionService.getAllSection();
+		return sectionService.getAllSection();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class SectionController {
 	)
 	@GetMapping("/delete/id/{id}")
 	public String deleteSectionById(@PathVariable Integer id) {
-		return this.sectionService.deleteSectionById(id);
+		return sectionService.deleteSectionById(id);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class SectionController {
 	)
 	@PostMapping("/delete")
 	public String deleteSection(@RequestBody Section section) {
-		return this.sectionService.deleteSection(section);
+		return sectionService.deleteSection(section);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class SectionController {
 	)
 	@PostMapping("/create")
 	public String addSection(@RequestBody Section section) {
-		return this.sectionService.addSection(section);
+		return sectionService.addSection(section);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SectionController {
 	)
 	@PostMapping("/update")
 	public String updateSection(@RequestBody Section section) {
-		return this.sectionService.updateSection(section);
+		return sectionService.updateSection(section);
 	}
 
 	// SEARCH FUNCTION
@@ -121,9 +121,9 @@ public class SectionController {
 		}
 
 		if (type.equals("teacher")) {
-			return this.sectionService.getSectionByTeacherLastName(search);
+			return sectionService.getSectionByTeacherLastName(search);
 		} else if (type.equals("section name")) {
-			return this.sectionService.searchSectionByName(search);
+			return sectionService.searchSectionByName(search);
 		}
 
 		return Collections.emptyList();
@@ -138,6 +138,6 @@ public class SectionController {
 	)
 	@GetMapping("/get")
 	public Section getSection(@RequestParam("sectionId") Integer sectionId) {
-		return this.sectionService.getSectionBySectionId(sectionId);
+		return sectionService.getSectionBySectionId(sectionId);
 	}
 }

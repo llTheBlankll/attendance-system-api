@@ -29,7 +29,7 @@ public class GradeLevelController {
 	)
 	@GetMapping("/all")
 	public Iterable<Gradelevel> getAllGradeLevel() {
-		return this.gradeLevelService.getAllGradeLevel();
+		return gradeLevelService.getAllGradeLevel();
 	}
 
 	/**
@@ -45,9 +45,9 @@ public class GradeLevelController {
 			@Parameter(name = "gradelevel", description = "The grade level to be added")
 		}
 	)
-	@PostMapping("/create")
+	@PostMapping(value = "/create", produces = "text/plain")
 	public String addGradeLevel(@RequestBody Gradelevel gradelevel) {
-		return this.gradeLevelService.addGradeLevel(gradelevel);
+		return gradeLevelService.addGradeLevel(gradelevel);
 	}
 
 	/**
@@ -63,9 +63,9 @@ public class GradeLevelController {
 			@Parameter(name = "gradelevel", description = "The grade level object to be deleted")
 		}
 	)
-	@PostMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteGradeLevel(@RequestBody Gradelevel gradelevel) {
-		return this.gradeLevelService.deleteGradeLevel(gradelevel);
+		return gradeLevelService.deleteGradeLevel(gradelevel);
 	}
 
 	/**
@@ -78,20 +78,17 @@ public class GradeLevelController {
 		summary = "Delete grade level by ID",
 		description = "Delete grade level by ID from the system"
 	)
-	@PostMapping("/delete/{id}")
-	public String deleteGradeLevelById(@PathVariable Integer id) {
-		return this.gradeLevelService.deleteGradeLevelById(id);
+	@PostMapping(value = "/delete/id", produces = "text/plain")
+	public String deleteGradeLevelById(@RequestParam Integer id) {
+		return gradeLevelService.deleteGradeLevelById(id);
 	}
 
 	@Operation(
 		summary = "Update grade level",
-		description = "Update grade level in the database.",
-		parameters = {
-			@Parameter(name = "gradelevel", description = "The grade level object to be updated")
-		}
+		description = "Update grade level in the database."
 	)
-	@PostMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
-		return this.gradeLevelService.updateGradeLevel(gradelevel);
+		return gradeLevelService.updateGradeLevel(gradelevel);
 	}
 }

@@ -28,7 +28,7 @@ public class SubjectsController {
 	)
 	@GetMapping("/all")
 	public Iterable<Subject> getAllSubjects() {
-		return this.subjectService.getAllSubjects();
+		return subjectService.getAllSubjects();
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class SubjectsController {
 	 */
 	@GetMapping("/search/subject-name/{subject-name}")
 	public Iterable<Subject> searchSubjects(@PathVariable("subject-name") String subjectName) {
-		return this.subjectService.searchSubjectsByName(subjectName);
+		return subjectService.searchSubjectsByName(subjectName);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class SubjectsController {
 	)
 	@GetMapping("/search/subject-description/{subject-description}")
 	public Iterable<Subject> searchSubjectsByDescription(@PathVariable("subject-description") String subjectDescription) {
-		return this.subjectService.searchSubjectsByDescription(subjectDescription);
+		return subjectService.searchSubjectsByDescription(subjectDescription);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class SubjectsController {
 	)
 	@PostMapping("/create")
 	public void createSubject(@RequestBody Subject subject) {
-		this.subjectService.createSubject(subject);
+		subjectService.createSubject(subject);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class SubjectsController {
 	)
 	@PostMapping("/update")
 	public void updateSubject(@RequestBody Subject subject) {
-		this.subjectService.updateSubject(subject);
+		subjectService.updateSubject(subject);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class SubjectsController {
 	)
 	@PostMapping("/delete")
 	public void deleteSubject(@RequestBody Subject subject) {
-		this.subjectService.deleteSubject(subject);
+		subjectService.deleteSubject(subject);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class SubjectsController {
 	)
 	@GetMapping("/get/{subject-id}")
 	public Subject getSubjectById(@PathVariable("subject-id") Integer subjectId) {
-		return this.subjectService.getSubject(subjectId);
+		return subjectService.getSubject(subjectId);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class SubjectsController {
 	)
 	@GetMapping("/get-by-name/{subject-name}")
 	public Subject getSubjectByName(@PathVariable("subject-name") String subjectName) {
-		return this.subjectService.getSubjectByName(subjectName);
+		return subjectService.getSubjectByName(subjectName);
 	}
 
 	/**
@@ -161,6 +161,6 @@ public class SubjectsController {
 	)
 	@PostMapping("/delete/{id}")
 	public void deleteSubjectById(@PathVariable("id") Integer id) {
-		this.subjectService.deleteSubjectById(id);
+		subjectService.deleteSubjectById(id);
 	}
 }

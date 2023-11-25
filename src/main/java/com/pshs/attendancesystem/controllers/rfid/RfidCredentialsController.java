@@ -37,7 +37,7 @@ public class RfidCredentialsController {
 	)
 	@GetMapping("/all")
 	public Iterable<RfidCredentials> getAllScan() {
-		return this.rfidService.getAllRfidCredentials();
+		return rfidService.getAllRfidCredentials();
 	}
 
 	/**
@@ -60,9 +60,9 @@ public class RfidCredentialsController {
 	@GetMapping("/get")
 	public Optional<RfidCredentials> getStudent(@RequestParam String type, @RequestParam String data) {
 		if (type.equals("hash")) {
-			return this.rfidService.getRfidCredentialByHashedLrn(data);
+			return rfidService.getRfidCredentialByHashedLrn(data);
 		} else {
-			return this.rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
+			return rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
 		}
 	}
 }

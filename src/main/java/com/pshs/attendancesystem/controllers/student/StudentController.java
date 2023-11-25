@@ -23,7 +23,7 @@ public class StudentController {
 	 */
 	@GetMapping("/all")
 	public Iterable<Student> getAllStudent() {
-		return this.studentService.getAllStudent();
+		return studentService.getAllStudent();
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class StudentController {
 	 */
 	@PostMapping("/create")
 	public String addStudent(@RequestBody Student student) {
-		return this.studentService.addStudent(student);
+		return studentService.addStudent(student);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class StudentController {
 	 */
 	@PostMapping("/delete")
 	public String deleteStudent(@RequestBody Student student) {
-		return this.studentService.deleteStudent(student);
+		return studentService.deleteStudent(student);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class StudentController {
 	 */
 	@PostMapping("/delete/lrn/{id}")
 	public String deleteStudentById(@PathVariable Long id) {
-		return this.studentService.deleteStudentById(id);
+		return studentService.deleteStudentById(id);
 	}
 
 	// SEARCH FUNCTION
@@ -69,7 +69,7 @@ public class StudentController {
 	 */
 	@GetMapping("/search/gradelevel/name/{gradeName}")
 	public Iterable<Student> getStudentByGradeLevel(@PathVariable("gradeName") String gradeName) {
-		return this.studentService.getStudentByGradeLevel(gradeName);
+		return studentService.getStudentByGradeLevel(gradeName);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class StudentController {
 	 */
 	@GetMapping("/search/lrn/{lrn}")
 	public Student getStudentById(@PathVariable("lrn") Long lrn) {
-		return this.studentService.getStudentById(lrn);
+		return studentService.getStudentById(lrn);
 	}
 
 	/**
@@ -91,16 +91,16 @@ public class StudentController {
 	 */
 	@PostMapping("/update")
 	public String updateStudent(@RequestBody Student student) {
-		return this.studentService.updateStudent(student);
+		return studentService.updateStudent(student);
 	}
 
 	@GetMapping("/get/students/{section_id}")
 	public Iterable<Student> getAllStudentWithSectionId(@PathVariable("section_id") Integer sectionId) {
-		return this.studentService.getAllStudentWithSectionId(sectionId);
+		return studentService.getAllStudentWithSectionId(sectionId);
 	}
 
 	@GetMapping("/count/students/{section_id}")
 	public long countStudentsBySectionId(@PathVariable("section_id") Integer sectionId) {
-		return this.studentService.countStudentsBySectionId(sectionId);
+		return studentService.countStudentsBySectionId(sectionId);
 	}
 }
