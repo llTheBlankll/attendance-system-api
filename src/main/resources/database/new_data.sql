@@ -7,10 +7,7 @@ VALUES (11, 'Grade 11'),
 INSERT INTO Subjects (name, description)
 VALUES ('General Mathematics', 'Hard Subject');
 
--- Add Teacher
-INSERT INTO Teachers (first_name, middle_name, last_name)
-VALUES ('Gladys', null, 'Austria');
-
--- Add Section
-INSERT INTO sections (teacher, room, grade_level, section_name)
-VALUES (1, 301, 11, 'Casimiro Del Rosario');
+-- ADD STRAND
+INSERT INTO Strand (strand_id, strand_name)
+VALUES (1, 'HUMSS'),
+       (2, 'STEM')

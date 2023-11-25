@@ -1,18 +1,15 @@
-package com.pshs.attendancesystem.controllers;
+package com.pshs.attendancesystem.controllers.fingerprint;
 
 import com.pshs.attendancesystem.entities.Fingerprint;
 import com.pshs.attendancesystem.services.FingerprintService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Fingerprint", description = "The Fingerprint Endpoints")
 @RestController
-@RequestMapping("/api/v1/fingerprint")
+@RequestMapping("/v1/fingerprint")
 public class FingerprintController {
 	private final FingerprintService fingerprintService;
 
@@ -26,7 +23,7 @@ public class FingerprintController {
 	)
 	@GetMapping("/all")
 	public Iterable<Fingerprint> getAllFingerprint() {
-		return this.fingerprintService.getAllFingerprint();
+		return fingerprintService.getAllFingerprint();
 	}
 
 	@Operation(
@@ -36,9 +33,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be created")
 		}
 	)
-	@GetMapping("/create")
+	@PostMapping(value = "/create", produces = "text/plain")
 	public String createFingerprint(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.addFingerprint(fingerprint);
+		return fingerprintService.addFingerprint(fingerprint);
 	}
 
 	@Operation(
@@ -48,9 +45,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be deleted")
 		}
 	)
-	@GetMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteFingerprint(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.deleteFingerprint(fingerprint);
+		return fingerprintService.deleteFingerprint(fingerprint);
 	}
 
 	@Operation(
@@ -60,9 +57,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be updated")
 		}
 	)
-	@GetMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateFingerprint(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.updateFingerprintByFingerprintId(fingerprint);
+		return fingerprintService.updateFingerprintByFingerprintId(fingerprint);
 	}
 
 	@Operation(
@@ -72,9 +69,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be retrieved")
 		}
 	)
-	@GetMapping("/get/fingerprint-id")
+	@PostMapping("/get/fingerprint-id")
 	public Fingerprint getFingerprint(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.getFingerprintByFingerprintId(fingerprint.getFingerprintId());
+		return fingerprintService.getFingerprintByFingerprintId(fingerprint.getFingerprintId());
 	}
 
 	@Operation(
@@ -84,9 +81,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be retrieved")
 		}
 	)
-	@GetMapping("/get/student-lrn")
+	@PostMapping("/get/student-lrn")
 	public Fingerprint getFingerprintByStudentLrn(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.getFingerprintByStudentLrn(fingerprint.getStudent().getLrn());
+		return fingerprintService.getFingerprintByStudentLrn(fingerprint.getStudent().getLrn());
 	}
 
 	@Operation(
@@ -96,9 +93,9 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be deleted")
 		}
 	)
-	@GetMapping("/delete/fingerprint-id")
+	@PostMapping(value = "/delete/fingerprint-id", produces = "text/plain")
 	public String deleteFingerprintByFingerprintId(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.deleteFingerprintByFingerprintId(fingerprint.getFingerprintId());
+		return fingerprintService.deleteFingerprintByFingerprintId(fingerprint.getFingerprintId());
 	}
 
 	@Operation(
@@ -108,8 +105,8 @@ public class FingerprintController {
 			@Parameter(name = "fingerprint", description = "The Fingerprint object to be deleted")
 		}
 	)
-	@GetMapping("/delete/student-lrn")
+	@PostMapping(value = "/delete/student-lrn", produces = "text/plain")
 	public String deleteFingerprintByStudentLrn(@RequestBody Fingerprint fingerprint) {
-		return this.fingerprintService.deleteFingerprintByStudentLrn(fingerprint.getStudent().getLrn());
+		return fingerprintService.deleteFingerprintByStudentLrn(fingerprint.getStudent().getLrn());
 	}
 }

@@ -2,7 +2,7 @@ package com.pshs.attendancesystem.entities.statistics;
 
 import com.pshs.attendancesystem.enums.Status;
 
-public class DateWithStatusLrn {
+public class DateRangeWithStatusLrn {
 
 	private BetweenDate dateRange;
 	private Status status;

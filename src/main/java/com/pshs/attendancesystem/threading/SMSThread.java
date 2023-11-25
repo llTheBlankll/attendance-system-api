@@ -22,7 +22,7 @@ public class SMSThread extends Thread {
 		try {
 			OkHttpClient client = new OkHttpClient();
 			MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-			RequestBody body = RequestBody.create(mediaType, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><request><Index>-1</Index><Phones><Phone>09998216556</Phone></Phones><Sca></Sca><Content>>Ambos Clarrise Jolia G. is on time</Content><Length>6</Length><Reserved>1</Reserved><Date>2023-11-13 23:32:14</Date></request>");
+			RequestBody body = RequestBody.create(mediaType, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><request><Index>-1</Index><Phones><Phone>09998216556</Phone></Phones><Sca></Sca><Content>Ambos Clarrise Jolia G. is on time</Content><Length>6</Length><Reserved>1</Reserved><Date>2023-11-13 23:32:14</Date></request>");
 			Request request = new Request.Builder()
 				.url("http://192.168.1.1/api/sms/send-sms")
 				.method("POST", body)
