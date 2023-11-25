@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.websocket.handlers;
 
 
-import com.pshs.attendancesystem.services.FrontEndWebSocketsCommunicationService;
+import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
