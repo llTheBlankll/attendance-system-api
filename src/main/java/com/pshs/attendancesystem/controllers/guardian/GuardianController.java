@@ -35,8 +35,8 @@ public class GuardianController {
 			@Parameter(name = "lrn", description = "The LRN of the student")
 		}
 	)
-	@GetMapping("/student/{lrn}")
-	public Iterable<Guardian> getStudentGuardiansByLrn(@PathVariable Long lrn) {
+	@GetMapping("/student/lrn")
+	public Iterable<Guardian> getStudentGuardiansByLrn(@RequestParam("lrn") Long lrn) {
 		return guardianService.getStudentGuardiansByLrn(lrn);
 	}
 
@@ -44,20 +44,17 @@ public class GuardianController {
 		summary = "Get Guardian By Last Name",
 		description = "Get Guardian by Last Name in the database.",
 		parameters = {
-			@Parameter(name = "last-name", description = "The Last Name of the Guardian object to be retrieved")
+			@Parameter(name = "name", description = "The Last Name of the Guardian object to be retrieved")
 		}
 	)
-	@GetMapping("/search/last-name/{fullName}")
-	public Iterable<Guardian> getGuardianByLastName(@PathVariable String fullName) {
+	@GetMapping("/search/full-name")
+	public Iterable<Guardian> getGuardianByLastName(@RequestParam("name") String fullName) {
 		return guardianService.searchGuardianByFullName(fullName);
 	}
 
 	@Operation(
 		summary = "Get Guardian by Student",
-		description = "Get Guardian by Student in the database.",
-		parameters = {
-			@Parameter(name = "student", description = "The Student object to be retrieved")
-		}
+		description = "Get Guardian by Student in the database."
 	)
 	@GetMapping("/student")
 	public Iterable<Guardian> getGuardiansByStudent(@RequestBody Student student) {
@@ -66,10 +63,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Create Guardian",
-		description = "Create Guardian in the database.",
-		parameters = {
-			@Parameter(name = "guardian", description = "The Guardian object to be created")
-		}
+		description = "Create Guardian in the database."
 	)
 	@PostMapping("/create")
 	public boolean createGuardian(@RequestBody Guardian guardian) {
@@ -78,10 +72,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Update Guardian",
-		description = "Update Guardian in the database.",
-		parameters = {
-			@Parameter(name = "guardian", description = "The Guardian object to be updated")
-		}
+		description = "Update Guardian in the database."
 	)
 	@PostMapping("/update")
 	public boolean updateGuardian(@RequestBody Guardian guardian) {
@@ -90,10 +81,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Delete Guardian",
-		description = "Delete Guardian in the database.",
-		parameters = {
-			@Parameter(name = "guardian", description = "The Guardian object to be deleted")
-		}
+		description = "Delete Guardian in the database."
 	)
 
 	@PostMapping("/delete")
@@ -108,9 +96,8 @@ public class GuardianController {
 			@Parameter(name = "guardian", description = "The Guardian object to be deleted")
 		}
 	)
-
-	@PostMapping("/delete/{guardianId}")
-	public void deleteGuardianById(@PathVariable Integer guardianId) {
-		guardianService.deleteGuardianById(guardianId);
+	@PostMapping("/delete/guardian_id")
+	public String deleteGuardianById(@RequestParam("id") Integer guardianId) {
+		return guardianService.deleteGuardianById(guardianId);
 	}
 }

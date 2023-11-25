@@ -77,7 +77,7 @@ public class SpringDocsConfiguration {
 	public GroupedOpenApi rfidCredentialsControllerGroup() {
 		return GroupedOpenApi.builder()
 			.group("RFID Credentials")
-			.packagesToScan("com.pshs.attendancesystem.controllers.rfidcredentials")
+			.packagesToScan("com.pshs.attendancesystem.controllers.rfid")
 			.build();
 	}
 
