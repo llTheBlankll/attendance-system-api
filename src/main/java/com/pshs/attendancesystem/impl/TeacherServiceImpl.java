@@ -44,7 +44,18 @@ public class TeacherServiceImpl implements TeacherService {
 			return false;
 		}
 
-		this.teacherRepository.save(teacher);
+		Optional<Teacher> teacherOptional = teacherRepository.findByTeacher(
+			teacher.getFirstName(),
+			teacher.getMiddleName(),
+			teacher.getLastName()
+		);
+
+		if (teacherOptional.isPresent()) {
+			logger.info(TeacherMessages.TEACHER_ALREADY_EXISTS);
+			return false;
+		}
+
+		teacherRepository.save(teacher);
 		return true;
 	}
 
