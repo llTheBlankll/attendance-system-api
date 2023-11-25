@@ -67,14 +67,11 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Create Subject",
-		description = "Create Subject in the database.",
-		parameters = {
-			@Parameter(name = "subject", description = "The Subject object to be created")
-		}
+		description = "Create Subject in the database."
 	)
 	@PostMapping("/create")
-	public void createSubject(@RequestBody Subject subject) {
-		subjectService.createSubject(subject);
+	public String createSubject(@RequestBody Subject subject) {
+		return subjectService.createSubject(subject);
 	}
 
 	/**
@@ -84,14 +81,11 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Update Subject",
-		description = "Update Subject in the database.",
-		parameters = {
-			@Parameter(name = "subject", description = "The Subject object to be updated")
-		}
+		description = "Update Subject in the database."
 	)
 	@PostMapping("/update")
-	public void updateSubject(@RequestBody Subject subject) {
-		subjectService.updateSubject(subject);
+	public String updateSubject(@RequestBody Subject subject) {
+		return subjectService.updateSubject(subject);
 	}
 
 	/**
@@ -107,8 +101,8 @@ public class SubjectsController {
 		}
 	)
 	@PostMapping("/delete")
-	public void deleteSubject(@RequestBody Subject subject) {
-		subjectService.deleteSubject(subject);
+	public String deleteSubject(@RequestBody Subject subject) {
+		return subjectService.deleteSubject(subject);
 	}
 
 	/**
@@ -160,7 +154,7 @@ public class SubjectsController {
 		}
 	)
 	@PostMapping("/delete/id")
-	public void deleteSubjectById(@RequestParam("id") Integer id) {
-		subjectService.deleteSubjectById(id);
+	public String deleteSubjectById(@RequestParam("id") Integer id) {
+		return subjectService.deleteSubjectById(id);
 	}
 }

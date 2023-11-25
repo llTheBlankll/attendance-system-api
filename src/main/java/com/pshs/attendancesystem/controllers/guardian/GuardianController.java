@@ -97,7 +97,7 @@ public class GuardianController {
 		}
 	)
 	@PostMapping("/delete/guardian_id")
-	public void deleteGuardianById(@RequestParam("id") Integer guardianId) {
-		guardianService.deleteGuardianById(guardianId);
+	public String deleteGuardianById(@RequestParam("id") Integer guardianId) {
+		return guardianService.deleteGuardianById(guardianId);
 	}
 }

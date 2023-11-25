@@ -202,22 +202,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return false;
 	}
 
-	/**
-	 * Retrieves the attendance record for a student based on their LRN (Learner Reference Number) for today.
-	 *
-	 * @param studentLrn the LRN of the student
-	 * @return the attendance record for the student today, or null if the student does not exist
-	 */
-	@Override
-	public Attendance getStudentAttendanceToday(Long studentLrn) {
-		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
-		if (attendance.isPresent()) {
-			return attendance.orElse(null);
-		}
-
-		return null;
-	}
-
 	@Override
 	public String deleteAllAttendance() {
 		this.attendanceRepository.deleteAll();

@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.teacher;
 
+import com.pshs.attendancesystem.documentation.TeacherDocumentation;
 import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +21,7 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Get all Teachers",
-		description = "Get all Teachers in the database."
+		description = TeacherDocumentation.GET_ALL_TEACHERS
 	)
 	@GetMapping("/all")
 	public Iterable<Teacher> getAllTeachers() {
@@ -29,7 +30,7 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Get Teacher by Last Name",
-		description = "Get Teacher by Last Name in the database.",
+		description = TeacherDocumentation.GET_TEACHERS_BY_LAST_NAME,
 		parameters = {
 			@Parameter(name = "last-name", description = "The Last Name of the Teacher object to be retrieved")
 		}
@@ -41,10 +42,7 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Create Teacher",
-		description = "Create Teacher in the database.",
-		parameters = {
-			@Parameter(name = "teacher", description = "The Teacher object to be created")
-		}
+		description = TeacherDocumentation.CREATE_TEACHER
 	)
 	@PostMapping("/create")
 	public boolean createTeacher(@RequestBody Teacher teacher) {
@@ -53,31 +51,25 @@ public class TeacherController {
 
 	@Operation(
 		summary = "Update Teacher",
-		description = "Update Teacher in the database.",
-		parameters = {
-			@Parameter(name = "teacher", description = "The Teacher object to be updated")
-		}
+		description = TeacherDocumentation.UPDATE_TEACHER
 	)
 	@PostMapping("/update")
-	public void updateTeacher(@RequestBody Teacher teacher) {
-		teacherService.updateTeacher(teacher);
+	public String updateTeacher(@RequestBody Teacher teacher) {
+		return teacherService.updateTeacher(teacher);
 	}
 
 	@Operation(
 		summary = "Delete Teacher",
-		description = "Delete Teacher in the database.",
-		parameters = {
-			@Parameter(name = "teacher", description = "The Teacher object to be deleted")
-		}
+		description = TeacherDocumentation.DELETE_TEACHER
 	)
 	@PostMapping("/delete")
-	public void deleteTeacher(@RequestBody Teacher teacher) {
-		teacherService.deleteTeacher(teacher.getId());
+	public String deleteTeacher(@RequestBody Teacher teacher) {
+		return teacherService.deleteTeacher(teacher.getId());
 	}
 
 	@Operation(
 		summary = "Get Teacher by ID",
-		description = "Get Teacher by ID in the database.",
+		description = TeacherDocumentation.GET_TEACHER_BY_ID,
 		parameters = {
 			@Parameter(name = "teacher-id", description = "The ID of the Teacher object to be retrieved")
 		}

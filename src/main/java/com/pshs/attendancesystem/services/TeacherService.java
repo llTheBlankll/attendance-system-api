@@ -3,7 +3,7 @@ package com.pshs.attendancesystem.services;
 import com.pshs.attendancesystem.entities.Teacher;
 
 public interface TeacherService {
-	void deleteTeacher(Integer teacherId);
+	String deleteTeacher(Integer teacherId);
 
 	boolean createTeacher(Teacher teacher);
 
@@ -11,7 +11,7 @@ public interface TeacherService {
 
 	Iterable<Teacher> getTeacherByLastName(String lastName);
 
-	void updateTeacher(Teacher teacher);
+	String updateTeacher(Teacher teacher);
 
 	Iterable<Teacher> getAllTeachers();
 }
