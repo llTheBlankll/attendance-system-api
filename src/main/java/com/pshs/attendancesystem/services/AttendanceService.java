@@ -1,6 +1,8 @@
 package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
 import com.pshs.attendancesystem.enums.Status;
@@ -11,9 +13,9 @@ public interface AttendanceService {
 
 	Iterable<Attendance> getAllAttendances();
 
-	Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(LocalDate startDate, LocalDate endDate, Status status);
+	Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(BetweenDate dateRange, Status status);
 
-	Iterable<Attendance> getAllAttendanceBetweenDate(LocalDate startDate, LocalDate endDate);
+	Iterable<Attendance> getAllAttendanceBetweenDate(BetweenDate dateRange);
 
 	Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn, BetweenDate dateRange, Status status);
 
@@ -37,7 +39,7 @@ public interface AttendanceService {
 
 	long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date);
 
-	long getAllCountOfAttendanceBetweenDate(LocalDate startDate, LocalDate endDate, Status status);
+	long getAllCountOfAttendanceBetweenDate(BetweenDate dateRange, Status status);
 
 	long getAllCountOfAttendanceBetweenDate(long studentLrn, BetweenDate dateRange, Status status);
 
@@ -46,6 +48,8 @@ public interface AttendanceService {
 	long countAttendanceBetweenDate(BetweenDate dateRange);
 
 	long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange);
+	long countByStudentStrandAndDate(Strand strand, LocalDate date, Status status);
+	long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date);
 
 	Status createAttendance(Long studentLrn);
 

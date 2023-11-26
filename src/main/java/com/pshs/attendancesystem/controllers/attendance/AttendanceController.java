@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
-    private static final String PRINCIPAL_ROLE = "PRINCIPAL";
 
     public AttendanceController(AttendanceServiceImpl attendanceService) {
         this.attendanceService = attendanceService;

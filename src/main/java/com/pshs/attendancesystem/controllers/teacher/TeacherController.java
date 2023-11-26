@@ -53,7 +53,7 @@ public class TeacherController {
 		summary = "Update Teacher",
 		description = TeacherDocumentation.UPDATE_TEACHER
 	)
-	@PostMapping("/update")
+	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateTeacher(@RequestBody Teacher teacher) {
 		return teacherService.updateTeacher(teacher);
 	}
@@ -62,7 +62,7 @@ public class TeacherController {
 		summary = "Delete Teacher",
 		description = TeacherDocumentation.DELETE_TEACHER
 	)
-	@PostMapping("/delete")
+	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteTeacher(@RequestBody Teacher teacher) {
 		return teacherService.deleteTeacher(teacher.getId());
 	}
