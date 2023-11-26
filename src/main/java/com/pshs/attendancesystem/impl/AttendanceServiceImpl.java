@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.config.APIConfiguration;
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
@@ -416,5 +417,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public long countByStudentStrandAndDate(Strand strand, LocalDate date, Status status) {
 		return this.attendanceRepository.countByStudent_StudentSection_StrandAndDateAndAttendanceStatus(strand, date, status);
+	}
+
+	@Override
+	public long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date) {
+		return this.attendanceRepository.countByStudent_StudentGradeLevelAndDateAndAttendanceStatus(gradeLevel, date, status);
 	}
 }
