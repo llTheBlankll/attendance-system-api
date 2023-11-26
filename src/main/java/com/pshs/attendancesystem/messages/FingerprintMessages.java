@@ -1,7 +1,8 @@
 package com.pshs.attendancesystem.messages;
 
 public class FingerprintMessages {
-
+	private FingerprintMessages() {
+	}
 	public static final String FINGERPRINT_NOT_FOUND = "Fingerprint does not exist.";
 	public static final String FINGERPRINT_EXISTS = "Fingerprint already exists.";
 	public static final String FINGERPRINT_CREATED = "Fingerprint was created.";

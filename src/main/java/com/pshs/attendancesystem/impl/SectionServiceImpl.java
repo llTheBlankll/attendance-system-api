@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.services.SectionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -18,7 +19,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	public Iterable<Section> getAllSection() {
+	public List<Section> getAllSection() {
 		return this.sectionRepository.findAll();
 	}
 
