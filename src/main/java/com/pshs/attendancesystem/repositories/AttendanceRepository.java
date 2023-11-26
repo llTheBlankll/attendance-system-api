@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.repositories;
 
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -49,6 +50,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
 	long countByStudent_StudentSection_SectionIdAndDate(Integer sectionId, LocalDate date);
 
+	long countByStudent_StudentSection_StrandAndDateAndAttendanceStatus(Strand strand, LocalDate date, Status status);
 
 	/**
 	 * Updates the time when the time the student was out of the school.

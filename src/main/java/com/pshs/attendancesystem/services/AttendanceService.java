@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Attendance;
+import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
 import com.pshs.attendancesystem.enums.Status;
@@ -46,6 +47,7 @@ public interface AttendanceService {
 	long countAttendanceBetweenDate(BetweenDate dateRange);
 
 	long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange);
+	long countByStudentStrandAndDate(Strand strand, LocalDate date, Status status);
 
 	Status createAttendance(Long studentLrn);
 

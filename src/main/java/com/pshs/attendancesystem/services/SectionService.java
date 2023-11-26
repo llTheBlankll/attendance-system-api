@@ -2,8 +2,10 @@ package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Section;
 
+import java.util.List;
+
 public interface SectionService {
-	Iterable<Section> getAllSection();
+	List<Section> getAllSection();
 
 	String deleteSectionById(Integer id);
 

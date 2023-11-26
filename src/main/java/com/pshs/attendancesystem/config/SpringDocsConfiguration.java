@@ -18,6 +18,13 @@ public class SpringDocsConfiguration {
 	}
 
 	@Bean
+	public GroupedOpenApi attendanceChartControllerGroup() {
+		return GroupedOpenApi.builder()
+			.group("Attendance Chart")
+			.packagesToScan("com.pshs.attendancesystem.controllers.attendance.chart")
+			.build();
+	}
+	@Bean
 	public GroupedOpenApi allControllersGroup() {
 		return GroupedOpenApi.builder()
 			.group("All")
