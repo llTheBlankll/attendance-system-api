@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.attendance.statistics.chart;
 
+import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.statistics.BetweenDate;
@@ -73,6 +74,17 @@ public class AttendanceChartController {
 		return countAttendances;
 	}
 
+	private List<Long> getChartGradeLevelWeek(@RequestBody Gradelevel gradeLevel, BetweenDate dateRange, Status status) {
+		List<Long> countAttendances = new ArrayList<>();
+		for (LocalDate date = dateRange.getStartDate();
+		     date.isBefore(dateRange.getEndDate().plusDays(1));
+		     date = date.plusDays(1)) {
+			attendanceService.countByStudentGradeLevelByStatusAndDate(gradeLevel, status, date);
+		}
+
+		return countAttendances;
+	}
+
 
 	@PostMapping("/section/week")
 	public List<Long> getChartSectionWeek(@RequestBody Section section, @RequestParam Status status) {
@@ -123,6 +135,33 @@ public class AttendanceChartController {
 	public List<Long> getChartStrandYear(@RequestBody Strand strand, @RequestParam Status status) {
 		return countStrandAttendance(
 			strand,
+			new BetweenDate(startYear, endYear),
+			status
+		);
+	}
+
+	@PostMapping("/gradelevel/week")
+	public List<Long> getChartGradeLevelWeek(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
+		return getChartGradeLevelWeek(
+			gradeLevel,
+			new BetweenDate(startWeek, endWeek),
+			status
+		);
+	}
+
+	@PostMapping("/gradelevel/month")
+	public List<Long> getChartGradeLevelMonth(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
+		return getChartGradeLevelWeek(
+			gradeLevel,
+			new BetweenDate(startMonth, endMonth),
+			status
+		);
+	}
+
+	@PostMapping("/gradelevel/year")
+	public List<Long> getChartGradeLevelYear(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
+		return getChartGradeLevelWeek(
+			gradeLevel,
 			new BetweenDate(startYear, endYear),
 			status
 		);

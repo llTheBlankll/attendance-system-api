@@ -6,14 +6,14 @@ CREATE TABLE Strand
 
 -- * GRADE LEVELS TABLE
 CREATE TABLE GradeLevels(
-                            grade_level  SERIAL PRIMARY KEY,
-                            grade_name   VARCHAR(255) NOT NULL,
-                            grade_strand INT,
-                            CONSTRAINT gradelevels_grade_strand_fk FOREIGN KEY (grade_strand) REFERENCES Strand (strand_id)
+    grade_level  SERIAL PRIMARY KEY,
+    grade_name   VARCHAR(255) NOT NULL,
+    grade_strand INT,
+    CONSTRAINT gradelevels_grade_strand_fk FOREIGN KEY (grade_strand) REFERENCES Strand (strand_id)
 );
 
 -- * Create enum types for each table.
-CREATE TYPE Status AS ENUM ('LATE','ONTIME');
+CREATE TYPE Status AS ENUM ('LATE','ONTIME', 'OUT', 'ABSENT');
 
 -- CREATE A CAST, The CREATE CAST solution does not seem to work when the enum
 -- is used as an argument of a JPA Repository. E.g.
