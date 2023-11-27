@@ -164,6 +164,11 @@ public class StudentServiceImpl implements StudentService {
 		return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
 	}
 
+	@Override
+	public Iterable<Student> existsAttendanceToday(Long lrn) {
+		return null;
+	}
+
 	/**
 	 * Retrieves a student by their unique learning resource number (LRN).
 	 *

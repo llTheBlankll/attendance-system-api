@@ -10,6 +10,7 @@ public interface StudentService {
 	String deleteStudentById(Long id);
 
 	Iterable<Student> getStudentByGradeLevel(String gradeLevel);
+	Iterable<Student> existsAttendanceToday(Long lrn);
 
 	Student getStudentById(Long lrn);
 

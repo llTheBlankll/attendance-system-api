@@ -53,6 +53,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
 	long countByStudent_StudentSection_StrandAndDateAndAttendanceStatus(Strand strand, LocalDate date, Status status);
 	long countByStudent_StudentGradeLevelAndDateAndAttendanceStatus(Gradelevel studentGradeLevel, LocalDate date, Status status);
+	boolean existsByStudentLrnAndDate(Long studentLrn, LocalDate date);
 
 	/**
 	 * Updates the time when the time the student was out of the school.

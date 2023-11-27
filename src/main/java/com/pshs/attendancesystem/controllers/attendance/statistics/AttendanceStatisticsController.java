@@ -5,6 +5,7 @@ import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.statistics.*;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.AttendanceServiceImpl;
+import com.pshs.attendancesystem.impl.ConfigurationService;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
@@ -51,8 +52,8 @@ public class AttendanceStatisticsController {
 
 
 	public AttendanceStatisticsController(AttendanceRepository attendanceRepository,
-	                                      StudentRepository studentRepository) {
-		attendanceService = new AttendanceServiceImpl(attendanceRepository, studentRepository);
+	                                      StudentRepository studentRepository, ConfigurationService configurationService) {
+		attendanceService = new AttendanceServiceImpl(attendanceRepository, studentRepository, configurationService);
 	}
 
 	/**

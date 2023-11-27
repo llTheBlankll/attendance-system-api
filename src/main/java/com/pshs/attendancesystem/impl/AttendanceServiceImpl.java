@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.config.APIConfiguration;
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Strand;
@@ -28,11 +27,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	private final AttendanceRepository attendanceRepository;
 	private final StudentRepository studentRepository;
+	private final ConfigurationService configurationService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public AttendanceServiceImpl(AttendanceRepository attendanceRepository, StudentRepository studentRepository) {
+	public AttendanceServiceImpl(AttendanceRepository attendanceRepository, StudentRepository studentRepository, ConfigurationService configurationService) {
 		this.attendanceRepository = attendanceRepository;
 		this.studentRepository = studentRepository;
+		this.configurationService = configurationService;
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 			}
 
 			LocalTime lateArrivalTime;
-			LocalTime onTimeArrival = APIConfiguration.Attendance.onTimeArrival;
+			LocalTime onTimeArrival = configurationService.getOnTimeArrival();
 
 			Time currentTime = new Time(System.currentTimeMillis());
 			LocalTime currentLocalTime = currentTime.toLocalTime();
@@ -120,9 +121,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 			// Flag Ceremony Time
 			if (isTodayMonday()) {
-				lateArrivalTime = APIConfiguration.Attendance.flagCeremonyTime;
+				lateArrivalTime = configurationService.getFlagCeremonyTime();
 			} else {
-				lateArrivalTime = APIConfiguration.Attendance.lateTimeArrival;
+				lateArrivalTime = configurationService.getLateTimeArrival();
 			}
 
 			// Check if the data is valid.
@@ -142,7 +143,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 			attendance.setTime(Time.valueOf(LocalTime.now()));
 			attendance.setDate(LocalDate.now());
-			attendance.setSection(student.get().getStudentSection());
 
 			this.attendanceRepository.save(attendance);
 
@@ -422,5 +422,19 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date) {
 		return this.attendanceRepository.countByStudent_StudentGradeLevelAndDateAndAttendanceStatus(gradeLevel, date, status);
+	}
+
+	@Override
+	public boolean existsByStudentLrnAndDate(Long studentLrn, LocalDate date) {
+		return this.attendanceRepository.existsByStudentLrnAndDate(studentLrn, date);
+	}
+
+	@Override
+	public void setAsAbsent(Student student, LocalDate date) {
+		Attendance attendance = new Attendance();
+		attendance.setDate(date);
+		attendance.setStudent(student);
+		attendance.setAttendanceStatus(Status.ABSENT);
+		this.attendanceRepository.save(attendance);
 	}
 }
