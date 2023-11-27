@@ -58,17 +58,7 @@ public class AttendanceChartController {
 	private List<Long> countStrandAttendance(@RequestBody Strand strand, BetweenDate dateRange, Status status) {
 		List<Long> countAttendances = new ArrayList<>();
 		for (LocalDate date = dateRange.getStartDate(); date.isBefore(dateRange.getEndDate().plusDays(1)); date = date.plusDays(1)) {
-			switch (status) {
-				case LATE -> countAttendances.add(
-					attendanceService.countByStudentStrandAndDate(strand, date, Status.LATE)
-				);
-
-				case ONTIME -> countAttendances.add(
-					attendanceService.countByStudentStrandAndDate(strand, date, Status.ONTIME)
-				);
-
-				default -> countAttendances.add(0L);
-			}
+			countAttendances.add(attendanceService.countByStudentStrandAndDate(strand, date, status));
 		}
 
 		return countAttendances;
@@ -79,7 +69,7 @@ public class AttendanceChartController {
 		for (LocalDate date = dateRange.getStartDate();
 		     date.isBefore(dateRange.getEndDate().plusDays(1));
 		     date = date.plusDays(1)) {
-			attendanceService.countByStudentGradeLevelByStatusAndDate(gradeLevel, status, date);
+			countAttendances.add(attendanceService.countByStudentGradeLevelByStatusAndDate(gradeLevel, status, date));
 		}
 
 		return countAttendances;
