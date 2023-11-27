@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.config;
 
+import com.pshs.attendancesystem.impl.ConfigurationService;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springdoc.core.models.GroupedOpenApi;
@@ -9,11 +10,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SpringDocsConfiguration {
 
+	private final ConfigurationService configurationService;
+
+	public SpringDocsConfiguration(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
 	@Bean
 	public OpenAPI openAPI() {
 		Info info = new Info();
-		info.setTitle(APIConfiguration.SPRING_DOCS_TITLE);
-		info.setDescription(APIConfiguration.SPRING_DOCS_DESCRIPTION);
+		info.setTitle(configurationService.getSPRING_DOCS_TITLE());
+		info.setDescription(configurationService.getSPRING_DOCS_DESCRIPTION());
 		return new OpenAPI().info(info);
 	}
 
@@ -22,6 +29,14 @@ public class SpringDocsConfiguration {
 		return GroupedOpenApi.builder()
 			.group("Attendance Chart")
 			.packagesToScan("com.pshs.attendancesystem.controllers.attendance.statistics.chart")
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi configControllerGroup() {
+		return GroupedOpenApi.builder()
+			.group("Config")
+			.packagesToScan("com.pshs.attendancesystem.controllers.config")
 			.build();
 	}
 	@Bean
