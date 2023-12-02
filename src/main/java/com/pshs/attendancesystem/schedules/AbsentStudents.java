@@ -18,19 +18,14 @@ public class AbsentStudents {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final StudentService studentService;
 	private final AttendanceService attendanceService;
-	private final ConfigurationService configurationService;
-	@Value("#{APIConfig.absentSchedule}")
-	private String test;
 
-	public AbsentStudents(StudentService studentService, AttendanceService attendanceService, ConfigurationService configurationService) {
+	public AbsentStudents(StudentService studentService, AttendanceService attendanceService) {
 		this.studentService = studentService;
 		this.attendanceService = attendanceService;
-		this.configurationService = configurationService;
 	}
 
-	@Scheduled(cron = "#{APIConfig.}") // run every minute
+	@Scheduled(cron = "#{APIConfig.absentSchedule}") // run every minute
 	public void setAbsentStudentYesterday() {
-		logger.info(test);
 		LocalDate yesterday = LocalDate.now();
 		Iterable<Student> students = studentService.getAllStudent();
 		logger.info("Giving attendance to those students who are absent.");
