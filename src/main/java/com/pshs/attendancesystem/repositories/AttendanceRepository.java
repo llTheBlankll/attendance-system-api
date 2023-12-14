@@ -55,12 +55,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Query("""
 		select count(a) from Attendance a
 		where a.student.studentSection.sectionId = ?1 and a.attendanceStatus = ?2 and a.date = ?3""")
-	long countSectionIdBetweenDateAndStatus(Integer studentSectionId, Status status, LocalDate date);
+	long countSectionIdDateAndStatus(Integer studentSectionId, Status status, LocalDate date);
 
 	@Query("""
 		select count(a) from Attendance a
 		where a.student.studentSection.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
-	long countSectionIdBetweenDateAndStatus(Integer studentSectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
+	long countSectionIdBetweenDateAndStatus(Integer sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
 	@Query("select count(a) from Attendance a where a.date between ?1 and ?2")
 	long countBetweenDate(LocalDate startDate, LocalDate endDate);
