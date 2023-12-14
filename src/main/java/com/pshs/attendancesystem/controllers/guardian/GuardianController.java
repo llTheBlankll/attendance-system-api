@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Guardian", description = "The Guardian Endpoints")
-@RequestMapping("/v1/guardian")
+@RequestMapping("${api.root}/guardian")
 @RestController
 public class GuardianController {
 
