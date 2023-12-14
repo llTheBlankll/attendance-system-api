@@ -15,7 +15,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
 		select t from Teacher t
 		where t.firstName = ?1 and t.middleName like concat('%', ?2, '%') and t.lastName = ?3""")
 	Optional<Teacher> findByTeacher(String firstName, String middleName, String lastName);
-	Iterable<Teacher> findByLastNameIgnoreCase(String lastName);
+	@Query("select t from Teacher t where upper(t.lastName) = upper(?1)")
+	Iterable<Teacher> searchByLastName(String lastName);
 
-	Page<Teacher> findAll(Pageable pageable);
 }
