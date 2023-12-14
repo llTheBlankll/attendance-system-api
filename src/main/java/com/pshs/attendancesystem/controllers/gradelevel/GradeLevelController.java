@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Grade Level", description = "Manage grade levels in the system")
 @RestController
-@RequestMapping("/v1/gradelevel")
+@RequestMapping("${api.root}/gradelevel")
 public class GradeLevelController {
 
 	private final GradeLevelService gradeLevelService;

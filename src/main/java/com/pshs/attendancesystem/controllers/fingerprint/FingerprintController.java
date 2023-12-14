@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Fingerprint", description = "The Fingerprint Endpoints")
 @RestController
-@RequestMapping("/v1/fingerprint")
+@RequestMapping("${api.root}/fingerprint")
 public class FingerprintController {
 	private final FingerprintService fingerprintService;
 

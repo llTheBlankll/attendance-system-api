@@ -4,6 +4,8 @@ import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.messages.GradeLevelMessages;
 import com.pshs.attendancesystem.repositories.GradeLevelRepository;
 import com.pshs.attendancesystem.services.GradeLevelService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
+	@CachePut(value = "gradelevel", key = "#gradelevel.id")
 	public String addGradeLevel(Gradelevel gradelevel) {
 		if (!gradelevel.getGradeName().isEmpty()) {
 			gradeLevelRepository.save(gradelevel);
@@ -30,6 +33,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
+	@CacheEvict(value = "gradelevel", key = "#gradelevel.id")
 	public String deleteGradeLevel(Gradelevel gradelevel) {
 		if (gradelevel.getId() != null && this.gradeLevelRepository.existsById(gradelevel.getId())) {
 			this.gradeLevelRepository.delete(gradelevel);
@@ -40,6 +44,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
+	@CacheEvict(value = "gradelevel", key = "#id")
 	public String deleteGradeLevelById(Integer id) {
 		if (id != null && this.gradeLevelRepository.existsById(id)) {
 			this.gradeLevelRepository.deleteById(id);
@@ -50,6 +55,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
+	@CachePut(value = "gradelevel", key = "#gradelevel.id")
 	public String updateGradeLevel(Gradelevel gradelevel) {
 		if (gradelevel.getGradeName().isEmpty()) {
 			return GradeLevelMessages.GRADELEVEL_EMPTY;

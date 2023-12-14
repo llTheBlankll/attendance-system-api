@@ -4,6 +4,9 @@ import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.messages.StrandMessages;
 import com.pshs.attendancesystem.repositories.StrandRepository;
 import com.pshs.attendancesystem.services.StrandService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +25,13 @@ public class StrandServiceImpl implements StrandService {
 	}
 
 	@Override
+	@CachePut(value = "strand", key = "#strand.id")
 	public String createStrand(Strand strand) {
 		if (strand.getStrandName().isEmpty()) {
 			return StrandMessages.STRAND_NO_NAME;
 		}
 
-		if (strandRepository.existsByStrandName(strand.getStrandName())) {
+		if (strandRepository.isStrandNameExist(strand.getStrandName())) {
 			return StrandMessages.STRAND_EXISTS;
 		}
 
@@ -36,6 +40,7 @@ public class StrandServiceImpl implements StrandService {
 	}
 
 	@Override
+	@CacheEvict(value = "strand", key = "#strand.id")
 	public String deleteStrand(Strand strand) {
 		if (strand.getId() == null) {
 			return StrandMessages.STRAND_NULL;
@@ -50,11 +55,13 @@ public class StrandServiceImpl implements StrandService {
 	}
 
 	@Override
+	@Cacheable(value = "strand", key = "#strandName")
 	public Iterable<Strand> searchStrandByName(@NonNull String strandName) {
-		return this.strandRepository.findByStrandNameContainsIgnoreCase(strandName);
+		return this.strandRepository.searchStrandName(strandName);
 	}
 
 	@Override
+	@CachePut(value = "strand", key = "#strand.id")
 	public String updateStrand(Strand strand) {
 		if (strand.getId() == null) {
 			return StrandMessages.STRAND_NULL;

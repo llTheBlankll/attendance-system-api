@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name = "Attendance", description = "The Attendance Endpoints")
-@RequestMapping("/v1/attendance")
+@RequestMapping("${api.root}/attendance")
 public class AttendanceController {
 
     private final AttendanceService attendanceService;

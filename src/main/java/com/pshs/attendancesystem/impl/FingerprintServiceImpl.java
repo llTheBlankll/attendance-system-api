@@ -6,6 +6,9 @@ import com.pshs.attendancesystem.repositories.FingerprintRepository;
 import com.pshs.attendancesystem.services.FingerprintService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -20,21 +23,25 @@ public class FingerprintServiceImpl implements FingerprintService {
 	}
 
 	@Override
+	@Cacheable(value = "fingerprint", key = "#fingerprintId")
 	public Fingerprint getFingerprintByFingerprintId(@NonNull String fingerprintId) {
-		return this.fingerprintRepository.findFingerprintByFingerprintId(fingerprintId).orElse(null);
+		return this.fingerprintRepository.getFingerprintId(fingerprintId).orElse(null);
 	}
 
 	@Override
+	@Cacheable(value = "fingerprint", key = "#lrn")
 	public Fingerprint getFingerprintByStudentLrn(Long lrn) {
-		return this.fingerprintRepository.findFingerprintByStudent_Lrn(lrn).orElse(null);
+		return this.fingerprintRepository.getStudentLrn(lrn).orElse(null);
 	}
 
 	@Override
+	@Cacheable(value = "fingerprint")
 	public Iterable<Fingerprint> getAllFingerprint() {
 		return this.fingerprintRepository.findAll();
 	}
 
 	@Override
+	@CachePut(value = "fingerprint", key = "#fingerprint.fingerprintId")
 	public String addFingerprint(@NonNull Fingerprint fingerprint) {
 		if (fingerprint.getFingerprintId() != null) {
 			this.fingerprintRepository.save(fingerprint);
@@ -45,6 +52,7 @@ public class FingerprintServiceImpl implements FingerprintService {
 	}
 
 	@Override
+	@CacheEvict(value = "fingerprint", key = "#fingerprint.fingerprintId")
 	public String deleteFingerprint(@NonNull Fingerprint fingerprint) {
 		try {
 			if (fingerprint.getFingerprintId() != null) {
@@ -60,8 +68,9 @@ public class FingerprintServiceImpl implements FingerprintService {
 	}
 
 	@Override
+	@CacheEvict(value = "fingerprint", key = "#fingerprintId")
 	public String deleteFingerprintByFingerprintId(String fingerprintId) {
-		return this.fingerprintRepository.findFingerprintByFingerprintId(fingerprintId).map(
+		return this.fingerprintRepository.getFingerprintId(fingerprintId).map(
 			fingerprint -> {
 				this.fingerprintRepository.delete(fingerprint);
 				return FingerprintMessages.FINGERPRINT_DELETED;
@@ -70,8 +79,9 @@ public class FingerprintServiceImpl implements FingerprintService {
 	}
 
 	@Override
+	@CacheEvict(value = "fingerprint", key = "#lrn")
 	public String deleteFingerprintByStudentLrn(Long lrn) {
-		return this.fingerprintRepository.findFingerprintByStudent_Lrn(lrn).map(
+		return this.fingerprintRepository.getStudentLrn(lrn).map(
 			fingerprint -> {
 				this.fingerprintRepository.delete(fingerprint);
 				return FingerprintMessages.FINGERPRINT_DELETED;
@@ -80,8 +90,9 @@ public class FingerprintServiceImpl implements FingerprintService {
 	}
 
 	@Override
+	@CachePut(value = "fingerprint", key = "#fingerprint.fingerprintId")
 	public String updateFingerprintByFingerprintId(Fingerprint fingerprint) {
-		return this.fingerprintRepository.findFingerprintByFingerprintId(fingerprint.getFingerprintId()).map(
+		return this.fingerprintRepository.getFingerprintId(fingerprint.getFingerprintId()).map(
 			existingFingerprint -> {
 				this.fingerprintRepository.save(fingerprint);
 				return FingerprintMessages.FINGERPRINT_UPDATED;
