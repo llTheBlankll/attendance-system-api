@@ -101,7 +101,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	private void handleInMode(WebSocketSession session, @Nonnull RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
 		try {
-			if (credentials.getHashedLrn() != null && !this.rfidCredentialsRepository.existsByHashedLrn(credentials.getHashedLrn())) {
+			if (credentials.getHashedLrn() != null && !this.rfidCredentialsRepository.isHashedLrnExist(credentials.getHashedLrn())) {
 				response.setMessage("Invalid");
 				sendErrorMessage(session, new TextMessage(
 					mapper.writeValueAsString(response)
@@ -110,8 +110,8 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				return;
 			}
 
-			if (student.getLrn() != null && (attendanceService.checkIfAlreadyArrived(student))) {
-				Status attendanceStatus = attendanceService.getAttendanceStatusToday(student.getLrn());
+			if (student.getLrn() != null && (attendanceService.isAlreadyArrived(student))) {
+				Status attendanceStatus = attendanceService.getStatusToday(student.getLrn());
 				response.setMessage("Already arrived!");
 				response.setStudentLrn(credentials.getLrn());
 				response.setTime(Time.valueOf(LocalTime.now()));
@@ -161,8 +161,8 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	private void handleOutMode(WebSocketSession session, RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
 		try {
-			if (attendanceService.checkIfAlreadyOut(credentials.getLrn())) {
-				Status attendanceStatus = attendanceService.getAttendanceStatusToday(credentials.getLrn());
+			if (attendanceService.isAlreadyOut(credentials.getLrn())) {
+				Status attendanceStatus = attendanceService.getStatusToday(credentials.getLrn());
 				response.setMessage("Already check in");
 				response.setStatus(attendanceStatus);
 				response.setStudentLrn(credentials.getLrn());
