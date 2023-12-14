@@ -1,10 +1,12 @@
 package com.pshs.attendancesystem.schedules;
 
 import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.impl.ConfigurationService;
 import com.pshs.attendancesystem.services.AttendanceService;
 import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +24,12 @@ public class AbsentStudents {
 		this.attendanceService = attendanceService;
 	}
 
-	@Scheduled(cron = "#{@configurationService.absentSchedule}") // Run everyday at midnight
-//	@Scheduled(fixedRate = 60000)
+	@Scheduled(cron = "#{APIConfig.absentSchedule}") // run every minute
 	public void setAbsentStudentYesterday() {
-		LocalDate yesterday = LocalDate.now().minusDays(1);
+		LocalDate yesterday = LocalDate.now();
 		Iterable<Student> students = studentService.getAllStudent();
 		logger.info("Giving attendance to those students who are absent.");
 		students.forEach(student -> {
-			// If they don't have attendance yesterday (before 00:00 MIDNIGHT), set as absent.
 			if (!attendanceService.existsByStudentLrnAndDate(student.getLrn(), yesterday)) {
 				attendanceService.setAsAbsent(student, yesterday);
 			}
