@@ -2,15 +2,17 @@ package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Student;
 
+import java.time.LocalDate;
+
 public interface StudentService {
-	String addStudent(Student student);
+	String createStudent(Student student);
 
 	String deleteStudent(Student student);
 
 	String deleteStudentById(Long id);
 
 	Iterable<Student> getStudentByGradeLevel(String gradeLevel);
-	Iterable<Student> existsAttendanceToday(Long lrn);
+	boolean isStudentAttended(Long lrn, LocalDate date);
 
 	Student getStudentById(Long lrn);
 
@@ -22,5 +24,5 @@ public interface StudentService {
 
 	Iterable<Student> getAllStudent();
 
-	boolean studentExistsByLrn(Long lrn);
+	boolean isLrnExist(Long lrn);
 }
