@@ -394,7 +394,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	@Cacheable(value = "attendance", key = "#sectionId + '-' + #attendanceStatus + '-' + #date")
 	public long countAttendanceInSectionByStatusAndDate(@NonNull Integer sectionId, Status attendanceStatus, LocalDate date) {
-		return this.attendanceRepository.countSectionIdBetweenDateAndStatus(sectionId, attendanceStatus, date);
+		return this.attendanceRepository.countSectionIdDateAndStatus(sectionId, attendanceStatus, date);
 	}
 
 	/**
