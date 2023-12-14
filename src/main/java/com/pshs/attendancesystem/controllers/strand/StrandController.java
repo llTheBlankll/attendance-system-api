@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Strand", description = "The Strand Endpoints")
 @RestController
-@RequestMapping("/v1/strand")
+@RequestMapping("${api.root}/strand")
 public class StrandController {
 
 	private final StrandService strandService;

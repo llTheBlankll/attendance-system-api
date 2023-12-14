@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Tag(name = "RFID Credentials", description = "The RFID Controller Endpoints")
 @RestController
-@RequestMapping("/v1/rfid")
+@RequestMapping("${api.root}/rfid")
 @PreAuthorize("hasRole('RFID_DEVICE')")
 public class RfidCredentialsController {
 
