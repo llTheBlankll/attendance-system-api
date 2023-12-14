@@ -71,7 +71,7 @@ public class TeacherServiceImpl implements TeacherService {
 			return Collections.emptyList();
 		}
 
-		return this.teacherRepository.findByLastNameIgnoreCase(lastName);
+		return this.teacherRepository.searchByLastName(lastName);
 	}
 
 	@Override

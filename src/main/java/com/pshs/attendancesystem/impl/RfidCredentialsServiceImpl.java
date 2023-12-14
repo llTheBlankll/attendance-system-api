@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.services.RfidService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class RfidCredentialsServiceImpl implements RfidService {
 	}
 
 	@Override
+	@Cacheable(value = "rfid", key = "#lrn")
 	public Optional<RfidCredentials> getRfidCredentialByStudentLrn(Long lrn) {
 		if (lrn == null) {
 			return Optional.empty();
@@ -40,12 +42,13 @@ public class RfidCredentialsServiceImpl implements RfidService {
 	}
 
 	@Override
+	@Cacheable(value = "rfid", key = "#hashedLrn")
 	public Optional<RfidCredentials> getRfidCredentialByHashedLrn(String hashedLrn) {
 		if (hashedLrn == null) {
 			return Optional.empty();
 		}
 
-		if (!this.rfidCredentialsRepository.existsByHashedLrn(hashedLrn)) {
+		if (!this.rfidCredentialsRepository.isHashedLrnExist(hashedLrn)) {
 			logger.info(RfidMessages.HASHED_LRN_NOT_FOUND);
 			return Optional.empty();
 		}
