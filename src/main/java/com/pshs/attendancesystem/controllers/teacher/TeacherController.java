@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Teacher", description = "The Teacher Endpoints")
 @RestController
-@RequestMapping("/v1/teacher")
+@RequestMapping("${api.root}/teacher")
 public class TeacherController {
 
 	private final TeacherService teacherService;

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/attendance/stats/chart")
+@RequestMapping("${api.root}/attendance/stats/chart")
 @Tag(name = "Attendance Chart", description = "Get attendance chart data, gives List of Integers")
 public class AttendanceChartController {
 

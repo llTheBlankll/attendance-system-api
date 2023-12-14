@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.pshs</groupId>
 	<artifactId>attendance-system</artifactId>
-	<version>1.0.1-BETA</version>
+	<version>1.0.0-BETA</version>
 	<name>attendance-system</name>
 	<description>Attendance System API for PSHS</description>
 	<properties>
@@ -89,6 +89,19 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>4.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
 		</dependency>
 	</dependencies>
 

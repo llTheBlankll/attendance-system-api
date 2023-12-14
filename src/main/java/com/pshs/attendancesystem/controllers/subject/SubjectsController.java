@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Subjects", description = "The Operations related to Subjects")
 @RestController
-@RequestMapping("/v1/subject")
+@RequestMapping("${api.root}/subject")
 public class SubjectsController {
 	private final SubjectService subjectService;
 

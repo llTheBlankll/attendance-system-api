@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalTime;
 
 @RestController
-@RequestMapping("/v1/config")
+@RequestMapping("${api.root}/config")
 @Tag(name = "Config", description = "Config API")
 public class ConfigController {
 

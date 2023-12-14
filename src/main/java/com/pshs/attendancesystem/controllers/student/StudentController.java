@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Student", description = "The Student Endpoints")
 @RestController
-@RequestMapping("/v1/student")
+@RequestMapping("${api.root}/student")
 public class StudentController {
 
 	private final StudentService studentService;
@@ -34,7 +34,7 @@ public class StudentController {
 	 */
 	@PostMapping("/create")
 	public String addStudent(@RequestBody Student student) {
-		return studentService.addStudent(student);
+		return studentService.createStudent(student);
 	}
 
 	/**

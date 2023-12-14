@@ -12,11 +12,15 @@ import com.pshs.attendancesystem.security.PasswordGenerator;
 import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -73,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public boolean studentExistsByLrn(Long lrn) {
+	public boolean isLrnExist(Long lrn) {
 		return this.studentRepository.existsById(lrn);
 	}
 
@@ -83,7 +87,8 @@ public class StudentServiceImpl implements StudentService {
 	 * @param student the student object to be added
 	 * @return a message indicating the success of the operation
 	 */
-	public String addStudent(@RequestBody Student student) {
+	@CachePut(value = "student", key = "#student.lrn")
+	public String createStudent(Student student) {
 		if (student.getLrn() == null) {
 			return StudentMessages.STUDENT_INVALID_LRN;
 		}
@@ -123,6 +128,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param student the student object to be deleted
 	 * @return a string indicating the result of the deletion
 	 */
+	@CacheEvict(value = "student", key = "#student.lrn")
 	public String deleteStudent(@RequestBody Student student) {
 		if (!this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_NOT_FOUND;
@@ -138,6 +144,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param id the ID of the student to delete
 	 * @return a message indicating if the student was deleted or if they do not exist
 	 */
+	@CacheEvict(value = "student", key = "#id")
 	public String deleteStudentById(Long id) {
 		if (!this.studentRepository.existsById(id)) {
 			return StudentMessages.STUDENT_NOT_FOUND;
@@ -155,18 +162,20 @@ public class StudentServiceImpl implements StudentService {
 	 * @param gradeName the name of the grade level to search for
 	 * @return an iterable collection of Student objects
 	 */
+	@Cacheable(value = "student", key = "#gradeName")
 	public Iterable<Student> getStudentByGradeLevel(String gradeName) {
-		if (!this.studentRepository.existsByStudentGradeLevel_GradeName(gradeName)) {
+		if (!this.studentRepository.isGradeNameExist(gradeName)) {
 			Stream<Student> empty = Stream.empty();
 			return empty::iterator; // Return empty.
 		}
 
-		return this.studentRepository.findStudentsByStudentGradeLevel_GradeName(gradeName);
+		return this.studentRepository.getStudentByGradeName(gradeName);
 	}
 
 	@Override
-	public Iterable<Student> existsAttendanceToday(Long lrn) {
-		return null;
+	@Cacheable(value = "student", key = "#lrn")
+	public boolean isStudentAttended(Long lrn, LocalDate date) {
+		return studentRepository.isStudentAttended(lrn, LocalDate.now());
 	}
 
 	/**
@@ -175,6 +184,8 @@ public class StudentServiceImpl implements StudentService {
 	 * @param lrn the learning resource number of the student
 	 * @return the student with the specified LRN, or null if not found
 	 */
+	@Override
+	@Cacheable(value = "student", key = "#lrn")
 	public Student getStudentById(Long lrn) {
 		if (!this.studentRepository.existsById(lrn)) {
 			return new Student();
@@ -189,6 +200,8 @@ public class StudentServiceImpl implements StudentService {
 	 * @param student the student object to be updated
 	 * @return a string indicating the result of the update
 	 */
+	@Override
+	@CachePut(value = "student", key = "#student.lrn")
 	public String updateStudent(@RequestBody Student student) {
 		if (!this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_NOT_FOUND;
@@ -198,13 +211,15 @@ public class StudentServiceImpl implements StudentService {
 		return StudentMessages.STUDENT_UPDATED;
 	}
 
+	@Override
+	@Cacheable(value = "student", key = "#sectionId")
 	public Iterable<Student> getAllStudentWithSectionId(Integer sectionId) {
-		return this.studentRepository.findStudentsByStudentSection_SectionId(sectionId);
+		return this.studentRepository.getStudentBySectionId(sectionId);
 	}
 
+	@Override
+	@Cacheable(value = "student", key = "#sectionId")
 	public long countStudentsBySectionId(Integer sectionId) {
-		return this.studentRepository.countStudentsByStudentSectionSectionId(sectionId);
+		return this.studentRepository.countStudentsBySectionId(sectionId);
 	}
-
-
 }

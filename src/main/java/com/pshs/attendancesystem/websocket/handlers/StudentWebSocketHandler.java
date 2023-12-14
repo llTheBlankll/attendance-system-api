@@ -28,6 +28,6 @@ public class StudentWebSocketHandler extends TextWebSocketHandler {
 		mapper.registerModule(new JavaTimeModule());
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 		Student student = mapper.readValue(message.getPayload().toString(), Student.class);
-		session.sendMessage(new TextMessage(studentService.addStudent(student)));
+		session.sendMessage(new TextMessage(studentService.createStudent(student)));
 	}
 }

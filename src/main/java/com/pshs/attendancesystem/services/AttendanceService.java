@@ -17,7 +17,7 @@ public interface AttendanceService {
 
 	Iterable<Attendance> getAllAttendanceBetweenDate(BetweenDate dateRange);
 
-	Iterable<Attendance> getStudentAttendanceBetweenDateWithAttendanceStatus(long studentLrn, BetweenDate dateRange, Status status);
+	Iterable<Attendance> getStudentAttendanceBetweenDateStatus(long studentLrn, BetweenDate dateRange, Status status);
 
 	Iterable<Attendance> getAttendanceBetweenDate(long studentLrn, BetweenDate dateRange);
 
@@ -59,13 +59,13 @@ public interface AttendanceService {
 
 	String updateAttendance(Attendance attendance);
 
-	Status getAttendanceStatusToday(Long studentLrn);
+	Status getStatusToday(Long studentLrn);
 
 	boolean attendanceOut(Long studentLrn);
 
-	boolean checkIfAlreadyArrived(Student student);
+	boolean isAlreadyArrived(Student student);
 
-	boolean checkIfAlreadyOut(Long studentLrn);
+	boolean isAlreadyOut(Long studentLrn);
 
 	String deleteAllAttendance();
 }
