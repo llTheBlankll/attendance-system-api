@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.impl;
+package com.pshs.attendancesystem.websocket.communication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FrontEndWebSocketsCommunicationService {
+public class FrontEndCommunicationService {
 
 	private final List<WebSocketSession> sessionList = new ArrayList<>();
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());

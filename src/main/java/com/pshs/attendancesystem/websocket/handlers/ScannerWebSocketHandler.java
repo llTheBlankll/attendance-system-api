@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pshs.attendancesystem.entities.*;
 import com.pshs.attendancesystem.enums.Status;
-import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.messages.RfidMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
-import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
+import com.pshs.attendancesystem.services.RfidService;
 import com.pshs.attendancesystem.threading.SMSThread;
+import com.pshs.attendancesystem.websocket.communication.FrontEndCommunicationService;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +32,14 @@ import java.util.Set;
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	private final AttendanceService attendanceService;
-	private final RfidCredentialsRepository rfidCredentialsRepository;
-	private final FrontEndWebSocketsCommunicationService communicationService;
+	private final RfidService rfidService;
+	private final FrontEndCommunicationService communicationService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	ObjectMapper mapper = new ObjectMapper();
 	WebSocketResponse response = new WebSocketResponse();
 
-	public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, FrontEndWebSocketsCommunicationService communicationService, AttendanceService attendanceService) {
-		this.rfidCredentialsRepository = rfidCredentialsRepository;
+	public ScannerWebSocketHandler(RfidService rfidService, FrontEndCommunicationService communicationService, AttendanceService attendanceService) {
+		this.rfidService = rfidService;
 		this.communicationService = communicationService;
 		this.attendanceService = attendanceService;
 		mapper.registerModule(new JavaTimeModule());
@@ -75,7 +75,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 			WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
 			hashedLrn = webSocketData.getHashedLrn();
 
-			rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+			rfidCredentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn);
 			if (rfidCredentials.isPresent()) {
 				student = rfidCredentials.get().getStudent();
 				credentials = rfidCredentials.get();
@@ -101,7 +101,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	private void handleInMode(WebSocketSession session, @Nonnull RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
 		try {
-			if (credentials.getHashedLrn() != null && !this.rfidCredentialsRepository.isHashedLrnExist(credentials.getHashedLrn())) {
+			if (credentials.getHashedLrn() != null && !this.rfidService.isHashedLrnExist(credentials.getHashedLrn())) {
 				response.setMessage("Invalid");
 				sendErrorMessage(session, new TextMessage(
 					mapper.writeValueAsString(response)
