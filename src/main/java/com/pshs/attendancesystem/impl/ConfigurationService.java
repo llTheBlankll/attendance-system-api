@@ -42,6 +42,14 @@ public class ConfigurationService {
 		return apiConfig.getFlagCeremonyTime();
 	}
 
+	public String getAPIVersion() {
+		return apiConfig.getAPI_VERSION();
+	}
+
+	public void setAPI_VERSION(String API_VERSION) {
+		apiConfig.setAPI_VERSION(API_VERSION);
+	}
+
 	public LocalTime getLateTimeArrival() {
 		return apiConfig.getLateTimeArrival();
 	}
