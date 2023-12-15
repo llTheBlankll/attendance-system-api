@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.websocket.handlers;
 
-import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.services.AttendanceService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;

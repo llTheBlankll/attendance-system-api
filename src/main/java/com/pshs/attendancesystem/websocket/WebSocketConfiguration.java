@@ -1,8 +1,8 @@
 package com.pshs.attendancesystem.websocket;
 
+import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
-import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.services.StudentService;
 import com.pshs.attendancesystem.websocket.handlers.FrontEndWebSocketHandler;
 import com.pshs.attendancesystem.websocket.handlers.ScannerWebSocketHandler;

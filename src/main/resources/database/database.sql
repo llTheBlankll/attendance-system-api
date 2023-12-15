@@ -5,7 +5,8 @@ CREATE TABLE Strand
 );
 
 -- * GRADE LEVELS TABLE
-CREATE TABLE GradeLevels(
+CREATE TABLE GradeLevels
+(
     grade_level  SERIAL PRIMARY KEY,
     grade_name   VARCHAR(255) NOT NULL,
     grade_strand INT,
@@ -48,11 +49,11 @@ CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 -- * SECTIONS TABLE
 CREATE TABLE Sections
 (
-    section_id SERIAL PRIMARY KEY,
-    teacher    INT NULL,
-    room INT,
-    strand INT,
-    grade_level INT NOT NULL,
+    section_id   SERIAL PRIMARY KEY,
+    teacher      INT          NULL,
+    room         INT,
+    strand       INT,
+    grade_level  INT          NOT NULL,
     section_name VARCHAR(255) NOT NULL,
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level) ON DELETE SET NULL,
     FOREIGN KEY (teacher) REFERENCES Teachers (teacher_id) ON DELETE SET NULL,
@@ -62,15 +63,15 @@ CREATE TABLE Sections
 -- * STUDENTS TABLE
 CREATE TABLE Students
 (
-    lrn              BIGINT PRIMARY KEY,
-    first_name       VARCHAR(255) NOT NULL,
-    middle_name      VARCHAR(255) NULL,
-    last_name        VARCHAR(255),
-    grade_level      INT,
-    sex              VARCHAR(6),
-    section_id INT,
-    address          TEXT,
-    birthdate DATE NOT NULL,
+    lrn         BIGINT PRIMARY KEY,
+    first_name  VARCHAR(255) NOT NULL,
+    middle_name VARCHAR(255) NULL,
+    last_name   VARCHAR(255),
+    grade_level INT,
+    sex         VARCHAR(6),
+    section_id  INT,
+    address     TEXT,
+    birthdate   DATE         NOT NULL,
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level) ON DELETE SET NULL,
     FOREIGN KEY (section_id) REFERENCES Sections (section_id) ON DELETE SET NULL
 );
@@ -88,8 +89,8 @@ CREATE INDEX rfid_credentials_lrn_idx ON rfid_credentials (lrn);
 -- * GUARDIANS TABLE
 CREATE TABLE Guardians
 (
-    guardian_id             SERIAL PRIMARY KEY,
-    student_lrn BIGINT,
+    guardian_id    SERIAL PRIMARY KEY,
+    student_lrn    BIGINT,
     full_name      VARCHAR(255) NOT NULL,
     contact_number VARCHAR(32),
     FOREIGN KEY (student_lrn) REFERENCES Students (lrn) ON DELETE CASCADE
@@ -99,7 +100,7 @@ CREATE INDEX guardian_student_id_idx ON Guardians (student_lrn);
 -- * ATTENDANCE TABLE
 CREATE TABLE Attendance
 (
-    id SERIAL PRIMARY KEY,
+    id                SERIAL PRIMARY KEY,
     student_id        BIGINT NOT NULL,
     attendance_status Status,
     date              DATE DEFAULT CURRENT_DATE,

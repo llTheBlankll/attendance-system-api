@@ -78,10 +78,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 		select count(a) from Attendance a
 		where a.student.studentSection.strand = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
 	long countSectionStrandAndStatus(Strand strand, LocalDate date, Status status);
+
 	@Query("""
 		select count(a) from Attendance a
 		where a.student.studentGradeLevel = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
 	long countStudentGradeLevelAndDateAndStatus(Gradelevel studentGradeLevel, LocalDate date, Status status);
+
 	@Query("select (count(a) > 0) from Attendance a where a.student.lrn = ?1 and a.date = ?2")
 	boolean isLrnAndDateExist(Long studentLrn, LocalDate date);
 

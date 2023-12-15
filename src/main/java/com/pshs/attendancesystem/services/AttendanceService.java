@@ -48,9 +48,13 @@ public interface AttendanceService {
 	long countAttendanceBetweenDate(BetweenDate dateRange);
 
 	long countStudentAttendanceBetweenDate(Long studentLrn, BetweenDate dateRange);
+
 	long countByStudentStrandAndDate(Strand strand, LocalDate date, Status status);
+
 	long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date);
+
 	boolean existsByStudentLrnAndDate(Long studentLrn, LocalDate date);
+
 	void setAsAbsent(Student student, LocalDate date);
 
 	Status createAttendance(Long studentLrn);
