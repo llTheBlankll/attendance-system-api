@@ -29,4 +29,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 		select (count(s) > 0) from Student s inner join s.attendances attendances
 		where s.lrn = ?1 and attendances.date = ?2""")
 	boolean isStudentAttended(Long lrn, LocalDate date);
+
+	@Query("select s from Student s where upper(s.lastName) like upper(concat('%', ?1, '%'))")
+	Iterable<Student> searchByLastName(String lastName);
+
+	@Query("select s from Student s where upper(s.firstName) like upper(concat('%', ?1, '%'))")
+	Iterable<Student> searchByFirstName(String firstName);
+
+	@Query("""
+		select s from Student s
+		where upper(s.firstName) like upper(concat('%', ?1, '%')) and upper(s.lastName) like upper(concat('%', ?2, '%'))""")
+	Iterable<Student> searchByFirstAndLastName(String firstName, String lastName);
 }

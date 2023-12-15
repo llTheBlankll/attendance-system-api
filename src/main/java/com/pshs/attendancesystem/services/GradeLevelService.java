@@ -12,4 +12,5 @@ public interface GradeLevelService {
 	String deleteGradeLevelById(Integer id);
 
 	String updateGradeLevel(Gradelevel gradelevel);
+	Iterable<Gradelevel> searchGradeLevelByName(String name);
 }

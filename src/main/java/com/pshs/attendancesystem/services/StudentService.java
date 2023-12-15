@@ -23,6 +23,9 @@ public interface StudentService {
 	long countStudentsBySectionId(Integer sectionId);
 
 	Iterable<Student> getAllStudent();
+	Iterable<Student> searchStudentByLastName(String name);
+	Iterable<Student> searchStudentByFirstName(String name);
+	Iterable<Student> searchStudentByFirstAndLastName(String firstName, String lastName);
 
 	boolean isLrnExist(Long lrn);
 }
