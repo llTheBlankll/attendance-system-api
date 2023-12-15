@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.guardian;
 
+import com.pshs.attendancesystem.documentation.GuardianDocumentation;
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.GuardianService;
@@ -21,7 +22,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Get Guardian Count",
-		description = "Get Guardian Count in the database."
+		description = GuardianDocumentation.GET_GUARDIAN_COUNT
 	)
 	@GetMapping("/count")
 	public long getGuardiansCount() {
@@ -30,7 +31,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Get Guardian By LRN",
-		description = "Get the guardians of student by their LRN in the database.",
+		description = GuardianDocumentation.GET_STUDENT_GUARDIANS_BY_LRN,
 		parameters = {
 			@Parameter(name = "lrn", description = "The LRN of the student")
 		}
@@ -41,10 +42,10 @@ public class GuardianController {
 	}
 
 	@Operation(
-		summary = "Get Guardian By Last Name",
-		description = "Get Guardian by Last Name in the database.",
+		summary = "Search Guardian By Full Name",
+		description = GuardianDocumentation.SEARCH_GUARDIAN_BY_FULL_NAME,
 		parameters = {
-			@Parameter(name = "name", description = "The Last Name of the Guardian object to be retrieved")
+			@Parameter(name = "name", description = "The Full Name of the Guardian object to be retrieved")
 		}
 	)
 	@GetMapping("/search/full-name")
@@ -54,7 +55,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Get Guardian by Student",
-		description = "Get Guardian by Student in the database."
+		description = GuardianDocumentation.GET_GUARDIANS_BY_STUDENT
 	)
 	@GetMapping("/student")
 	public Iterable<Guardian> getGuardiansByStudent(@RequestBody Student student) {
@@ -63,7 +64,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Create Guardian",
-		description = "Create Guardian in the database."
+		description = GuardianDocumentation.CREATE_GUARDIAN
 	)
 	@PostMapping("/create")
 	public boolean createGuardian(@RequestBody Guardian guardian) {
@@ -72,7 +73,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Update Guardian",
-		description = "Update Guardian in the database."
+		description = GuardianDocumentation.UPDATE_GUARDIAN
 	)
 	@PostMapping("/update")
 	public boolean updateGuardian(@RequestBody Guardian guardian) {
@@ -81,7 +82,7 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Delete Guardian",
-		description = "Delete Guardian in the database."
+		description = GuardianDocumentation.DELETE_GUARDIAN
 	)
 
 	@PostMapping("/delete")
@@ -91,12 +92,12 @@ public class GuardianController {
 
 	@Operation(
 		summary = "Delete Guardian",
-		description = "Delete Guardian in the database.",
+		description = GuardianDocumentation.DELETE_GUARDIAN_BY_ID,
 		parameters = {
 			@Parameter(name = "guardian", description = "The Guardian object to be deleted")
 		}
 	)
-	@PostMapping("/delete/guardian_id")
+	@PostMapping("/delete/guardian-id")
 	public String deleteGuardianById(@RequestParam("id") Integer guardianId) {
 		return guardianService.deleteGuardianById(guardianId);
 	}

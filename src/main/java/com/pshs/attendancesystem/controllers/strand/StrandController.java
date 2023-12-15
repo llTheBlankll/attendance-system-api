@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.strand;
 
+import com.pshs.attendancesystem.documentation.StrandDocumentation;
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.services.StrandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +22,7 @@ public class StrandController {
 
 	@Operation(
 		summary = "Get All Strand",
-		description = "Get All Strand."
+		description = StrandDocumentation.GET_ALL_STRAND
 	)
 	@GetMapping("/all")
 	public Iterable<Strand> getAllStrand() {
@@ -30,7 +31,7 @@ public class StrandController {
 
 	@Operation(
 		summary = "Create Strand",
-		description = "Create Strand in the database. Returns a message if it successful or already exists."
+		description = StrandDocumentation.CREATE_STRAND
 	)
 	@PostMapping(value = "/create", produces = "text/plain")
 	public String createStrand(@RequestBody Strand strand) {
@@ -39,7 +40,7 @@ public class StrandController {
 
 	@Operation(
 		summary = "Update Strand",
-		description = "Update Strand in the database. Returns a message if it successful or not."
+		description = StrandDocumentation.UPDATE_STRAND
 	)
 	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateStrand(@RequestBody Strand strand) {
@@ -48,7 +49,7 @@ public class StrandController {
 
 	@Operation(
 		summary = "Delete Strand",
-		description = "Delete Strand in the database. Returns a message if it successful or not."
+		description = StrandDocumentation.DELETE_STRAND
 	)
 	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteStrand(@RequestBody Strand strand) {
@@ -57,7 +58,7 @@ public class StrandController {
 
 	@Operation(
 		summary = "Search Strand",
-		description = "Search Strand in the database. Returns empty list if search is empty.",
+		description = StrandDocumentation.SEARCH_STRAND_BY_STRAND_NAME,
 		parameters = {
 			@Parameter(name = "strand-name", description = "The Strand Name of the Strand object to be retrieved")
 		}

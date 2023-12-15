@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.rfid;
 
+import com.pshs.attendancesystem.documentation.RFIDDocumentation;
 import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,11 +33,10 @@ public class RfidCredentialsController {
 	 */
 	@Operation(
 		summary = "Retrieves all the rfid credentials",
-		description = "Retrieves all the rfid credentials. " +
-			"Returns an empty list if there are no rfid credentials in the database."
+		description = RFIDDocumentation.GET_ALL_RFID
 	)
 	@GetMapping("/all")
-	public Iterable<RfidCredentials> getAllScan() {
+	public Iterable<RfidCredentials> getAllCredentials() {
 		return rfidService.getAllRfidCredentials();
 	}
 
@@ -49,9 +49,7 @@ public class RfidCredentialsController {
 	 */
 	@Operation(
 		summary = "Retrieves an RfidCredentials object based on the provided type and data",
-		description = "Retrieves an RfidCredentials object based on the provided type and data. " +
-			"If it is hash, you should provide appropriate hashed value. " +
-			"If it is studentLrn, you should provide appropriate student lrn. ",
+		description = RFIDDocumentation.SEARCH_RFID_BY_TYPE,
 		parameters = {
 			@Parameter(name = "type", description = "The type of data to search for (hash or student lrn)"),
 			@Parameter(name = "data", description = "The data to search for (hashed value or student lrn)")

@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.subject;
 
+import com.pshs.attendancesystem.documentation.SubjectDocumentation;
 import com.pshs.attendancesystem.entities.Subject;
 import com.pshs.attendancesystem.services.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,7 +25,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Retrieves all subjects",
-		description = "Retrieves all subjects"
+		description = SubjectDocumentation.GET_ALL_SUBJECTS
 	)
 	@GetMapping("/all")
 	public Iterable<Subject> getAllSubjects() {
@@ -37,6 +38,10 @@ public class SubjectsController {
 	 * @param subjectName the name of the subject to search for
 	 * @return an iterable collection of subjects matching the given name
 	 */
+	@Operation(
+		summary = "Retrieves a list of subjects based on the given subject name",
+		description = SubjectDocumentation.SEARCH_SUBJECTS_BY_SUBJECT_NAME
+	)
 	@GetMapping("/search/subject-name")
 	public Iterable<Subject> searchSubjects(@RequestParam("name") String subjectName) {
 		return subjectService.searchSubjectsByName(subjectName);
@@ -50,7 +55,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Retrieves a collection of Subject objects based on the provided subject description",
-		description = "Retrieves a collection of Subject objects based on the provided subject description"
+		description = SubjectDocumentation.SEARCH_SUBJECTS_BY_SUBJECT_DESCRIPTION
 	)
 	@GetMapping("/search/subject-description")
 	public Iterable<Subject> searchSubjectsByDescription(@RequestParam("description") String subjectDescription) {
@@ -64,7 +69,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Create Subject",
-		description = "Create Subject in the database."
+		description = SubjectDocumentation.CREATE_SUBJECT
 	)
 	@PostMapping("/create")
 	public String createSubject(@RequestBody Subject subject) {
@@ -78,7 +83,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Update Subject",
-		description = "Update Subject in the database."
+		description = SubjectDocumentation.UPDATE_SUBJECT
 	)
 	@PostMapping("/update")
 	public String updateSubject(@RequestBody Subject subject) {
@@ -92,10 +97,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Delete Subject",
-		description = "Delete Subject in the database.",
-		parameters = {
-			@Parameter(name = "subject", description = "The Subject object to be deleted")
-		}
+		description = SubjectDocumentation.DELETE_SUBJECT
 	)
 	@PostMapping("/delete")
 	public String deleteSubject(@RequestBody Subject subject) {
@@ -110,7 +112,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Get Subject by ID",
-		description = "Get Subject by ID in the database.",
+		description = SubjectDocumentation.GET_SUBJECT_BY_ID,
 		parameters = {
 			@Parameter(name = "subject-id", description = "The ID of the Subject object to be retrieved")
 		}
@@ -128,7 +130,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Get Subject by Name",
-		description = "Get Subject by Name in the database.",
+		description = SubjectDocumentation.GET_SUBJECT_BY_NAME,
 		parameters = {
 			@Parameter(name = "subject-name", description = "The Name of the Subject object to be retrieved")
 		}
@@ -145,7 +147,7 @@ public class SubjectsController {
 	 */
 	@Operation(
 		summary = "Delete Subject by ID",
-		description = "Delete Subject by ID in the database.",
+		description = SubjectDocumentation.DELETE_SUBJECT_BY_ID,
 		parameters = {
 			@Parameter(name = "id", description = "The ID of the Subject object to be deleted")
 		}
