@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.repositories.GradeLevelRepository;
 import com.pshs.attendancesystem.services.GradeLevelService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -63,5 +64,11 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 
 		this.gradeLevelRepository.save(gradelevel);
 		return GradeLevelMessages.GRADELEVEL_UPDATED;
+	}
+
+	@Override
+	@Cacheable(value = "gradelevel", key = "#name")
+	public Iterable<Gradelevel> searchGradeLevelByName(String name) {
+		return gradeLevelRepository.searchGradeLevelByName(name);
 	}
 }
