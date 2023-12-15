@@ -55,4 +55,14 @@ public class RfidCredentialsServiceImpl implements RfidService {
 
 		return this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
 	}
+
+	@Override
+	public boolean isHashedLrnExist(String hashedLrn) {
+		return this.rfidCredentialsRepository.isHashedLrnExist(hashedLrn);
+	}
+
+	@Override
+	public boolean isLrnExist(Long lrn) {
+		return rfidCredentialsRepository.isLrnExist(lrn);
+	}
 }

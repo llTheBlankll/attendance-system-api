@@ -10,4 +10,6 @@ public interface RfidService {
 	Optional<RfidCredentials> getRfidCredentialByStudentLrn(Long lrn);
 
 	Optional<RfidCredentials> getRfidCredentialByHashedLrn(String hashedLrn);
+	boolean isHashedLrnExist(String hashedLrn);
+	boolean isLrnExist(Long lrn);
 }
