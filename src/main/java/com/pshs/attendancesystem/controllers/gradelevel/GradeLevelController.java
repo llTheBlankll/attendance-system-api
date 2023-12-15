@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.gradelevel;
 
+import com.pshs.attendancesystem.documentation.GradeLevelDocumentation;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.services.GradeLevelService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +26,7 @@ public class GradeLevelController {
 	 */
 	@Operation(
 		summary = "Retrieves all grade levels",
-		description = "Retrieves all grade levels"
+		description = GradeLevelDocumentation.GET_ALL_GRADE_LEVELS
 	)
 	@GetMapping("/all")
 	public Iterable<Gradelevel> getAllGradeLevel() {
@@ -39,8 +40,8 @@ public class GradeLevelController {
 	 * @return a message indicating the status of the operation
 	 */
 	@Operation(
-		summary = "Add grade level",
-		description = "Add grade level to the system",
+		summary = "Create grade level",
+		description = GradeLevelDocumentation.CREATE_GRADELEVEL,
 		parameters = {
 			@Parameter(name = "gradelevel", description = "The grade level to be added")
 		}
@@ -58,7 +59,7 @@ public class GradeLevelController {
 	 */
 	@Operation(
 		summary = "Delete grade level",
-		description = "Delete grade level from the system",
+		description = GradeLevelDocumentation.DELETE_GRADELEVEL,
 		parameters = {
 			@Parameter(name = "gradelevel", description = "The grade level object to be deleted")
 		}
@@ -76,7 +77,7 @@ public class GradeLevelController {
 	 */
 	@Operation(
 		summary = "Delete grade level by ID",
-		description = "Delete grade level by ID from the system"
+		description = GradeLevelDocumentation.DELETE_GRADELEVEL_BY_ID
 	)
 	@PostMapping(value = "/delete/id", produces = "text/plain")
 	public String deleteGradeLevelById(@RequestParam Integer id) {
@@ -85,10 +86,22 @@ public class GradeLevelController {
 
 	@Operation(
 		summary = "Update grade level",
-		description = "Update grade level in the database."
+		description = GradeLevelDocumentation.UPDATE_GRADELEVEL
 	)
 	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateGradeLevel(@RequestBody Gradelevel gradelevel) {
 		return gradeLevelService.updateGradeLevel(gradelevel);
+	}
+
+	@Operation(
+		summary = "Search grade level by name",
+		description = GradeLevelDocumentation.SEARCH_GRADELEVEL_BY_NAME,
+		parameters = {
+			@Parameter(name = "name", description = "The name of the grade level to be searched")
+		}
+	)
+	@GetMapping("/search/name")
+	public Iterable<Gradelevel> searchGradeLevelByName(@RequestParam("name") String name) {
+		return gradeLevelService.searchGradeLevelByName(name);
 	}
 }
