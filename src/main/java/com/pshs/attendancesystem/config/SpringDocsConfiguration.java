@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.config;
 
 import com.pshs.attendancesystem.impl.ConfigurationService;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +20,17 @@ public class SpringDocsConfiguration {
 	@Bean
 	public OpenAPI openAPI() {
 		Info info = new Info();
+		Contact contact = new Contact();
+
+		contact.setEmail("llTheBlankll@gmail.com");
+		contact.setName("Vince Angelo Batecan");
+		contact.setUrl("https://www.facebook.com/Nytriii");
 		info.setTitle(configurationService.getSPRING_DOCS_TITLE());
 		info.setDescription(configurationService.getSPRING_DOCS_DESCRIPTION());
-		return new OpenAPI().info(info);
+		info.setVersion(configurationService.getAPIVersion());
+		info.setContact(contact);
+		return new OpenAPI()
+			.info(info);
 	}
 
 	@Bean
@@ -39,6 +48,7 @@ public class SpringDocsConfiguration {
 			.packagesToScan("com.pshs.attendancesystem.controllers.config")
 			.build();
 	}
+
 	@Bean
 	public GroupedOpenApi allControllersGroup() {
 		return GroupedOpenApi.builder()
