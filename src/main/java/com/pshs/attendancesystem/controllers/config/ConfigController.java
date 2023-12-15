@@ -60,7 +60,7 @@ public class ConfigController {
 	@Operation(
 		summary = "Set Absent Schedule",
 		description = "Set Absent Schedule. Uses cron format. E.g: '0 18 * * * *'; Runs every 6 PM." +
-			              "<br>Note: It uses six asterisk (*), the last one being the year.",
+			"<br>Note: It uses six asterisk (*), the last one being the year.",
 		parameters = {
 			@Parameter(name = "time", description = "The time of the absent schedule", schema = @Schema(name = "time", type = "string", example = "0 18 * * * *"))
 		}

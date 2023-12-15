@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ReverseEngineeringSettings">
-    <database-infos>
-      <database-info dbms-id="mysql">
-        <mapping-types>
-          <mapping-type sql-type="status" java-class="java.lang.String" use-column-definition="true" />
-        </mapping-types>
-      </database-info>
-        <database-info dbms-id="postgres">
-            <mapping-types>
-                <mapping-type sql-type="relationship" java-class="com.pshs.attendancesystem.enums.Relationship"
-                              use-column-definition="true"/>
-            </mapping-types>
-        </database-info>
-    </database-infos>
-  </component>
+    <component name="ReverseEngineeringSettings">
+        <database-infos>
+            <database-info dbms-id="mysql">
+                <mapping-types>
+                    <mapping-type sql-type="status" java-class="java.lang.String" use-column-definition="true"/>
+                </mapping-types>
+            </database-info>
+            <database-info dbms-id="postgres">
+                <mapping-types>
+                    <mapping-type sql-type="relationship" java-class="com.pshs.attendancesystem.enums.Relationship"
+                                  use-column-definition="true"/>
+                </mapping-types>
+            </database-info>
+        </database-infos>
+    </component>
 </project>

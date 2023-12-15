@@ -230,7 +230,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	@Cacheable(value = "attendance", key = "#dateRange + '-' + #status")
 	public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(BetweenDate dateRange, Status status) {
-		return attendanceRepository.searchBetweenDateAndStatus(dateRange.getStartDate(), dateRange.getEndDate() , status);
+		return attendanceRepository.searchBetweenDateAndStatus(dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
 
 	/**
