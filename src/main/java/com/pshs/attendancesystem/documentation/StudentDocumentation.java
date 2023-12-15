@@ -1,10 +1,6 @@
 package com.pshs.attendancesystem.documentation;
 
 public class StudentDocumentation {
-	private StudentDocumentation() {
-
-	}
-
 	public static final String GET_ALL_STUDENTS = "Retrieve a list of all students from the database.";
 	public static final String SEARCH_STUDENTS_BY_FIRST_NAME = "Search for students based on their first name.";
 	public static final String SEARCH_STUDENTS_BY_LAST_NAME = "Search for students based on their last name.";
@@ -17,5 +13,8 @@ public class StudentDocumentation {
 	public static final String DELETE_STUDENT = "Delete a student record from the database.";
 	public static final String SEARCH_STUDENTS_BY_GRADE_LEVEL = "Retrieve a list of students based on their grade level.";
 	public static final String GET_STUDENT_BY_LRN = "Retrieve a specific student by their unique identifier.";
+	private StudentDocumentation() {
+
+	}
 
 }

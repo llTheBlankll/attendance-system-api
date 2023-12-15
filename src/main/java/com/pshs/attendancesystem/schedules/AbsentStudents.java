@@ -1,12 +1,10 @@
 package com.pshs.attendancesystem.schedules;
 
 import com.pshs.attendancesystem.entities.Student;
-import com.pshs.attendancesystem.impl.ConfigurationService;
 import com.pshs.attendancesystem.services.AttendanceService;
 import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

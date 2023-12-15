@@ -40,6 +40,10 @@ public class APIConfig {
 		return SPRING_DOCS_TITLE;
 	}
 
+	public void setSPRING_DOCS_TITLE(String SPRING_DOCS_TITLE) {
+		this.SPRING_DOCS_TITLE = SPRING_DOCS_TITLE;
+	}
+
 	public String getAPI_VERSION() {
 		return API_VERSION;
 	}
@@ -52,43 +56,39 @@ public class APIConfig {
 		return SPRING_DOCS_DESCRIPTION;
 	}
 
+	public void setSPRING_DOCS_DESCRIPTION(String SPRING_DOCS_DESCRIPTION) {
+		this.SPRING_DOCS_DESCRIPTION = SPRING_DOCS_DESCRIPTION;
+	}
+
 	public LocalTime getFlagCeremonyTime() {
 		return flagCeremonyTime;
-	}
-
-	public LocalTime getLateTimeArrival() {
-		return lateTimeArrival;
-	}
-
-	public LocalTime getOnTimeArrival() {
-		return onTimeArrival;
-	}
-
-	public String getAbsentSchedule() {
-		return absentSchedule;
 	}
 
 	public void setFlagCeremonyTime(LocalTime flagCeremonyTime) {
 		this.flagCeremonyTime = flagCeremonyTime;
 	}
 
+	public LocalTime getLateTimeArrival() {
+		return lateTimeArrival;
+	}
+
 	public void setLateTimeArrival(LocalTime lateTimeArrival) {
 		this.lateTimeArrival = lateTimeArrival;
+	}
+
+	public LocalTime getOnTimeArrival() {
+		return onTimeArrival;
 	}
 
 	public void setOnTimeArrival(LocalTime onTimeArrival) {
 		this.onTimeArrival = onTimeArrival;
 	}
 
+	public String getAbsentSchedule() {
+		return absentSchedule;
+	}
+
 	public void setAbsentSchedule(String absentSchedule) {
 		this.absentSchedule = absentSchedule;
-	}
-
-	public void setSPRING_DOCS_TITLE(String SPRING_DOCS_TITLE) {
-		this.SPRING_DOCS_TITLE = SPRING_DOCS_TITLE;
-	}
-
-	public void setSPRING_DOCS_DESCRIPTION(String SPRING_DOCS_DESCRIPTION) {
-		this.SPRING_DOCS_DESCRIPTION = SPRING_DOCS_DESCRIPTION;
 	}
 }
