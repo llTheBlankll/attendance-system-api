@@ -222,4 +222,22 @@ public class StudentServiceImpl implements StudentService {
 	public long countStudentsBySectionId(Integer sectionId) {
 		return this.studentRepository.countStudentsBySectionId(sectionId);
 	}
+
+	@Override
+	@Cacheable(value = "student", key = "#name")
+	public Iterable<Student> searchStudentByLastName(String name) {
+		return studentRepository.searchByLastName(name);
+	}
+
+	@Override
+	@Cacheable(value = "student", key = "#name")
+	public Iterable<Student> searchStudentByFirstName(String name) {
+		return studentRepository.searchByFirstName(name);
+	}
+
+	@Override
+	@Cacheable(value = "student", key = "#firstName + '-' + #lastName")
+	public Iterable<Student> searchStudentByFirstAndLastName(String firstName, String lastName) {
+		return studentRepository.searchByFirstAndLastName(firstName, lastName);
+	}
 }
