@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.section;
 
+import com.pshs.attendancesystem.documentation.SectionDocumentation;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.services.SectionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Retrieves all sections",
-		description = "Retrieves all sections"
+		description = SectionDocumentation.GET_ALL_SECTIONS
 	)
 	@GetMapping("/all")
 	public Iterable<Section> getAllSection() {
@@ -42,7 +43,7 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Delete section by ID",
-		description = "Delete section by ID, returns a message if it was deleted successfully or not.",
+		description = SectionDocumentation.DELETE_BY_ID,
 		parameters = {
 			@Parameter(name = "id", description = "The ID of the section to be deleted")
 		}
@@ -60,7 +61,7 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Delete section",
-		description = "Delete section by section object, containing the section ID to be deleted and returns a message."
+		description = SectionDocumentation.DELETE_SECTION
 	)
 	@PostMapping(value = "/delete", produces = "text/plain")
 	public String deleteSection(@RequestBody Section section) {
@@ -74,11 +75,11 @@ public class SectionController {
 	 * @return a string indicating the status of the operation
 	 */
 	@Operation(
-		summary = "Add section",
-		description = "Add section to the database. Returns a string if section is created or if it already exists."
+		summary = "Create section",
+		description = SectionDocumentation.CREATE_SECTION
 	)
 	@PostMapping(value = "/create", produces = "text/plain")
-	public String addSection(@RequestBody Section section) {
+	public String createSection(@RequestBody Section section) {
 		return sectionService.addSection(section);
 	}
 
@@ -90,7 +91,7 @@ public class SectionController {
 	 */
 	@Operation(
 		summary = "Update section",
-		description = "Update section in the database. Returns a string if section is not found."
+		description = SectionDocumentation.UPDATE_SECTION
 	)
 	@PostMapping(value = "/update", produces = "text/plain")
 	public String updateSection(@RequestBody Section section) {
@@ -100,7 +101,7 @@ public class SectionController {
 	// SEARCH FUNCTION
 	@Operation(
 		summary = "Search Section",
-		description = "Search Section in the database. Returns empty list if search is empty.",
+		description = SectionDocumentation.SEARCH_SECTION_BY_SECTION,
 		parameters = {
 			@Parameter(name = "type", description = "The type of search to be performed"),
 			@Parameter(name = "search", description = "The search string")
@@ -123,7 +124,7 @@ public class SectionController {
 
 	@Operation(
 		summary = "Get Section",
-		description = "Get Section by Section ID in the database.",
+		description = SectionDocumentation.GET_SECTION_BY_ID,
 		parameters = {
 			@Parameter(name = "sectionId", description = "The ID of the section to be retrieved")
 		}
