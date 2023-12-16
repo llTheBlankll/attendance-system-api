@@ -1,8 +1,6 @@
 package com.pshs.attendancesystem.dto;
 
-import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Gradelevel;
-import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.Section;
 
 import java.io.Serializable;
@@ -22,11 +20,11 @@ public class StudentDto implements Serializable {
 	private final Gradelevel studentGradeLevel;
 	private final String sex;
 	private final Section studentSection;
-	private final Set<Guardian> guardian;
+	private final Set<GuardianDto> guardian;
 	private final String address;
-	private final Set<Attendance> attendances;
+	private final Set<AttendanceDto> attendances;
 
-	public StudentDto(Long lrn, String firstName, String middleName, String lastName, LocalDate birthdate, Gradelevel studentGradeLevel, String sex, Section studentSection, Set<Guardian> guardian, String address, Set<Attendance> attendances) {
+	public StudentDto(Long lrn, String firstName, String middleName, String lastName, LocalDate birthdate, Gradelevel studentGradeLevel, String sex, Section studentSection, Set<GuardianDto> guardian, String address, Set<AttendanceDto> attendances) {
 		this.lrn = lrn;
 		this.firstName = firstName;
 		this.middleName = middleName;
@@ -72,7 +70,7 @@ public class StudentDto implements Serializable {
 		return studentSection;
 	}
 
-	public Set<Guardian> getGuardian() {
+	public Set<GuardianDto> getGuardian() {
 		return guardian;
 	}
 
@@ -80,7 +78,7 @@ public class StudentDto implements Serializable {
 		return address;
 	}
 
-	public Set<Attendance> getAttendances() {
+	public Set<AttendanceDto> getAttendances() {
 		return attendances;
 	}
 

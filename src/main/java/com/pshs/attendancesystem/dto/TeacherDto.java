@@ -1,7 +1,5 @@
 package com.pshs.attendancesystem.dto;
 
-import com.pshs.attendancesystem.entities.Section;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -14,9 +12,9 @@ public class TeacherDto implements Serializable {
 	private final String firstName;
 	private final String middleName;
 	private final String lastName;
-	private final Set<Section> sections;
+	private final Set<SectionDto> sections;
 
-	public TeacherDto(Integer id, String firstName, String middleName, String lastName, Set<Section> sections) {
+	public TeacherDto(Integer id, String firstName, String middleName, String lastName, Set<SectionDto> sections) {
 		this.id = id;
 		this.firstName = firstName;
 		this.middleName = middleName;
@@ -40,7 +38,7 @@ public class TeacherDto implements Serializable {
 		return lastName;
 	}
 
-	public Set<Section> getSections() {
+	public Set<SectionDto> getSections() {
 		return sections;
 	}
 
