@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +13,7 @@ public class Guardian {
 
 	@JoinColumn(name = "student_lrn")
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JsonBackReference
+	@JsonIgnore
 	private Student student;
 
 	@Column(name = "full_name")
