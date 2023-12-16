@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -20,6 +21,7 @@ public class Section {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "grade_level")
+	@JsonManagedReference
 	private Gradelevel gradeLevel;
 
 	@Column(name = "section_name", nullable = false)
@@ -27,15 +29,17 @@ public class Section {
 
 	@ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "teacher")
+	@JsonManagedReference
 	private Teacher teacher;
 
 	@OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Student> students;
 
 	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Strand.class, cascade = CascadeType.DETACH)
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	@JoinColumn(name = "strand")
+	@JsonManagedReference
 	private Strand strand;
 
 	public Strand getStrand() {

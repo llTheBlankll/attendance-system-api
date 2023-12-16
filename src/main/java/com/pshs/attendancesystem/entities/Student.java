@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class Student {
 
 	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "grade_level")
+	@JsonManagedReference
 	private Gradelevel studentGradeLevel;
 
 	@Column(name = "sex", length = 6)
@@ -34,17 +36,30 @@ public class Student {
 
 	@ManyToOne(targetEntity = Section.class)
 	@JoinColumn(name = "section_id")
+	@JsonManagedReference
 	private Section studentSection;
 
 	@OneToMany(mappedBy = "student", targetEntity = Guardian.class, fetch = FetchType.EAGER)
+	@JsonManagedReference
 	private Set<Guardian> guardian;
+
+	@OneToOne(mappedBy = "student", fetch = FetchType.EAGER)
+	private RfidCredentials rfid;
 
 	@Column(name = "address", length = Integer.MAX_VALUE)
 	private String address;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class, fetch = FetchType.EAGER)
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Attendance> attendances;
+
+	public RfidCredentials getRfid() {
+		return rfid;
+	}
+
+	public void setRfid(RfidCredentials rfid) {
+		this.rfid = rfid;
+	}
 
 	public LocalDate getBirthdate() {
 		return birthdate;
