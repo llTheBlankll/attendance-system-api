@@ -28,7 +28,7 @@ public class AbsentStudents {
 		Iterable<Student> students = studentService.getAllStudent();
 		logger.info("Giving attendance to those students who are absent.");
 		students.forEach(student -> {
-			if (!attendanceService.existsByStudentLrnAndDate(student.getLrn(), yesterday)) {
+			if (!attendanceService.isLrnAndDateExist(student.getLrn(), yesterday)) {
 				attendanceService.setAsAbsent(student, yesterday);
 			}
 		});

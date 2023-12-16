@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -23,7 +23,7 @@ public class Teacher {
 	private String lastName;
 
 	@OneToMany(mappedBy = "teacher")
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Section> sections;
 
 

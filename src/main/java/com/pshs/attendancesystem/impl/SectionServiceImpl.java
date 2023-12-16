@@ -108,4 +108,14 @@ public class SectionServiceImpl implements SectionService {
 	public Iterable<Section> searchSectionByName(String sectionName) {
 		return this.sectionRepository.searchSectionName(sectionName);
 	}
+
+	@Override
+	public boolean isSectionExist(Section section) {
+		return this.sectionRepository.existsById(section.getSectionId());
+	}
+
+	@Override
+	public boolean isSectionExistById(Integer sectionId) {
+		return this.sectionRepository.existsById(sectionId);
+	}
 }

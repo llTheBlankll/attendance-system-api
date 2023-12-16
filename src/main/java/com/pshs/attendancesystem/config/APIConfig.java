@@ -8,13 +8,13 @@ import java.time.LocalTime;
 @Configuration
 public class APIConfig {
 
-	@Value("${attendance.flag-ceremony-time:06:30:00}")
+	@Value("${attendance.flag-ceremony-time}")
 	private LocalTime flagCeremonyTime;
 
-	@Value("${attendance.late-time-arrival:07:00:00}")
+	@Value("${attendance.late-time-arrival}")
 	private LocalTime lateTimeArrival;
 
-	@Value("${attendance.on-time-arrival:05:00:00}")
+	@Value("${attendance.on-time-arrival}")
 	private LocalTime onTimeArrival;
 
 	@Value("${attendance.absent-schedule}")

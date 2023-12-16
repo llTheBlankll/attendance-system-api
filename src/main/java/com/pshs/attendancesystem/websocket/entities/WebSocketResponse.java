@@ -1,5 +1,6 @@
-package com.pshs.attendancesystem.entities;
+package com.pshs.attendancesystem.websocket.entities;
 
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
 
 import java.sql.Time;

@@ -53,9 +53,10 @@ public interface AttendanceService {
 
 	long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date);
 
-	boolean existsByStudentLrnAndDate(Long studentLrn, LocalDate date);
+	boolean isLrnAndDateExist(Long studentLrn, LocalDate date);
 
 	void setAsAbsent(Student student, LocalDate date);
+	void absentAllNoAttendanceToday();
 
 	Status createAttendance(Long studentLrn);
 
@@ -67,7 +68,7 @@ public interface AttendanceService {
 
 	boolean attendanceOut(Long studentLrn);
 
-	boolean isAlreadyArrived(Student student);
+	Boolean isAlreadyArrived(Long lrn);
 
 	boolean isAlreadyOut(Long studentLrn);
 

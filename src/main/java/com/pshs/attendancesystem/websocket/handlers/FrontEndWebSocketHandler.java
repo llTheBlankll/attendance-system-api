@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.websocket.handlers;
 
 
-import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
+import com.pshs.attendancesystem.websocket.communication.FrontEndCommunicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,10 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private final FrontEndWebSocketsCommunicationService communicationService;
+	private final FrontEndCommunicationService communicationService;
 	private WebSocketSession session;
 
-	public FrontEndWebSocketHandler(FrontEndWebSocketsCommunicationService communicationService) {
+	public FrontEndWebSocketHandler(FrontEndCommunicationService communicationService) {
 		this.communicationService = communicationService;
 	}
 

@@ -16,4 +16,7 @@ public interface RfidCredentialsRepository extends JpaRepository<RfidCredentials
 	@Query("select (count(r) > 0) from RfidCredentials r where r.hashedLrn = ?1")
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	boolean isHashedLrnExist(String hashedLrn);
+
+	@Query("select (count(r) > 0) from RfidCredentials r where r.lrn = ?1")
+	boolean isLrnExist(Long lrn);
 }

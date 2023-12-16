@@ -3,18 +3,26 @@ package com.pshs.attendancesystem.websocket.handlers;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pshs.attendancesystem.entities.*;
+import com.pshs.attendancesystem.entities.Guardian;
+import com.pshs.attendancesystem.entities.RfidCredentials;
+import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
-import com.pshs.attendancesystem.impl.FrontEndWebSocketsCommunicationService;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
 import com.pshs.attendancesystem.messages.RfidMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
-import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
+import com.pshs.attendancesystem.services.RfidService;
 import com.pshs.attendancesystem.threading.SMSThread;
+import com.pshs.attendancesystem.websocket.communication.FrontEndCommunicationService;
+import com.pshs.attendancesystem.websocket.communication.SectionCommunicationService;
+import com.pshs.attendancesystem.websocket.entities.WSSectionAttendanceResponse;
+import com.pshs.attendancesystem.websocket.entities.WebSocketData;
+import com.pshs.attendancesystem.websocket.entities.WebSocketResponse;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -24,6 +32,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Optional;
@@ -32,16 +41,18 @@ import java.util.Set;
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	private final AttendanceService attendanceService;
-	private final RfidCredentialsRepository rfidCredentialsRepository;
-	private final FrontEndWebSocketsCommunicationService communicationService;
+	private final RfidService rfidService;
+	private final FrontEndCommunicationService frontEndCommunicationService;
+	private final SectionCommunicationService sectionCommunicationService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	ObjectMapper mapper = new ObjectMapper();
 	WebSocketResponse response = new WebSocketResponse();
 
-	public ScannerWebSocketHandler(RfidCredentialsRepository rfidCredentialsRepository, FrontEndWebSocketsCommunicationService communicationService, AttendanceService attendanceService) {
-		this.rfidCredentialsRepository = rfidCredentialsRepository;
-		this.communicationService = communicationService;
+	public ScannerWebSocketHandler(RfidService rfidService, FrontEndCommunicationService frontEndCommunicationService, AttendanceService attendanceService, SectionCommunicationService sectionCommunicationService) {
+		this.rfidService = rfidService;
+		this.frontEndCommunicationService = frontEndCommunicationService;
 		this.attendanceService = attendanceService;
+		this.sectionCommunicationService = sectionCommunicationService;
 		mapper.registerModule(new JavaTimeModule());
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 	}
@@ -55,8 +66,63 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 		session.sendMessage(new TextMessage(message));
 	}
 
+	private WSSectionAttendanceResponse getSectionWSResponse(Section section) {
+		LocalDate today = LocalDate.now();
+		WSSectionAttendanceResponse response = new WSSectionAttendanceResponse();
+		response.setSection(section);
+		response.setOut(
+			attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.OUT,
+				today
+			)
+		);
+
+		response.setAbsent(
+			attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.ABSENT,
+				today
+			)
+		);
+
+		response.setPresent(
+			attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.ONTIME,
+				today
+			) + attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.LATE,
+				today
+			) + attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.OUT,
+				today
+			)
+		);
+
+		response.setLate(
+			attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.LATE,
+				today
+			)
+		);
+
+		response.setOnTime(
+			attendanceService.countAttendanceInSectionByStatusAndDate(
+				section.getSectionId(),
+				Status.ONTIME,
+				today
+			)
+		);
+
+		return response;
+	}
+
 	@Override
-	protected void handleTextMessage(@Nonnull WebSocketSession session, TextMessage message) throws IOException {
+	protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) throws IOException {
 		String textMessage = message.getPayload();
 		if (textMessage.isEmpty()) {
 			return;
@@ -75,7 +141,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 			WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
 			hashedLrn = webSocketData.getHashedLrn();
 
-			rfidCredentials = this.rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+			rfidCredentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn);
 			if (rfidCredentials.isPresent()) {
 				student = rfidCredentials.get().getStudent();
 				credentials = rfidCredentials.get();
@@ -101,7 +167,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	private void handleInMode(WebSocketSession session, @Nonnull RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
 		try {
-			if (credentials.getHashedLrn() != null && !this.rfidCredentialsRepository.isHashedLrnExist(credentials.getHashedLrn())) {
+			if (credentials.getHashedLrn() != null && !this.rfidService.isHashedLrnExist(credentials.getHashedLrn())) {
 				response.setMessage("Invalid");
 				sendErrorMessage(session, new TextMessage(
 					mapper.writeValueAsString(response)
@@ -110,7 +176,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				return;
 			}
 
-			if (student.getLrn() != null && (attendanceService.isAlreadyArrived(student))) {
+			if (student.getLrn() != null && attendanceService.isAlreadyArrived(student.getLrn())) {
 				Status attendanceStatus = attendanceService.getStatusToday(student.getLrn());
 				response.setMessage("Already arrived!");
 				response.setStudentLrn(credentials.getLrn());
@@ -146,7 +212,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 				sendMessage(session, mapper.writeValueAsString(response));
 
-				communicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
+				frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
 			} else {
 				// Send a warning message, because there might be an error in scanner.
 				TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
@@ -163,7 +229,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 		try {
 			if (attendanceService.isAlreadyOut(credentials.getLrn())) {
 				Status attendanceStatus = attendanceService.getStatusToday(credentials.getLrn());
-				response.setMessage("Already check in");
+				response.setMessage("Already check out");
 				response.setStatus(attendanceStatus);
 				response.setStudentLrn(credentials.getLrn());
 				response.setTime(Time.valueOf(LocalTime.now()));
@@ -189,7 +255,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 			// Send response
 			sendMessage(session, mapper.writeValueAsString(response));
-			communicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
+			frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
 
 			// Inform Guardians
 			String parentMessage = AttendanceMessages.studentOutOfFacility(getFullName(student), currentLocalTime.toString());

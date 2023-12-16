@@ -19,7 +19,7 @@ public class CachingConfiguration {
 			"attendance",
 			"student",
 			"fingerprint",
-			"rfid_credentials",
+			"rfid",
 			"guardian",
 			"section",
 			"subject",

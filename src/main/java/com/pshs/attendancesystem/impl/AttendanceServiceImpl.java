@@ -42,23 +42,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	/**
 	 * Checks if the student has already arrived by iterating through their attendances and comparing the date.
 	 *
-	 * @param student the student object to check
+	 * @param lrn the LRN (Learner Reference Number) of the student
 	 * @return true if the student has already arrived, false otherwise
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#student.lrn")
-	public boolean isAlreadyArrived(Student student) {
-
-		// Iterate each attendance and get the attendance with the current date time,
-		// If a row exists, return false because the student has already arrived.
-		for (Attendance currentAttendance : student.getAttendances()) {
-			if (currentAttendance.getDate().equals(LocalDate.now())) {
-				logger.info("Student {} already arrived", student.getLrn());
-				return true;
-			}
-		}
-
-		return false;
+	@Cacheable(value = "attendance", key = "#lrn.toString()")
+	public Boolean isAlreadyArrived(Long lrn) {
+		return attendanceRepository.isLrnAndDateExist(lrn, LocalDate.now());
 	}
 
 	/**
@@ -77,10 +67,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return true if the student has already checked out, false otherwise
 	 */
 	@Override
+	@Cacheable(value = "attendance", key = "#studentLrn.toString()")
 	public boolean isAlreadyOut(Long studentLrn) {
 		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
 		if (attendance.isPresent() && attendance.get().getTimeOut() != null) {
-			logger.info("Student {} already left", studentLrn);
+			logger.debug("Student {} already left", studentLrn);
 			return true;
 		}
 
@@ -152,7 +143,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 			this.attendanceRepository.save(attendance);
 
-			logger.info("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
+			logger.debug("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
 			return status;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -205,8 +196,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 		if (attendance.isPresent() && attendance.get().getTimeOut() == null) {
 			Attendance getAttendance = attendance.get();
-			logger.info("The student {} is out, Time left: {}", studentLrn, LocalTime.now());
-			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
+			logger.debug("The student {} is out, Time left: {}", studentLrn, LocalTime.now());
+			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), Status.OUT, getAttendance.getId());
 			return true;
 		}
 
@@ -455,8 +446,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn + '-' + #date")
-	public boolean existsByStudentLrnAndDate(Long studentLrn, LocalDate date) {
+	public boolean isLrnAndDateExist(Long studentLrn, LocalDate date) {
 		return this.attendanceRepository.isLrnAndDateExist(studentLrn, date);
 	}
 
@@ -468,5 +458,17 @@ public class AttendanceServiceImpl implements AttendanceService {
 		attendance.setStudent(student);
 		attendance.setAttendanceStatus(Status.ABSENT);
 		this.attendanceRepository.save(attendance);
+	}
+
+	@Override
+	public void absentAllNoAttendanceToday() {
+		LocalDate today = LocalDate.now();
+		Iterable<Student> students = studentRepository.findAll();
+		logger.info("Absent all students that has no attendance today");
+		students.forEach(student -> {
+			if (isLrnAndDateExist(student.getLrn(), today)) {
+				setAsAbsent(student, today);
+			}
+		});
 	}
 }

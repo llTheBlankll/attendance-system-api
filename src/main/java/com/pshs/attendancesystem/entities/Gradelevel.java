@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;
@@ -18,11 +18,11 @@ public class Gradelevel {
 	private String gradeName;
 
 	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Section> sections = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "studentGradeLevel", cascade = CascadeType.ALL)
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Student> students = new LinkedHashSet<>();
 
 	public Set<Section> getSections() {

@@ -1,6 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;
@@ -18,7 +18,7 @@ public class Strand {
 	private String strandName;
 
 	@OneToMany(mappedBy = "strand")
-	@JsonIgnore
+	@JsonBackReference
 	private Set<Section> sections = new LinkedHashSet<>();
 
 	public Integer getId() {

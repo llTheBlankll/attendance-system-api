@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.entities;
+package com.pshs.attendancesystem.websocket.entities;
 
 public class WebSocketData {
 
