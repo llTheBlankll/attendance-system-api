@@ -43,8 +43,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry handlerRegistry) {
 		handlerRegistry.addHandler(new ScannerWebSocketHandler(rfidService, frontEndCommunicationService, attendanceService, sectionCommunicationService), "/websocket/scanner").setAllowedOrigins("*");
-		handlerRegistry.addHandler(new FrontEndWebSocketHandler(frontEndCommunicationService), "/websocket/frontend").setAllowedOrigins("*");
-		handlerRegistry.addHandler(new SectionWebSocketHandler(attendanceService, sectionService), "/websocket/section").setAllowedOrigins("*");
-		handlerRegistry.addHandler(new StudentWebSocketHandler(studentService), "/websocket/student").setAllowedOrigins("*");
+		handlerRegistry.addHandler(new FrontEndWebSocketHandler(frontEndCommunicationService), "/websocket/frontend");
+		handlerRegistry.addHandler(new SectionWebSocketHandler(attendanceService, sectionService), "/websocket/section");
+		handlerRegistry.addHandler(new StudentWebSocketHandler(studentService), "/websocket/student");
 	}
 }
