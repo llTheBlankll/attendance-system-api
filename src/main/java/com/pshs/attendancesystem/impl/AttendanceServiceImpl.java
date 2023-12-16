@@ -197,7 +197,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		if (attendance.isPresent() && attendance.get().getTimeOut() == null) {
 			Attendance getAttendance = attendance.get();
 			logger.debug("The student {} is out, Time left: {}", studentLrn, LocalTime.now());
-			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), Status.OUT, getAttendance.getId());
+			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
 			return true;
 		}
 

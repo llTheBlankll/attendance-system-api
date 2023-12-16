@@ -93,8 +93,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	 * @param timeOut the new time out value
 	 * @param id      the ID of the attendance record
 	 */
-	@Query("UPDATE Attendance attendance SET attendance.timeOut = ?1, attendance.attendanceStatus = ?2 WHERE attendance.id = ?3")
+	@Query("UPDATE Attendance attendance SET attendance.timeOut = ?1 WHERE attendance.id = ?3")
 	@Modifying
 	@Transactional
-	void studentAttendanceOut(LocalTime timeOut, Status status, Integer id);
+	void studentAttendanceOut(LocalTime timeOut, Integer id);
 }
