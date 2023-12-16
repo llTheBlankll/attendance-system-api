@@ -83,4 +83,14 @@ public class AttendanceController {
 	public String deleteAllAttendance() {
 		return attendanceService.deleteAllAttendance();
 	}
+
+	@Operation(
+		summary = "Absent all students that has no attendance",
+		description = "Use this endpoint to absent all students that has no attendance, please use with care as there is no confirmation. Principal only."
+	)
+	@PreAuthorize("hasRole('PRINCIPAL')")
+	@PostMapping(value = "/absent/all", produces = "text/plain")
+	public void absentAllStudents() {
+		attendanceService.absentAllNoAttendanceToday();
+	}
 }
