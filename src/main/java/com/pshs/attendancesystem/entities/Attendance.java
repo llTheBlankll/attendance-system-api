@@ -1,66 +1,77 @@
 package com.pshs.attendancesystem.entities;
 
-import com.pshs.attendancesystem.Enums;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.pshs.attendancesystem.enums.Status;
 import jakarta.persistence.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "attendance")
 public class Attendance {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Integer id;
+	@Enumerated(EnumType.STRING)
+	private Status attendanceStatus;
+	@Column(name = "date")
+	private LocalDate date;
+	@Column(name = "time")
+	private Time time;
+	@Column(name = "time_out")
+	private Time timeOut;
+	@ManyToOne
+	@JoinColumn(name = "student_id", nullable = false)
+	@JsonManagedReference
+	private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+	public Student getStudent() {
+		return student;
+	}
 
-    @Column(name = "date")
-    private LocalDate date;
-    @Column(name = "time")
-    private Time time;
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
-    @Enumerated(EnumType.STRING)
-    Enums.status attendanceStatus;
+	public Status getAttendanceStatus() {
+		return attendanceStatus;
+	}
 
-    public Enums.status getAttendanceStatus() {
-        return attendanceStatus;
-    }
+	public void setAttendanceStatus(Status attendanceStatus) {
+		this.attendanceStatus = attendanceStatus;
+	}
 
-    public void setAttendanceStatus(Enums.status attendanceStatus) {
-        this.attendanceStatus = attendanceStatus;
-    }
+	public Time getTimeOut() {
+		return timeOut;
+	}
 
+	public void setTimeOut(Time timeOut) {
+		this.timeOut = timeOut;
+	}
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public LocalDate getDate() {
+		return date;
+	}
 
-    public LocalDate getDate() {
-        return date;
-    }
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+	public Time getTime() {
+		return time;
+	}
 
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
-    }
+	public void setTime(Time time) {
+		this.time = time;
+	}
 }

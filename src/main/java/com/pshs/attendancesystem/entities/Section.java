@@ -1,70 +1,101 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "sections")
 public class Section {
-    @Id
-    private String sectionId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "section_id", nullable = false)
+	private Integer sectionId;
 
-    @Column(name = "adviser")
-    private String adviser;
+	@Column(name = "room")
+	private Integer room;
 
-    @Column(name = "room")
-    private Integer room;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "grade_level")
+	@JsonManagedReference
+	private Gradelevel gradeLevel;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "grade_level")
-    private Gradelevel gradeLevel;
+	@Column(name = "section_name", nullable = false)
+	private String sectionName;
 
-    @Column(name = "section_name", nullable = false)
-    private String sectionName;
+	@ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "teacher")
+	@JsonManagedReference
+	private Teacher teacher;
 
-    @OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE)
-    private Set<Student> students = new LinkedHashSet<>();
+	@OneToMany(mappedBy = "studentSection", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
+	@JsonBackReference
+	private Set<Student> students;
 
-    public String getSectionId() {
-        return sectionId;
-    }
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Strand.class, cascade = CascadeType.DETACH)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
+	@JoinColumn(name = "strand")
+	@JsonManagedReference
+	private Strand strand;
 
-    public void setSectionId(String sectionId) {
-        this.sectionId = sectionId;
-    }
+	public Strand getStrand() {
+		return strand;
+	}
 
-    public String getAdviser() {
-        return adviser;
-    }
+	public void setStrand(Strand strand) {
+		this.strand = strand;
+	}
 
-    public void setAdviser(String adviser) {
-        this.adviser = adviser;
-    }
+	public Integer getSectionId() {
+		return sectionId;
+	}
 
-    public Integer getRoom() {
-        return room;
-    }
+	public void setSectionId(Integer sectionId) {
+		this.sectionId = sectionId;
+	}
 
-    public void setRoom(Integer room) {
-        this.room = room;
-    }
+	public Teacher getTeacher() {
+		return teacher;
+	}
 
-    public Gradelevel getGradeLevel() {
-        return gradeLevel;
-    }
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
 
-    public void setGradeLevel(Gradelevel gradeLevel) {
-        this.gradeLevel = gradeLevel;
-    }
+	public Set<Student> getStudents() {
+		return students;
+	}
 
-    public String getSectionName() {
-        return sectionName;
-    }
+	public void setStudents(Set<Student> students) {
+		this.students = students;
+	}
 
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName;
-    }
+	public Integer getRoom() {
+		return room;
+	}
+
+	public void setRoom(Integer room) {
+		this.room = room;
+	}
+
+	public Gradelevel getGradeLevel() {
+		return gradeLevel;
+	}
+
+	public void setGradeLevel(Gradelevel gradeLevel) {
+		this.gradeLevel = gradeLevel;
+	}
+
+	public String getSectionName() {
+		return sectionName;
+	}
+
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
+	}
 
 }

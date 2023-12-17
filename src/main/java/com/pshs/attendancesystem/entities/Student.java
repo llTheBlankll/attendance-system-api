@@ -1,146 +1,151 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "students")
 public class Student {
-    @Id
-    @Column(name = "lrn", nullable = false)
-    private Long lrn;
+	@Id
+	@Column(name = "lrn", nullable = false)
+	private Long lrn;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+	@Column(name = "first_name", nullable = false)
+	private String firstName;
 
-    @Column(name = "middle_name")
-    private String middleName;
+	@Column(name = "middle_name")
+	private String middleName;
 
-    @Column(name = "last_name")
-    private String lastName;
+	@Column(name = "last_name")
+	private String lastName;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "grade_level")
-    private Gradelevel studentGradeLevel;
+	@Column(name = "birthdate")
+	private LocalDate birthdate;
 
-    @Column(name = "sex", length = 6)
-    private String sex;
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "grade_level")
+	@JsonManagedReference
+	private Gradelevel studentGradeLevel;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "section_id")
-    private Section studentSection;
+	@Column(name = "sex", length = 6)
+	private String sex;
 
-    @Column(name = "guardian_name")
-    private String guardianName;
+	@ManyToOne(targetEntity = Section.class)
+	@JoinColumn(name = "section_id")
+	@JsonManagedReference
+	private Section studentSection;
 
-    @Column(name = "contact_guardian")
-    private Long contactGuardian;
+	@OneToMany(mappedBy = "student", targetEntity = Guardian.class, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set<Guardian> guardian;
 
-    @Column(name = "address", length = Integer.MAX_VALUE)
-    private String address;
+	@OneToOne(mappedBy = "student", fetch = FetchType.EAGER)
+	private RfidCredentials rfid;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private Set<Attendance> attendances = new LinkedHashSet<>();
+	@Column(name = "address", length = Integer.MAX_VALUE)
+	private String address;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "lrn")
-    private Scan studentScan;
+	@OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class, fetch = FetchType.EAGER)
+	@JsonBackReference
+	private Set<Attendance> attendances;
 
-    public Scan getStudentScan() {
-        return studentScan;
-    }
+	public RfidCredentials getRfid() {
+		return rfid;
+	}
 
-    public void setStudentScan(Scan studentScan) {
-        this.studentScan = studentScan;
-    }
+	public void setRfid(RfidCredentials rfid) {
+		this.rfid = rfid;
+	}
 
-    public Long getLrn() {
-        return lrn;
-    }
+	public LocalDate getBirthdate() {
+		return birthdate;
+	}
 
-    public void setLrn(Long lrn) {
-        this.lrn = lrn;
-    }
+	public void setBirthdate(LocalDate birthdate) {
+		this.birthdate = birthdate;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public Set<Guardian> getGuardian() {
+		return guardian;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setGuardian(Set<Guardian> guardian) {
+		this.guardian = guardian;
+	}
 
-    public String getMiddleName() {
-        return middleName;
-    }
+	public Long getLrn() {
+		return lrn;
+	}
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+	public void setLrn(Long lrn) {
+		this.lrn = lrn;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public Gradelevel getStudentGradeLevel() {
-        return studentGradeLevel;
-    }
+	public String getMiddleName() {
+		return middleName;
+	}
 
-    public void setStudentGradeLevel(Gradelevel studentGradeLevel) {
-        this.studentGradeLevel = studentGradeLevel;
-    }
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
 
-    public String getSex() {
-        return sex;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public Section getStudentSection() {
-        return studentSection;
-    }
+	public Gradelevel getStudentGradeLevel() {
+		return studentGradeLevel;
+	}
 
-    public void setStudentSection(Section studentSection) {
-        this.studentSection = studentSection;
-    }
+	public void setStudentGradeLevel(Gradelevel studentGradeLevel) {
+		this.studentGradeLevel = studentGradeLevel;
+	}
 
-    public String getGuardianName() {
-        return guardianName;
-    }
+	public String getSex() {
+		return sex;
+	}
 
-    public void setGuardianName(String guardianName) {
-        this.guardianName = guardianName;
-    }
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
 
-    public Long getContactGuardian() {
-        return contactGuardian;
-    }
+	public Section getStudentSection() {
+		return studentSection;
+	}
 
-    public void setContactGuardian(Long contactGuardian) {
-        this.contactGuardian = contactGuardian;
-    }
+	public void setStudentSection(Section studentSection) {
+		this.studentSection = studentSection;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public Set<Attendance> getAttendances() {
-        return attendances;
-    }
+	public Set<Attendance> getAttendances() {
+		return attendances;
+	}
 
-    public void setAttendances(Set<Attendance> attendances) {
-        this.attendances = attendances;
-    }
+	public void setAttendances(Set<Attendance> attendances) {
+		this.attendances = attendances;
+	}
 }
