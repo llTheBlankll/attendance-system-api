@@ -46,6 +46,8 @@ public class WebSecurity {
 					.hasAnyRole(Privilege.PRINCIPAL.name(), Privilege.TEACHER.name())
 					.requestMatchers("/websocket/**")
 					.hasAnyRole(Privilege.RFID_DEVICE.name())
+					.requestMatchers("/login", "/token")
+					.permitAll()
 					.anyRequest()
 					.authenticated());
 
