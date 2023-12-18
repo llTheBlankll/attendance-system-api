@@ -11,9 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class JwtConfiguration {
 
-	private final MyUserDetailsService userDetailsService;
+	private final JWTUserDetailsService userDetailsService;
 
-	public JwtConfiguration(MyUserDetailsService userDetailsService) {
+	public JwtConfiguration(JWTUserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 	}
 
