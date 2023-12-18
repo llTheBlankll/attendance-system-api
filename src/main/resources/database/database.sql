@@ -35,12 +35,8 @@ CREATE TABLE Teachers
     first_name        VARCHAR(32),
     middle_name       VARCHAR(32),
     last_name         VARCHAR(32),
-    birth_date        DATE,
+    sex               VARCHAR(8),
     subject_expertise INT,
-    sex               VARCHAR(6),
-    address           VARCHAR(255),
-    contact_number    VARCHAR(48),
-    email             VARCHAR(255),
     PRIMARY KEY (teacher_id),
     FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id) ON DELETE SET NULL
 );
@@ -75,6 +71,8 @@ CREATE TABLE Students
     FOREIGN KEY (grade_level) REFERENCES GradeLevels (grade_level) ON DELETE SET NULL,
     FOREIGN KEY (section_id) REFERENCES Sections (section_id) ON DELETE SET NULL
 );
+CREATE INDEX students_section_id_idx ON Students (section_id);
+CREATE INDEX students_grade_level_idx ON Students (grade_level);
 
 -- * RFID CREDENTIALS
 CREATE TABLE rfid_credentials
@@ -96,6 +94,7 @@ CREATE TABLE Guardians
     FOREIGN KEY (student_lrn) REFERENCES Students (lrn) ON DELETE CASCADE
 );
 CREATE INDEX guardian_student_id_idx ON Guardians (student_lrn);
+CREATE INDEX guardian_full_name_idx ON Guardians (full_name);
 
 -- * ATTENDANCE TABLE
 CREATE TABLE Attendance
@@ -108,6 +107,8 @@ CREATE TABLE Attendance
     time_out          TIME DEFAULT LOCALTIME,
     CONSTRAINT fk_student_lrn FOREIGN KEY (student_id) REFERENCES students (lrn) ON DELETE SET NULL ON UPDATE CASCADE
 );
+CREATE INDEX attendance_student_id_idx ON Attendance (student_id);
+CREATE INDEX attendance_date_idx on Attendance (date);
 
 -- * MAKE ATTENDANCE ENUM TYPE CHARACTER VARYING
 ALTER TABLE Attendance
@@ -124,6 +125,25 @@ CREATE TABLE Fingerprint
     student        BIGINT,
     template_data  TEXT,
     CONSTRAINT fk_student_lrn FOREIGN KEY (student) REFERENCES students (lrn) ON DELETE SET NULL
+);
+
+-- * CREATE ROLES TABLE
+CREATE TABLE Roles
+(
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(128)
+);
+
+-- * CREATE USERS TABLE
+CREATE TABLE Users
+(
+    user_id    SERIAL PRIMARY KEY,
+    user_name VARCHAR(255),
+    password  VARCHAR(255),
+    email VARCHAR(255),
+    role_id   INT,
+    last_login TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES Roles (role_id) ON DELETE SET NULL
 );
 
 -- CREATE TRIGGER AND NOTIFY --
