@@ -1,6 +1,5 @@
 package com.pshs.attendancesystem.entities;
 
-import com.pshs.attendancesystem.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
@@ -33,7 +32,7 @@ public class User implements UserDetails {
 	@Column(name = "email")
 	private String email;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = CascadeType.DETACH)
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	@JoinColumn(name = "role_id")
 	private Role role;
@@ -63,9 +62,8 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(
-			new SimpleGrantedAuthority(Roles.GUEST.name())
-		);
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getRoleName());
+		return List.of(authority);
 	}
 
 	public String getPassword() {
