@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false)
@@ -33,7 +38,7 @@ public class User {
 	private Role role;
 
 	@Column(name = "last_login")
-	private Instant lastLogin;
+	private LocalDateTime lastLogin;
 
 	public Integer getId() {
 		return id;
@@ -51,8 +56,42 @@ public class User {
 		this.userName = userName;
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(
+			new SimpleGrantedAuthority(
+				role.getRoleName()
+			)
+		);
+	}
+
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		return userName;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	public void setPassword(String password) {
@@ -67,19 +106,19 @@ public class User {
 		this.email = email;
 	}
 
-	public Role getRole() {
+	public Role getRoles() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRoles(Role role) {
 		this.role = role;
 	}
 
-	public Instant getLastLogin() {
+	public LocalDateTime getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Instant lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
