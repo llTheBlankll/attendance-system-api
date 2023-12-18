@@ -28,13 +28,13 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public LoginResponse login(@RequestBody LoginUserDTO loginUserDTO) {
-		System.out.println("LOGIN");
 		User authenticatedUser = authenticationService.signIn(loginUserDTO);
 
 		return new LoginResponse(
 			jwtService.generateToken(authenticatedUser)
 		);
 	}
+
 	@GetMapping("/ping")
 	@PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'PRINCIPAL')")
 	public String ping() {
