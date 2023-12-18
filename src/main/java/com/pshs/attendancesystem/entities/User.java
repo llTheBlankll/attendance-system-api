@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.entities;
 
+import com.pshs.attendancesystem.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
@@ -40,6 +41,10 @@ public class User implements UserDetails {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
+	public User() {
+
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -59,9 +64,7 @@ public class User implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(
-			new SimpleGrantedAuthority(
-				role.getRoleName()
-			)
+			new SimpleGrantedAuthority(Roles.GUEST.name())
 		);
 	}
 
@@ -106,11 +109,11 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	public Role getRoles() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRoles(Role role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 

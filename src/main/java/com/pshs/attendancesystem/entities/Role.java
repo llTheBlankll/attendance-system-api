@@ -18,7 +18,7 @@ public class Role {
 	@Column(name = "role_name", length = 128)
 	private String roleName;
 
-	@OneToMany(targetEntity = User.class, mappedBy = "role")
+	@OneToMany(targetEntity = User.class, mappedBy = "role", fetch = FetchType.LAZY)
 	private List<User> users = new ArrayList<>();
 
 	public Integer getId() {
