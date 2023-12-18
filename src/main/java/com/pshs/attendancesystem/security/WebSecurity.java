@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.security;
 
 import com.pshs.attendancesystem.enums.Roles;
 import com.pshs.attendancesystem.security.jwt.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,6 +28,9 @@ public class WebSecurity {
 	private final AuthenticationProvider authenticationProvider;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+	@Value("${api.root}")
+	private String baseUrl;
+
 	public WebSecurity(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
 		this.authenticationProvider = authenticationProvider;
 		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -48,14 +52,17 @@ public class WebSecurity {
 			)
 			.authorizeHttpRequests(authorize ->
 				authorize
-					.requestMatchers("/api/v1/rfid/**")
+					.requestMatchers(baseUrl + "/v1/rfid/**")
 					.hasAnyRole(Roles.PRINCIPAL.name())
 
-					.requestMatchers("/api/v1/**")
+					.requestMatchers(baseUrl + "/v1/**")
 					.hasAnyRole(Roles.TEACHER.name(), Roles.PRINCIPAL.name())
 
 					.requestMatchers("/websocket/**")
 					.hasAnyRole(Roles.OTHER.name())
+
+					.requestMatchers(baseUrl + "/user/**")
+					.hasAnyRole(Roles.ADMIN.name())
 
 					.requestMatchers("/api/auth/**")
 					.permitAll()
