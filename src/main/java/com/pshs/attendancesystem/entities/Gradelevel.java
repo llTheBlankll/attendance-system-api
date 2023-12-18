@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;
@@ -8,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "gradelevels")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Gradelevel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +20,9 @@ public class Gradelevel {
 	private String gradeName;
 
 	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
-	@JsonBackReference
 	private Set<Section> sections = new LinkedHashSet<>();
 
-	@OneToMany(mappedBy = "studentGradeLevel", cascade = CascadeType.ALL)
-	@JsonBackReference
+	@OneToMany(mappedBy = "gradeLevel", cascade = CascadeType.ALL)
 	private Set<Student> students = new LinkedHashSet<>();
 
 	public Set<Section> getSections() {

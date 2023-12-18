@@ -1,11 +1,16 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "rfid_credentials")
+@Table(name = "rfid_credentials", indexes = {
+	@Index(columnList = "lrn")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
+
 public class RfidCredentials {
 	@Id
 	@Column(name = "lrn", nullable = false)
@@ -13,7 +18,6 @@ public class RfidCredentials {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
-	@JsonBackReference
 	private Student student;
 
 	@Column(name = "hashed_lrn", length = 128)
