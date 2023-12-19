@@ -25,3 +25,10 @@ VALUES ('admin', '$2a$12$ll5AqR1tdfRBB3v1UcBEr.HAGmYxQ9lUxdFcLFZAbMJwQUczjQ9OG',
        ('principal', '$2a$12$GQTtgkh7ufBcjrQqY683KOKvG/ZS796Al1siLsmlCD5PtalfPyV1S', 'principal', 2, '2022-01-01 00:00:00'),
        ('teacher', '$2a$12$9m6b4VxlAXCCGF1V7rtH2evITY0nFJ.NPneDMwD1xy9l.ueba1az2', 'teacher', 3, '2022-01-01 00:00:00'),
        ('student', '$2a$12$a3aGT3oFUy6SKd5otLJ3COKGl5cDMviWn5.w9JW6gOx6YRQpJmxaa', 'student', 4, '2022-01-01 00:00:00');
+
+-- ADD ROLES
+INSERT INTO users_role (user_id, role_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 3),
+       (4, 4);

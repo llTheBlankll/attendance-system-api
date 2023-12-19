@@ -146,6 +146,15 @@ CREATE TABLE Users
     FOREIGN KEY (role_id) REFERENCES Roles (role_id) ON DELETE SET NULL
 );
 
+-- * CREATE USERS_ROLE
+CREATE TABLE Users_Role (
+    user_id BIGINT,
+    role_id BIGINT,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES Users (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES Roles (role_id) ON DELETE CASCADE
+);
+
 -- CREATE TRIGGER AND NOTIFY --
 CREATE OR REPLACE FUNCTION notify_changes_attendance() RETURNS TRIGGER AS
 $$
