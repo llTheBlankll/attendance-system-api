@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -95,7 +95,7 @@ public class StudentServiceImpl implements StudentService {
 
 		if (this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_EXISTS;
-		} else if (!this.sectionService.existsById(student.getStudentSection().getSectionId())) {
+		} else if (!this.sectionService.existsById(student.getSection().getSectionId())) {
 			return SectionMessages.SECTION_NOT_FOUND;
 		}
 
@@ -110,7 +110,7 @@ public class StudentServiceImpl implements StudentService {
 		studentRfidCredentials.setSalt(salt);
 
 		// Set guardian student lrn
-		Set<Guardian> guardianSet = student.getGuardian();
+		List<Guardian> guardianSet = student.getGuardian();
 		for (Guardian guardian : guardianSet) {
 			guardian.setStudent(student);
 		}

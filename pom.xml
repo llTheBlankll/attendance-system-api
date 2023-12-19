@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pshs</groupId>
     <artifactId>attendance-system</artifactId>
-    <version>1.0.3-BETA</version>
+    <version>1.0.5-BETA</version>
     <name>attendance-system</name>
     <description>Attendance System API for PSHS</description>
     <properties>
@@ -44,8 +44,18 @@
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

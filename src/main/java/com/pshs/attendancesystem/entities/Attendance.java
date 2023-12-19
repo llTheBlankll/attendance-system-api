@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.pshs.attendancesystem.enums.Status;
 import jakarta.persistence.*;
 
@@ -8,7 +9,10 @@ import java.sql.Time;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "attendance")
+@Table(name = "attendance", indexes = {
+	@Index(name = "attendance_student_id_idx", columnList = "student_id")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Attendance {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +28,6 @@ public class Attendance {
 	private Time timeOut;
 	@ManyToOne
 	@JoinColumn(name = "student_id", nullable = false)
-	@JsonManagedReference
 	private Student student;
 
 	public Student getStudent() {

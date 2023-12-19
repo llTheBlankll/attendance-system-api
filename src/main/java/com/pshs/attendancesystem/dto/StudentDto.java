@@ -17,22 +17,22 @@ public class StudentDto implements Serializable {
 	private final String middleName;
 	private final String lastName;
 	private final LocalDate birthdate;
-	private final Gradelevel studentGradeLevel;
+	private final Gradelevel gradeLevel;
 	private final String sex;
-	private final Section studentSection;
+	private final Section section;
 	private final Set<GuardianDto> guardian;
 	private final String address;
 	private final Set<AttendanceDto> attendances;
 
-	public StudentDto(Long lrn, String firstName, String middleName, String lastName, LocalDate birthdate, Gradelevel studentGradeLevel, String sex, Section studentSection, Set<GuardianDto> guardian, String address, Set<AttendanceDto> attendances) {
+	public StudentDto(Long lrn, String firstName, String middleName, String lastName, LocalDate birthdate, Gradelevel gradeLevel, String sex, Section section, Set<GuardianDto> guardian, String address, Set<AttendanceDto> attendances) {
 		this.lrn = lrn;
 		this.firstName = firstName;
 		this.middleName = middleName;
 		this.lastName = lastName;
 		this.birthdate = birthdate;
-		this.studentGradeLevel = studentGradeLevel;
+		this.gradeLevel = gradeLevel;
 		this.sex = sex;
-		this.studentSection = studentSection;
+		this.section = section;
 		this.guardian = guardian;
 		this.address = address;
 		this.attendances = attendances;
@@ -58,16 +58,16 @@ public class StudentDto implements Serializable {
 		return birthdate;
 	}
 
-	public Gradelevel getStudentGradeLevel() {
-		return studentGradeLevel;
+	public Gradelevel getGradeLevel() {
+		return gradeLevel;
 	}
 
 	public String getSex() {
 		return sex;
 	}
 
-	public Section getStudentSection() {
-		return studentSection;
+	public Section getSection() {
+		return section;
 	}
 
 	public Set<GuardianDto> getGuardian() {
@@ -92,9 +92,9 @@ public class StudentDto implements Serializable {
 			Objects.equals(this.middleName, entity.middleName) &&
 			Objects.equals(this.lastName, entity.lastName) &&
 			Objects.equals(this.birthdate, entity.birthdate) &&
-			Objects.equals(this.studentGradeLevel, entity.studentGradeLevel) &&
+			Objects.equals(this.gradeLevel, entity.gradeLevel) &&
 			Objects.equals(this.sex, entity.sex) &&
-			Objects.equals(this.studentSection, entity.studentSection) &&
+			Objects.equals(this.section, entity.section) &&
 			Objects.equals(this.guardian, entity.guardian) &&
 			Objects.equals(this.address, entity.address) &&
 			Objects.equals(this.attendances, entity.attendances);
@@ -102,7 +102,7 @@ public class StudentDto implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(lrn, firstName, middleName, lastName, birthdate, studentGradeLevel, sex, studentSection, guardian, address, attendances);
+		return Objects.hash(lrn, firstName, middleName, lastName, birthdate, gradeLevel, sex, section, guardian, address, attendances);
 	}
 
 	@Override
@@ -113,9 +113,9 @@ public class StudentDto implements Serializable {
 			"middleName = " + middleName + ", " +
 			"lastName = " + lastName + ", " +
 			"birthdate = " + birthdate + ", " +
-			"studentGradeLevel = " + studentGradeLevel + ", " +
+			"studentGradeLevel = " + gradeLevel + ", " +
 			"sex = " + sex + ", " +
-			"studentSection = " + studentSection + ", " +
+			"studentSection = " + section + ", " +
 			"guardian = " + guardian + ", " +
 			"address = " + address + ", " +
 			"attendances = " + attendances + ")";

@@ -1,12 +1,14 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "teachers")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Teacher {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +24,15 @@ public class Teacher {
 	@Column(name = "last_name", length = 32)
 	private String lastName;
 
-	@OneToMany(mappedBy = "teacher")
-	@JsonBackReference
-	private Set<Section> sections;
+	@OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
+	private List<Section> sections;
 
 
-	public Set<Section> getSections() {
+	public List<Section> getSections() {
 		return sections;
 	}
 
-	public void setSections(Set<Section> sections) {
+	public void setSections(List<Section> sections) {
 		this.sections = sections;
 	}
 

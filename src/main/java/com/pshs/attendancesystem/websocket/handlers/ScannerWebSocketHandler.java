@@ -34,8 +34,8 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
@@ -168,7 +168,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				sectionCommunicationService.sendUpdate(
 					mapper.writeValueAsString(
 						getSectionWSResponse(
-							student.getStudentSection(),
+							student.getSection(),
 							student,
 							attendanceStatus,
 							currentLocalTime
@@ -222,7 +222,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 			sectionCommunicationService.sendUpdate(
 				mapper.writeValueAsString(
 					getSectionWSResponse(
-						student.getStudentSection(),
+						student.getSection(),
 						student,
 						Status.OUT,
 						currentLocalTime
@@ -239,7 +239,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void informGuardian(Student student, String parentMessage) {
-		Set<Guardian> guardianSet = student.getGuardian();
+		List<Guardian> guardianSet = student.getGuardian();
 		for (Guardian guardian : guardianSet) {
 			if (guardian.getContactNumber().equals("null")) {
 				logger.error("No contact number found");
