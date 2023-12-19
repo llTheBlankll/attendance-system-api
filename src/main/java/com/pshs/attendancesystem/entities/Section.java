@@ -24,12 +24,17 @@ public class Section {
 	@Column(name = "room")
 	private Integer room;
 
+	@Column(name = "section_name", nullable = false)
+	private String sectionName;
+
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Strand.class, cascade = CascadeType.DETACH)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
+	@JoinColumn(name = "strand")
+	private Strand strand;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "grade_level")
 	private Gradelevel gradeLevel;
-
-	@Column(name = "section_name", nullable = false)
-	private String sectionName;
 
 	@ManyToOne(targetEntity = Teacher.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "teacher")
@@ -37,11 +42,6 @@ public class Section {
 
 	@OneToMany(mappedBy = "section", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
 	private List<Student> students;
-
-	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Strand.class, cascade = CascadeType.DETACH)
-	@OnDelete(action = OnDeleteAction.SET_NULL)
-	@JoinColumn(name = "strand")
-	private Strand strand;
 
 	public Strand getStrand() {
 		return strand;
