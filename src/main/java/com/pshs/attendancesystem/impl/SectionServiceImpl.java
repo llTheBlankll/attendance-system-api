@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.services.SectionService;
@@ -70,7 +71,11 @@ public class SectionServiceImpl implements SectionService {
 		return SectionMessages.SECTION_UPDATED;
 	}
 
-	// TODO: Search section by Teacher object.
+	@Override
+	public List<Section> getAllSectionByTeacher(Teacher teacher) {
+		return sectionRepository.getAllSectionByTeacher(teacher);
+	}
+
 	@Override
 	@Cacheable(value = "section", key = "#sectionId")
 	public Section getSectionBySectionId(Integer sectionId) {
