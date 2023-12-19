@@ -23,6 +23,10 @@ public class WSSectionAttendanceResponse {
 		return section;
 	}
 
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
 	public Long getOut() {
 		return out;
 	}
@@ -37,10 +41,6 @@ public class WSSectionAttendanceResponse {
 
 	public void setLate(Long late) {
 		this.late = late;
-	}
-
-	public void setSection(Section section) {
-		this.section = section;
 	}
 
 	public Long getAbsent() {

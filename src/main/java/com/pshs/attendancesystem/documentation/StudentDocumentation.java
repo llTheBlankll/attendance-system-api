@@ -13,6 +13,7 @@ public class StudentDocumentation {
 	public static final String DELETE_STUDENT = "Delete a student record from the database.";
 	public static final String SEARCH_STUDENTS_BY_GRADE_LEVEL = "Retrieve a list of students based on their grade level.";
 	public static final String GET_STUDENT_BY_LRN = "Retrieve a specific student by their unique identifier.";
+
 	private StudentDocumentation() {
 
 	}

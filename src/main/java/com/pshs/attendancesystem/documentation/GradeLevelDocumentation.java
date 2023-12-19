@@ -8,6 +8,7 @@ public class GradeLevelDocumentation {
 	public static final String UPDATE_GRADELEVEL = "Update an existing grade level's information in the database.";
 	public static final String DELETE_GRADELEVEL_BY_ID = "Delete a grade level record from the database using its unique identifier.";
 	public static final String SEARCH_GRADELEVEL_BY_NAME = "Retrieve a list of grade levels based on their name.";
+
 	private GradeLevelDocumentation() {
 
 	}

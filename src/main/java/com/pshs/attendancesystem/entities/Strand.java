@@ -23,7 +23,7 @@ public class Strand {
 	@Column(name = "strand_name", nullable = false)
 	private String strandName;
 
-	@OneToMany(mappedBy = "strand",targetEntity = Section.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "strand", targetEntity = Section.class, fetch = FetchType.EAGER)
 	private List<Section> sections = new ArrayList<>();
 
 	public Integer getId() {

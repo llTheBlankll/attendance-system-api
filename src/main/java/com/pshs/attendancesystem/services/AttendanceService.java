@@ -56,6 +56,7 @@ public interface AttendanceService {
 	boolean isLrnAndDateExist(Long studentLrn, LocalDate date);
 
 	void setAsAbsent(Student student, LocalDate date);
+
 	void absentAllNoAttendanceToday();
 
 	Status createAttendance(Long studentLrn);

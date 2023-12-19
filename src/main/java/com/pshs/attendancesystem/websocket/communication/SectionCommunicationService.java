@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public class SectionCommunicationService {
 
-	private List<WebSocketSession> sessions = new ArrayList<>();
 	private final Logger logger = LogManager.getLogger(this.getClass());
+	private final List<WebSocketSession> sessions = new ArrayList<>();
 
 	public void registerSession(WebSocketSession session) {
 		sessions.add(session);

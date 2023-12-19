@@ -18,6 +18,8 @@ public interface SectionService {
 	String deleteSection(Section section);
 
 	Iterable<Section> searchSectionByName(String sectionName);
+
 	boolean isSectionExist(Section section);
+
 	boolean isSectionExistById(Integer sectionId);
 }

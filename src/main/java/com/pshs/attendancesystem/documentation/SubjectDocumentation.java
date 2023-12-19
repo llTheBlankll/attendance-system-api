@@ -10,6 +10,7 @@ public class SubjectDocumentation {
 	public static final String CREATE_SUBJECT = "Create a new subject record in the database.";
 	public static final String UPDATE_SUBJECT = "Update an existing subject's information in the database.";
 	public static final String DELETE_SUBJECT = "Delete a subject record from the database.";
+
 	private SubjectDocumentation() {
 
 	}
