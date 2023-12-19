@@ -36,12 +36,15 @@ public class Student {
 	@Column(name = "birthdate")
 	private LocalDate birthdate;
 
+	@Column(name = "sex", length = 6)
+	private String sex;
+
+	@Column(name = "address", length = Integer.MAX_VALUE)
+	private String address;
+
 	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Gradelevel.class, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "grade_level")
 	private Gradelevel gradeLevel;
-
-	@Column(name = "sex", length = 6)
-	private String sex;
 
 	@ManyToOne(targetEntity = Section.class, fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "section_id")
@@ -52,9 +55,6 @@ public class Student {
 
 	@OneToOne(mappedBy = "student")
 	private RfidCredentials rfid;
-
-	@Column(name = "address", length = Integer.MAX_VALUE)
-	private String address;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class)
 	private Set<Attendance> attendances;
