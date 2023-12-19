@@ -7,25 +7,26 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "users_role")
 public class UsersRole {
-	@EmbeddedId
-	private UsersRoleId id;
-	@MapsId("userId")
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "users_role_id", nullable = false)
+	private Long id;
+
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@MapsId("roleId")
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.MERGE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "role_id", nullable = false)
 	private Role role;
 
-	public UsersRoleId getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(UsersRoleId id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
