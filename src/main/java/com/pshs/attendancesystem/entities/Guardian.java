@@ -1,26 +1,29 @@
 package com.pshs.attendancesystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "guardians")
+@Table(name = "guardians", indexes = {
+	@Index(columnList = "student_lrn")
+})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Guardian {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "guardian_id", nullable = false)
 	private Integer id;
 
-	@JoinColumn(name = "student_lrn")
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JsonBackReference
-	private Student student;
-
 	@Column(name = "full_name")
 	private String fullName;
 
 	@Column(name = "contact_number", length = 32)
 	private String contactNumber;
+
+	@JoinColumn(name = "student_lrn")
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Student student;
 
 	public String getFullName() {
 		return fullName;

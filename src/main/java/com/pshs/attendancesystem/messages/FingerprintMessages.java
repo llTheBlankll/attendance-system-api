@@ -7,6 +7,7 @@ public class FingerprintMessages {
 	public static final String FINGERPRINT_UPDATED = "Fingerprint was updated.";
 	public static final String FINGERPRINT_DELETED = "Fingerprint was deleted.";
 	public static final String FINGERPRINT_INVALID = "Invalid fingerprint";
+
 	private FingerprintMessages() {
 	}
 }

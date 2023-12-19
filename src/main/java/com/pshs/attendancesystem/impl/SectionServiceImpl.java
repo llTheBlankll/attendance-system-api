@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class SectionServiceImpl implements SectionService {
@@ -71,17 +70,7 @@ public class SectionServiceImpl implements SectionService {
 		return SectionMessages.SECTION_UPDATED;
 	}
 
-	@Override
-	@Cacheable(value = "section", key = "#lastName")
-	public Iterable<Section> getSectionByTeacherLastName(String lastName) {
-		if (!this.sectionRepository.isTeacherLastNameExist(lastName)) {
-			Stream<Section> emptyStream = Stream.empty();
-			return emptyStream::iterator;
-		}
-
-		return this.sectionRepository.searchTeacherLastName(lastName);
-	}
-
+	// TODO: Search section by Teacher object.
 	@Override
 	@Cacheable(value = "section", key = "#sectionId")
 	public Section getSectionBySectionId(Integer sectionId) {

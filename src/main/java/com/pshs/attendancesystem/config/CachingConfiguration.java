@@ -25,7 +25,8 @@ public class CachingConfiguration {
 			"subject",
 			"teacher",
 			"strand",
-			"gradelevel"
+			"gradelevel",
+			"user"
 		);
 		cacheManager.setCaffeine(caffeineCacheBuilder());
 
@@ -35,7 +36,7 @@ public class CachingConfiguration {
 	private Caffeine<Object, Object> caffeineCacheBuilder() {
 		return Caffeine.newBuilder()
 			.expireAfterWrite(60, TimeUnit.MINUTES)
-			.maximumSize(1000)
+			.maximumSize(10000)
 			.recordStats();
 	}
 }

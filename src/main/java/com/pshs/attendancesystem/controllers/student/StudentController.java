@@ -76,7 +76,7 @@ public class StudentController {
 		description = StudentDocumentation.DELETE_STUDENT_BY_LRN
 	)
 	@PostMapping("/delete/lrn")
-	public String deleteStudentById(@RequestParam("lrn") Long lrn) {
+	public String deleteStudentById(@RequestParam("q") Long lrn) {
 		return studentService.deleteStudentById(lrn);
 	}
 
@@ -93,7 +93,7 @@ public class StudentController {
 		description = StudentDocumentation.SEARCH_STUDENTS_BY_GRADE_LEVEL
 	)
 	@GetMapping("/search/gradelevel")
-	public Iterable<Student> getStudentByGradeLevel(@RequestParam("name") String gradeName) {
+	public Iterable<Student> getStudentByGradeLevel(@RequestParam("q") String gradeName) {
 		return studentService.getStudentByGradeLevel(gradeName);
 	}
 
@@ -108,7 +108,7 @@ public class StudentController {
 		description = StudentDocumentation.GET_STUDENT_BY_LRN
 	)
 	@GetMapping("/search/lrn")
-	public Student getStudentById(@RequestParam("lrn") Long lrn) {
+	public Student getStudentById(@RequestParam("q") Long lrn) {
 		return studentService.getStudentById(lrn);
 	}
 
@@ -135,7 +135,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/get/students/section-id")
-	public Iterable<Student> getAllStudentWithSectionId(@RequestParam("id") Integer sectionId) {
+	public Iterable<Student> getAllStudentWithSectionId(@RequestParam("q") Integer sectionId) {
 		return studentService.getAllStudentWithSectionId(sectionId);
 	}
 
@@ -147,7 +147,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/count/students/section-id")
-	public long countStudentsBySectionId(@RequestParam("id") Integer sectionId) {
+	public long countStudentsBySectionId(@RequestParam("q") Integer sectionId) {
 		return studentService.countStudentsBySectionId(sectionId);
 	}
 
@@ -159,7 +159,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/search/firstname")
-	public Iterable<Student> searchStudentByFirstName(@RequestParam("name") String name) {
+	public Iterable<Student> searchStudentByFirstName(@RequestParam("q") String name) {
 		return studentService.searchStudentByFirstName(name);
 	}
 
@@ -171,7 +171,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/search/lastname")
-	public Iterable<Student> searchStudentByLastName(@RequestParam("name") String name) {
+	public Iterable<Student> searchStudentByLastName(@RequestParam("q") String name) {
 		return studentService.searchStudentByLastName(name);
 	}
 
@@ -183,7 +183,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/search/first-last-name")
-	public Iterable<Student> searchStudentByFirstAndLastName(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+	public Iterable<Student> searchStudentByFirstAndLastName(@RequestParam("first") String firstName, @RequestParam("last") String lastName) {
 		return studentService.searchStudentByFirstAndLastName(firstName, lastName);
 	}
 
@@ -195,7 +195,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/is-lrn-exist")
-	public boolean isLrnExist(@RequestParam("lrn") Long lrn) {
+	public boolean isLrnExist(@RequestParam("q") Long lrn) {
 		return studentService.isLrnExist(lrn);
 	}
 

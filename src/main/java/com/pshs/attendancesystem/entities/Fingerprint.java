@@ -15,13 +15,13 @@ public class Fingerprint {
 	@Column(name = "fingerprint_id", nullable = false)
 	private String fingerprintId;
 
+	@Column(name = "template_data", length = Integer.MAX_VALUE)
+	private String templateData;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	@JoinColumn(name = "student")
 	private Student student;
-
-	@Column(name = "template_data", length = Integer.MAX_VALUE)
-	private String templateData;
 
 	public Integer getId() {
 		return id;

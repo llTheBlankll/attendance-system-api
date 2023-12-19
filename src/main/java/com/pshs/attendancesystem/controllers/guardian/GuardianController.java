@@ -37,7 +37,7 @@ public class GuardianController {
 		}
 	)
 	@GetMapping("/student/lrn")
-	public Iterable<Guardian> getStudentGuardiansByLrn(@RequestParam("lrn") Long lrn) {
+	public Iterable<Guardian> getStudentGuardiansByLrn(@RequestParam("q") Long lrn) {
 		return guardianService.getStudentGuardiansByLrn(lrn);
 	}
 
@@ -49,7 +49,7 @@ public class GuardianController {
 		}
 	)
 	@GetMapping("/search/full-name")
-	public Iterable<Guardian> getGuardianByLastName(@RequestParam("name") String fullName) {
+	public Iterable<Guardian> getGuardianByLastName(@RequestParam("q") String fullName) {
 		return guardianService.searchGuardianByFullName(fullName);
 	}
 
@@ -98,7 +98,7 @@ public class GuardianController {
 		}
 	)
 	@PostMapping("/delete/guardian-id")
-	public String deleteGuardianById(@RequestParam("id") Integer guardianId) {
+	public String deleteGuardianById(@RequestParam("q") Integer guardianId) {
 		return guardianService.deleteGuardianById(guardianId);
 	}
 }

@@ -10,7 +10,8 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master" ]
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -36,6 +37,5 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: false
-        title: "Production Build"
         files: target/*.jar
             

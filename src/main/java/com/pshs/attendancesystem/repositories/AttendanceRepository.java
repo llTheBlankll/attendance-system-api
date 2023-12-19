@@ -27,18 +27,18 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Query("select a from Attendance a where a.student.lrn = ?1 and a.date between ?2 and ?3")
 	Iterable<Attendance> searchLrnBetwenDate(Long studentLrn, LocalDate startDate, LocalDate endDate);
 
-	@Query("select a from Attendance a where a.student.studentSection.sectionId = ?1")
+	@Query("select a from Attendance a where a.student.section.sectionId = ?1")
 	Iterable<Attendance> searchStudentSectionId(Integer sectionId);
 
 	@Query("""
 		select a from Attendance a
-		where a.student.studentSection.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
+		where a.student.section.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
 	Iterable<Attendance> searchSectionIdBetweenDateAndStatus(Integer sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
 	@Query("select a from Attendance a where a.date between ?1 and ?2")
 	Iterable<Attendance> searchBetweenDate(LocalDate startDate, LocalDate endDate);
 
-	@Query("select a from Attendance a where a.student.studentSection.sectionId = ?1 and a.date between ?2 and ?3")
+	@Query("select a from Attendance a where a.student.section.sectionId = ?1 and a.date between ?2 and ?3")
 	Iterable<Attendance> searchSectionIdBetweenDate(Integer sectionId, LocalDate startDate, LocalDate endDate);
 
 	@Query("SELECT a FROM Attendance a JOIN a.student s WHERE s.lrn = :studentLrn AND a.date = :date")
@@ -54,12 +54,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
 	@Query("""
 		select count(a) from Attendance a
-		where a.student.studentSection.sectionId = ?1 and a.attendanceStatus = ?2 and a.date = ?3""")
+		where a.student.section.sectionId = ?1 and a.attendanceStatus = ?2 and a.date = ?3""")
 	long countSectionIdDateAndStatus(Integer studentSectionId, Status status, LocalDate date);
 
 	@Query("""
 		select count(a) from Attendance a
-		where a.student.studentSection.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
+		where a.student.section.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
 	long countSectionIdBetweenDateAndStatus(Integer sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
 	@Query("select count(a) from Attendance a where a.date between ?1 and ?2")
@@ -68,20 +68,20 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Query("select count(a) from Attendance a where a.student.lrn = ?1 and a.date between ?2 and ?3")
 	long countLrnBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate);
 
-	@Query("select count(a) from Attendance a where a.student.studentSection.sectionId = ?1 and a.date between ?2 and ?3")
+	@Query("select count(a) from Attendance a where a.student.section.sectionId = ?1 and a.date between ?2 and ?3")
 	long countSectionIdBetweenDate(Integer studentSectionId, LocalDate startDate, LocalDate endDate);
 
-	@Query("select count(a) from Attendance a where a.student.studentSection.sectionId = ?1 and a.date = ?2")
+	@Query("select count(a) from Attendance a where a.student.section.sectionId = ?1 and a.date = ?2")
 	long countSectionIdAndDate(Integer sectionId, LocalDate date);
 
 	@Query("""
 		select count(a) from Attendance a
-		where a.student.studentSection.strand = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
+		where a.student.section.strand = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
 	long countSectionStrandAndStatus(Strand strand, LocalDate date, Status status);
 
 	@Query("""
 		select count(a) from Attendance a
-		where a.student.studentGradeLevel = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
+		where a.student.gradeLevel = ?1 and a.date = ?2 and a.attendanceStatus = ?3""")
 	long countStudentGradeLevelAndDateAndStatus(Gradelevel studentGradeLevel, LocalDate date, Status status);
 
 	@Query("select (count(a) > 0) from Attendance a where a.student.lrn = ?1 and a.date = ?2")
@@ -93,8 +93,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	 * @param timeOut the new time out value
 	 * @param id      the ID of the attendance record
 	 */
-	@Query("UPDATE Attendance attendance SET attendance.timeOut = ?1, attendance.attendanceStatus = ?2 WHERE attendance.id = ?3")
+	@Query("UPDATE Attendance attendance SET attendance.timeOut = ?1 WHERE attendance.id = ?2")
 	@Modifying
 	@Transactional
-	void studentAttendanceOut(LocalTime timeOut, Status status, Integer id);
+	void studentAttendanceOut(LocalTime timeOut, Integer id);
 }

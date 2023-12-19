@@ -13,13 +13,13 @@ public interface SectionService {
 
 	String updateSection(Section section);
 
-	Iterable<Section> getSectionByTeacherLastName(String lastName);
-
 	Section getSectionBySectionId(Integer sectionId);
 
 	String deleteSection(Section section);
 
 	Iterable<Section> searchSectionByName(String sectionName);
+
 	boolean isSectionExist(Section section);
+
 	boolean isSectionExistById(Integer sectionId);
 }

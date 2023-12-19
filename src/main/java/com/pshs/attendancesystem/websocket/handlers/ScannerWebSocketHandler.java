@@ -16,7 +16,7 @@ import com.pshs.attendancesystem.services.RfidService;
 import com.pshs.attendancesystem.threading.SMSThread;
 import com.pshs.attendancesystem.websocket.communication.FrontEndCommunicationService;
 import com.pshs.attendancesystem.websocket.communication.SectionCommunicationService;
-import com.pshs.attendancesystem.websocket.entities.WSSectionAttendanceResponse;
+import com.pshs.attendancesystem.websocket.entities.WSSectionCommunicationServiceResponse;
 import com.pshs.attendancesystem.websocket.entities.WebSocketData;
 import com.pshs.attendancesystem.websocket.entities.WebSocketResponse;
 import jakarta.annotation.Nonnull;
@@ -32,11 +32,10 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
@@ -66,59 +65,13 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 		session.sendMessage(new TextMessage(message));
 	}
 
-	private WSSectionAttendanceResponse getSectionWSResponse(Section section) {
-		LocalDate today = LocalDate.now();
-		WSSectionAttendanceResponse response = new WSSectionAttendanceResponse();
-		response.setSection(section);
-		response.setOut(
-			attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.OUT,
-				today
-			)
+	private WSSectionCommunicationServiceResponse getSectionWSResponse(Section section, Student student, Status status, LocalTime time) {
+		return new WSSectionCommunicationServiceResponse(
+			section,
+			student,
+			status,
+			time
 		);
-
-		response.setAbsent(
-			attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.ABSENT,
-				today
-			)
-		);
-
-		response.setPresent(
-			attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.ONTIME,
-				today
-			) + attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.LATE,
-				today
-			) + attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.OUT,
-				today
-			)
-		);
-
-		response.setLate(
-			attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.LATE,
-				today
-			)
-		);
-
-		response.setOnTime(
-			attendanceService.countAttendanceInSectionByStatusAndDate(
-				section.getSectionId(),
-				Status.ONTIME,
-				today
-			)
-		);
-
-		return response;
 	}
 
 	@Override
@@ -212,6 +165,16 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 				sendMessage(session, mapper.writeValueAsString(response));
 
+				sectionCommunicationService.sendUpdate(
+					mapper.writeValueAsString(
+						getSectionWSResponse(
+							student.getSection(),
+							student,
+							attendanceStatus,
+							currentLocalTime
+						)
+					)
+				);
 				frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
 			} else {
 				// Send a warning message, because there might be an error in scanner.
@@ -256,6 +219,16 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 			// Send response
 			sendMessage(session, mapper.writeValueAsString(response));
 			frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
+			sectionCommunicationService.sendUpdate(
+				mapper.writeValueAsString(
+					getSectionWSResponse(
+						student.getSection(),
+						student,
+						Status.OUT,
+						currentLocalTime
+					)
+				)
+			);
 
 			// Inform Guardians
 			String parentMessage = AttendanceMessages.studentOutOfFacility(getFullName(student), currentLocalTime.toString());
@@ -266,7 +239,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void informGuardian(Student student, String parentMessage) {
-		Set<Guardian> guardianSet = student.getGuardian();
+		List<Guardian> guardianSet = student.getGuardian();
 		for (Guardian guardian : guardianSet) {
 			if (guardian.getContactNumber().equals("null")) {
 				logger.error("No contact number found");

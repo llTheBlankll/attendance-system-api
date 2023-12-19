@@ -48,8 +48,8 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "lrn", description = "The learning reference number of the student")
 		}
 	)
-	@GetMapping("/student")
-	public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestParam("lrn") Long studentLrn) {
+	@GetMapping("/student") // TODO: Make it between date.
+	public Iterable<Attendance> getStudentAttendanceBetweenDate(@RequestParam("q") Long studentLrn) {
 		if (studentLrn == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return null;
@@ -809,12 +809,12 @@ public class AttendanceStatisticsController {
 		summary = "Get Section's Attendance with date range",
 		description = "Retrieves the attendance records for between the date you provided with Status filtering.",
 		parameters = {
-			@Parameter(name = "sectionId", description = "The ID of the section.", required = true),
+			@Parameter(name = "section-id", description = "The ID of the section.", required = true),
 			@Parameter(name = "status", description = "The status to filter the attendance. If provided null, no late and on time filtering.")
 		}
 	)
 	@PostMapping("/section")
-	public Iterable<Attendance> getAttendanceInSection(@RequestParam Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+	public Iterable<Attendance> getAttendanceInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
 		if (status == null) {
 			return attendanceService.getAttendanceInSection(sectionId, dateRange);
 		} else {
@@ -826,12 +826,12 @@ public class AttendanceStatisticsController {
 		summary = "Get Section's Attendance Count with date range",
 		description = "Retrieves the attendance records for between the date you provided with Status filtering.",
 		parameters = {
-			@Parameter(name = "sectionId", description = "The ID of the section.", required = true),
+			@Parameter(name = "section-id", description = "The ID of the section.", required = true),
 			@Parameter(name = "status", description = "The status to filter the attendance.", required = true)
 		}
 	)
 	@PostMapping("/count/section")
-	public long getAttendanceCountInSection(@RequestParam Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+	public long getAttendanceCountInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
 		return attendanceService.countAttendanceInSection(sectionId, dateRange, status);
 	}
 
@@ -840,11 +840,11 @@ public class AttendanceStatisticsController {
 		description = "Retrieves the attendance records for the date you provided. NOTE: If status is null, " +
 			"the attendance count will be returned without the filter of ONTIME or LATE and date should not be null.",
 		parameters = {
-			@Parameter(name = "sectionId", description = "The ID of the section.")
+			@Parameter(name = "section-id", description = "The ID of the section.")
 		}
 	)
 	@PostMapping("/count/section/date")
-	public long getAttendanceCountInSectionByStatusAndDate(@RequestParam Integer sectionId, @RequestBody DateWithStatus dateStatus) {
+	public long getAttendanceCountInSectionByStatusAndDate(@RequestParam("section-id") Integer sectionId, @RequestBody DateWithStatus dateStatus) {
 		if (dateStatus.getDate() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return -2;

@@ -6,14 +6,15 @@ import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.services.AttendanceService;
 import com.pshs.attendancesystem.services.SectionService;
+import com.pshs.attendancesystem.websocket.communication.SectionCommunicationService;
 import com.pshs.attendancesystem.websocket.entities.WSSectionAttendanceResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
@@ -21,15 +22,18 @@ import java.time.LocalDate;
 public class SectionWebSocketHandler extends TextWebSocketHandler {
 	private final AttendanceService attendanceService;
 	private final SectionService sectionService;
-	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private final SectionCommunicationService sectionCommunicationService;
 	private final ObjectMapper mapper = new ObjectMapper();
 
-	public SectionWebSocketHandler(AttendanceService attendanceService, SectionService sectionService) {
+	public SectionWebSocketHandler(AttendanceService attendanceService, SectionService sectionService, SectionCommunicationService sectionCommunicationService) {
 		this.attendanceService = attendanceService;
 		this.sectionService = sectionService;
+		this.sectionCommunicationService = sectionCommunicationService;
 
 		mapper.registerModule(new JavaTimeModule());
-		mapper.setDateFormat(dateFormat);
+		mapper.setDateFormat(
+			new SimpleDateFormat("yyyy-MM-dd")
+		);
 	}
 
 	private WSSectionAttendanceResponse getResponse(Integer sectionId) {
@@ -86,6 +90,16 @@ public class SectionWebSocketHandler extends TextWebSocketHandler {
 		);
 
 		return response;
+	}
+
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		sectionCommunicationService.registerSession(session);
+	}
+
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		sectionCommunicationService.removeSession(session);
 	}
 
 	@Override
