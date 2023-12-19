@@ -15,15 +15,15 @@ public class Guardian {
 	@Column(name = "guardian_id", nullable = false)
 	private Integer id;
 
-	@JoinColumn(name = "student_lrn")
-	@ManyToOne(cascade = CascadeType.ALL)
-	private Student student;
-
 	@Column(name = "full_name")
 	private String fullName;
 
 	@Column(name = "contact_number", length = 32)
 	private String contactNumber;
+
+	@JoinColumn(name = "student_lrn")
+	@ManyToOne(cascade = CascadeType.ALL)
+	private Student student;
 
 	public String getFullName() {
 		return fullName;
