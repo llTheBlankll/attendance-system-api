@@ -25,7 +25,8 @@ public class CachingConfiguration {
 			"subject",
 			"teacher",
 			"strand",
-			"gradelevel"
+			"gradelevel",
+			"user"
 		);
 		cacheManager.setCaffeine(caffeineCacheBuilder());
 
