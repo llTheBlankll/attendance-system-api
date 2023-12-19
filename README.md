@@ -1,4 +1,12 @@
 # Attendance System API
+<div align="center" style="display: flex; flex-direction: column; align-items: center;">
+  
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=llTheBlankll_attendance-system-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=llTheBlankll_attendance-system-api)
+![Dependabot](https://img.shields.io/badge/dependabot-025E8C?style=for-the-badge&logo=dependabot&logoColor=white)
+[![wakatime](https://wakatime.com/badge/github/llTheBlankll/school-attendance-system.svg?style=plastic)](https://wakatime.com/badge/github/llTheBlankll/school-attendance-system)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+  
+</div>
 
 ## Overview
 
