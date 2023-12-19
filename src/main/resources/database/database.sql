@@ -148,9 +148,10 @@ CREATE TABLE Users
 
 -- * CREATE USERS_ROLE
 CREATE TABLE Users_Role (
+    users_role_id SERIAL,
     user_id BIGINT,
     role_id BIGINT,
-    PRIMARY KEY (user_id, role_id),
+    PRIMARY KEY (user_id, role_id, users_role_id),
     FOREIGN KEY (user_id) REFERENCES Users (user_id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES Roles (role_id) ON DELETE CASCADE
 );
