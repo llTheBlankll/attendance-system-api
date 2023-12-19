@@ -103,34 +103,27 @@ public class SectionController {
 		summary = "Search Section",
 		description = SectionDocumentation.SEARCH_SECTION_BY_SECTION,
 		parameters = {
-			@Parameter(name = "type", description = "The type of search to be performed"),
-			@Parameter(name = "search", description = "The search string")
+			@Parameter(name = "q", description = "The search string")
 		}
 	)
-	@GetMapping("/search")
-	public Iterable<Section> getSectionByAdviser(@RequestParam("type") String type, @RequestParam String search) {
+	@GetMapping("/search/name")
+	public Iterable<Section> searchSectionByName(@RequestParam("q") String search) {
 		if (search.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		if (type.equals("teacher")) {
-			return sectionService.getSectionByTeacherLastName(search);
-		} else if (type.equals("section name")) {
-			return sectionService.searchSectionByName(search);
-		}
-
-		return Collections.emptyList();
+		return sectionService.searchSectionByName(search);
 	}
 
 	@Operation(
 		summary = "Get Section",
 		description = SectionDocumentation.GET_SECTION_BY_ID,
 		parameters = {
-			@Parameter(name = "sectionId", description = "The ID of the section to be retrieved")
+			@Parameter(name = "q", description = "The ID of the section to be retrieved")
 		}
 	)
 	@GetMapping("/get")
-	public Section getSection(@RequestParam("sectionId") Integer sectionId) {
+	public Section getSection(@RequestParam("q") Integer sectionId) {
 		return sectionService.getSectionBySectionId(sectionId);
 	}
 }

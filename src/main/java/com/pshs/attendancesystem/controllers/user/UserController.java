@@ -19,6 +19,7 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@GetMapping("/all")
 	public Iterable<User> getAllUsers() {
 		return userService.getAllUsers();
 	}

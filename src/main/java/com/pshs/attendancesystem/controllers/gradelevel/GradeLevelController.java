@@ -80,7 +80,7 @@ public class GradeLevelController {
 		description = GradeLevelDocumentation.DELETE_GRADELEVEL_BY_ID
 	)
 	@PostMapping(value = "/delete/id", produces = "text/plain")
-	public String deleteGradeLevelById(@RequestParam Integer id) {
+	public String deleteGradeLevelById(@RequestParam("q") Integer id) {
 		return gradeLevelService.deleteGradeLevelById(id);
 	}
 
@@ -101,7 +101,7 @@ public class GradeLevelController {
 		}
 	)
 	@GetMapping("/search/name")
-	public Iterable<Gradelevel> searchGradeLevelByName(@RequestParam("name") String name) {
+	public Iterable<Gradelevel> searchGradeLevelByName(@RequestParam("q") String name) {
 		return gradeLevelService.searchGradeLevelByName(name);
 	}
 }

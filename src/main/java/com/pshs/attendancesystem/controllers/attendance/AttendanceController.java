@@ -40,7 +40,7 @@ public class AttendanceController {
 		description = "Create attendance of a student using their LRN"
 	)
 	@PostMapping("/create")
-	public Status addAttendance(@RequestParam("student_lrn") Long studentLrn) {
+	public Status createAttendance(@RequestParam("q") Long studentLrn) {
 		return attendanceService.createAttendance(studentLrn);
 	}
 
@@ -55,7 +55,12 @@ public class AttendanceController {
 		description = "Delete attendance of a student using attendance id"
 	)
 	@PostMapping(value = "/delete", produces = "text/plain")
-	public String deleteAttendance(@RequestParam Integer id) {
+	public String deleteAttendance(@RequestBody Attendance attendance) {
+		return attendanceService.deleteAttendance(attendance.getId());
+	}
+
+	@PostMapping(value = "/delete/id", produces = "text/plain")
+	public String deleteAttendanceById(@RequestParam("q") Integer id) {
 		return attendanceService.deleteAttendance(id);
 	}
 

@@ -64,7 +64,7 @@ public class StrandController {
 		}
 	)
 	@GetMapping("/search/strand-name")
-	public Iterable<Strand> searchStrandByStrandName(@RequestParam("name") String name) {
+	public Iterable<Strand> searchStrandByStrandName(@RequestParam("q") String name) {
 		return strandService.searchStrandByName(name);
 	}
 }
