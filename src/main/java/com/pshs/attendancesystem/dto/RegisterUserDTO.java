@@ -9,13 +9,13 @@ public class RegisterUserDTO {
 	private String username;
 	private String password;
 	private String email;
-	private Set<Role> role;
+	private Set<Role> roles;
 
-	public RegisterUserDTO(String username, String password, String email, Set<Role> role) {
+	public RegisterUserDTO(String username, String password, String email, Set<Role> roles) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.role = role;
+		this.roles = roles;
 	}
 
 	public String getUsername() {
@@ -42,11 +42,11 @@ public class RegisterUserDTO {
 		this.email = email;
 	}
 
-	public Set<Role> getRole() {
-		return role;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(Set<Role> role) {
-		this.role = role;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 }
