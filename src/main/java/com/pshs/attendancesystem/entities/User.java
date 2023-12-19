@@ -41,7 +41,7 @@ public class User implements UserDetails {
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = CascadeType.DETACH)
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
 	@JoinTable(
 		name = "users_role",
 		joinColumns = @JoinColumn(name = "user_id"),
@@ -50,20 +50,12 @@ public class User implements UserDetails {
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Set<Role> roles;
 
-	public User() {
-
-	}
-
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getUserName() {
-		return userName;
 	}
 
 	public void setUserName(String userName) {
