@@ -1,15 +1,20 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "gradelevels")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({
+	"sections",
+	"students"
+})
 public class Gradelevel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,24 +25,24 @@ public class Gradelevel {
 	private String gradeName;
 
 	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
-	private Set<Section> sections = new LinkedHashSet<>();
+	private List<Section> sections = new ArrayList<>();
 
 	@OneToMany(mappedBy = "gradeLevel", cascade = CascadeType.ALL)
-	private Set<Student> students = new LinkedHashSet<>();
+	private List<Student> students = new ArrayList<>();
 
-	public Set<Section> getSections() {
+	public List<Section> getSections() {
 		return sections;
 	}
 
-	public void setSections(Set<Section> sections) {
+	public void setSections(List<Section> sections) {
 		this.sections = sections;
 	}
 
-	public Set<Student> getStudents() {
+	public List<Student> getStudents() {
 		return students;
 	}
 
-	public void setStudents(Set<Student> students) {
+	public void setStudents(List<Student> students) {
 		this.students = students;
 	}
 

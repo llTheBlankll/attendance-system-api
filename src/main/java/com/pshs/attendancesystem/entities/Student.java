@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -14,6 +15,10 @@ import java.util.Set;
 	@Index(columnList = "section_id")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
+@JsonIgnoreProperties({
+	"rfid",
+	"attendances"
+})
 public class Student {
 	@Id
 	@Column(name = "lrn", nullable = false)
@@ -38,20 +43,20 @@ public class Student {
 	@Column(name = "sex", length = 6)
 	private String sex;
 
-	@ManyToOne(targetEntity = Section.class)
+	@ManyToOne(targetEntity = Section.class, fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "section_id")
 	private Section section;
 
 	@OneToMany(mappedBy = "student", targetEntity = Guardian.class, fetch = FetchType.EAGER)
 	private List<Guardian> guardian;
 
-	@OneToOne(mappedBy = "student", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "student")
 	private RfidCredentials rfid;
 
 	@Column(name = "address", length = Integer.MAX_VALUE)
 	private String address;
 
-	@OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "student", cascade = CascadeType.DETACH, targetEntity = Attendance.class)
 	private Set<Attendance> attendances;
 
 	public RfidCredentials getRfid() {

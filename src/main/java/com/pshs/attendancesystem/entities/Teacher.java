@@ -24,7 +24,7 @@ public class Teacher {
 	@Column(name = "last_name", length = 32)
 	private String lastName;
 
-	@OneToMany(mappedBy = "teacher")
+	@OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
 	private List<Section> sections;
 
 
