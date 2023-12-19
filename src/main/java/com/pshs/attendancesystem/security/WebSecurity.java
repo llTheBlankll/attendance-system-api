@@ -52,10 +52,10 @@ public class WebSecurity {
 			)
 			.authorizeHttpRequests(authorize ->
 				authorize
-					.requestMatchers(baseUrl + "/v1/rfid/**")
+					.requestMatchers(baseUrl + "/rfid/**")
 					.hasAnyRole(Roles.PRINCIPAL.name())
 
-					.requestMatchers(baseUrl + "/v1/**")
+					.requestMatchers(baseUrl + "/**")
 					.hasAnyRole(Roles.TEACHER.name(), Roles.PRINCIPAL.name())
 
 					.requestMatchers("/websocket/**")
@@ -64,7 +64,7 @@ public class WebSecurity {
 					.requestMatchers(baseUrl + "/user/**")
 					.hasAnyRole(Roles.ADMIN.name())
 
-					.requestMatchers("/api/auth/**")
+					.requestMatchers("/auth/**")
 					.permitAll()
 
 					.anyRequest()
