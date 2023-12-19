@@ -1,5 +1,8 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.pshs.attendancesystem.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.OnDelete;
@@ -9,11 +12,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +38,17 @@ public class User implements UserDetails {
 	@Column(name = "email")
 	private String email;
 
-	@ManyToOne(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = CascadeType.DETACH)
-	@OnDelete(action = OnDeleteAction.SET_NULL)
-	@JoinColumn(name = "role_id")
-	private Role role;
-
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
+
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = CascadeType.DETACH)
+	@JoinTable(
+		name = "users_role",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	@OnDelete(action = OnDeleteAction.SET_NULL)
+	private Set<Role> roles;
 
 	public User() {
 
@@ -62,8 +72,25 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getRoleName());
-		return List.of(authority);
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		for (Role role : roles) {
+			authorities.add(
+				new SimpleGrantedAuthority(
+					"ROLE_" + role.getRoleName()
+				)
+			);
+		}
+
+		// If authority is empty, set default to GUEST.
+		if (authorities.isEmpty()) {
+			authorities.add(
+				new SimpleGrantedAuthority(
+					"ROLE_" + Roles.GUEST.name()
+				)
+			);
+		}
+
+		return authorities;
 	}
 
 	public String getPassword() {
@@ -107,12 +134,12 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	public Role getRole() {
-		return role;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
 	public LocalDateTime getLastLogin() {

@@ -1,5 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "roles")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +21,7 @@ public class Role {
 	@Column(name = "role_name", length = 128)
 	private String roleName;
 
-	@OneToMany(targetEntity = User.class, mappedBy = "role", fetch = FetchType.LAZY)
+	@ManyToMany(targetEntity = User.class, mappedBy = "roles", fetch = FetchType.EAGER)
 	private List<User> users = new ArrayList<>();
 
 	public Integer getId() {

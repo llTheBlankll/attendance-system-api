@@ -2,14 +2,16 @@ package com.pshs.attendancesystem.dto;
 
 import com.pshs.attendancesystem.entities.Role;
 
+import java.util.Set;
+
 public class RegisterUserDTO {
 
 	private String username;
 	private String password;
 	private String email;
-	private Role role;
+	private Set<Role> role;
 
-	public RegisterUserDTO(String username, String password, String email, Role role) {
+	public RegisterUserDTO(String username, String password, String email, Set<Role> role) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -40,11 +42,11 @@ public class RegisterUserDTO {
 		this.email = email;
 	}
 
-	public Role getRole() {
+	public Set<Role> getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(Set<Role> role) {
 		this.role = role;
 	}
 }
