@@ -16,16 +16,16 @@ public class RfidCredentials {
 	@Column(name = "lrn", nullable = false)
 	private Long lrn;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
-	private Student student;
-
 	@Column(name = "hashed_lrn", length = 128)
 	private String hashedLrn;
 
 	@Column(name = "salt", length = 32)
 	@JsonIgnore
 	private String salt;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
+	private Student student;
 
 	public Student getStudent() {
 		return student;
