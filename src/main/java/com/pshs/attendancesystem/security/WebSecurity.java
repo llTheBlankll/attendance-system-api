@@ -55,14 +55,14 @@ public class WebSecurity {
 					.requestMatchers(baseUrl + "/rfid/**")
 					.hasAnyRole(Roles.PRINCIPAL.name())
 
-					.requestMatchers(baseUrl + "/**")
-					.hasAnyRole(Roles.TEACHER.name(), Roles.PRINCIPAL.name())
-
 					.requestMatchers("/websocket/**")
 					.hasAnyRole(Roles.OTHER.name())
 
 					.requestMatchers(baseUrl + "/user/**")
 					.hasAnyRole(Roles.ADMIN.name())
+
+					.requestMatchers(baseUrl + "/**")
+					.hasAnyRole(Roles.TEACHER.name(), Roles.PRINCIPAL.name())
 
 					.requestMatchers("/auth/**")
 					.permitAll()
