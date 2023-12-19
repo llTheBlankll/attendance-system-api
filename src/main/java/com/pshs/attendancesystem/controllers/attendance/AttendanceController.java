@@ -47,7 +47,6 @@ public class AttendanceController {
 	/**
 	 * Deletes the attendance record with the specified ID.
 	 *
-	 * @param id the ID of the attendance record to be deleted
 	 * @return a message indicating whether the attendance record was successfully deleted or not
 	 */
 	@Operation(
