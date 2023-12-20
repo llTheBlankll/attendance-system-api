@@ -80,7 +80,8 @@ public class SectionServiceImpl implements SectionService {
 	@Override
 	@Cacheable(value = "section", key = "#sectionId")
 	public Section getSectionBySectionId(Integer sectionId) {
-		return this.sectionRepository.findBySectionId(sectionId);
+		Optional<Section> sectionOptional = this.sectionRepository.findBySectionId(sectionId);
+		return sectionOptional.orElse(null);
 	}
 
 	@Override
