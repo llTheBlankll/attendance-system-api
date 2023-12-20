@@ -72,6 +72,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
+	@Cacheable(value = "section", key = "#teacher.id")
 	public List<Section> getAllSectionByTeacher(Teacher teacher) {
 		return sectionRepository.getAllSectionByTeacher(teacher);
 	}
