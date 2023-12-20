@@ -117,7 +117,7 @@ This section outlines areas that need attention, improvement, or future enhancem
 
 - [ ] **Add Examples:** Provide more usage examples and code snippets in the documentation (**Spring Docs**).
 
-- [ ] **Add Rate Limiting:** Add Rate limiting to prevent DoS or DDoS.
+- [x] **Add Rate Limiting:** Add Rate limiting to prevent DoS or DDoS.
 
 - [x] **Add Performance/Error Reporting** Add Third Party Performance and Error Tracker like Sentry IO
 
