@@ -14,6 +14,10 @@ public class ConfigurationService {
 		this.apiConfig = apiConfig;
 	}
 
+	public String getSecurityRequirement() {
+		return apiConfig.getSecurityRequirement();
+	}
+
 	public String updateFlagCeremonyTime(LocalTime flagCeremonyTime) {
 		LocalTime previousTime = apiConfig.getFlagCeremonyTime();
 		apiConfig.setFlagCeremonyTime(Time.valueOf(flagCeremonyTime).toLocalTime());
