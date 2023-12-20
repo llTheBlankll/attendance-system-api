@@ -7,11 +7,13 @@ import com.pshs.attendancesystem.entities.User;
 import com.pshs.attendancesystem.security.jwt.JwtService;
 import com.pshs.attendancesystem.services.AuthenticationService;
 import com.pshs.attendancesystem.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication")
 public class AuthController {
 
 	private final JwtService jwtService;

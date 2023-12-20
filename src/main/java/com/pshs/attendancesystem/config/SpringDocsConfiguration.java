@@ -1,9 +1,12 @@
 package com.pshs.attendancesystem.config;
 
 import com.pshs.attendancesystem.impl.ConfigurationService;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +18,12 @@ public class SpringDocsConfiguration {
 
 	public SpringDocsConfiguration(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+
+	private SecurityScheme createAPIKeyScheme() {
+		return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+			.bearerFormat("JWT")
+			.scheme("bearer");
 	}
 
 	@Bean
@@ -30,7 +39,10 @@ public class SpringDocsConfiguration {
 		info.setVersion(configurationService.getAPIVersion());
 		info.setContact(contact);
 		return new OpenAPI()
-			.info(info);
+			.info(info)
+			.addSecurityItem(new SecurityRequirement())
+			.components(new Components()
+				.addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()));
 	}
 
 	@Bean
@@ -144,6 +156,22 @@ public class SpringDocsConfiguration {
 		return GroupedOpenApi.builder()
 			.group("Subject")
 			.packagesToScan("com.pshs.attendancesystem.controllers.subject")
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi userControllerGroup() {
+		return GroupedOpenApi.builder()
+			.group("User")
+			.packagesToScan("com.pshs.attendancesystem.controllers.user")
+			.build();
+	}
+
+	@Bean
+	public GroupedOpenApi authenticationControllerGroup() {
+		return GroupedOpenApi.builder()
+			.group("Authentication")
+			.packagesToScan("com.pshs.attendancesystem.controllers.pub.auth")
 			.build();
 	}
 }
