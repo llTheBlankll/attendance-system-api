@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers.auth;
+package com.pshs.attendancesystem.controllers.pub.auth;
 
 import com.pshs.attendancesystem.dto.LoginResponse;
 import com.pshs.attendancesystem.dto.LoginUserDTO;
@@ -43,7 +43,7 @@ public class AuthController {
 		return loginResponse;
 	}
 
-	@GetMapping("/ping")
+	@GetMapping(value = "/ping")
 	@PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'PRINCIPAL')")
 	public String ping() {
 		return "pong";
