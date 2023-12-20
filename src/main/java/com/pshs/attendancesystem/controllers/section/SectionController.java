@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.SectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Tag(name = "Section", description = "The Section Endpoints")
 @RestController
 @RequestMapping("${api.root}/section")
+@SecurityRequirement(name = "JWT Authentication")
 public class SectionController {
 
 	private final SectionService sectionService;

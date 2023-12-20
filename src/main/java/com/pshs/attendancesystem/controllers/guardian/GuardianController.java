@@ -6,12 +6,16 @@ import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.GuardianService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Guardian", description = "The Guardian Endpoints")
 @RequestMapping("${api.root}/guardian")
 @RestController
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class GuardianController {
 
 	private final GuardianService guardianService;

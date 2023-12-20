@@ -5,6 +5,7 @@ import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,9 @@ import java.time.LocalDate;
 @Tag(name = "Student", description = "The Student Endpoints")
 @RestController
 @RequestMapping("${api.root}/student")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class StudentController {
 
 	private final StudentService studentService;

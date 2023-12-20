@@ -12,6 +12,7 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import java.util.Collections;
 @Tag(name = "Attendance Statistics", description = "Manages attendance statistics.")
 @RestController
 @RequestMapping("${api.root}/attendance/stats")
+@SecurityRequirement(name = "JWT Authentication")
 public class AttendanceStatisticsController {
 	private final AttendanceService attendanceService;
 	private final Logger logger = LoggerFactory.getLogger(getClass());

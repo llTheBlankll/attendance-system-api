@@ -5,8 +5,8 @@ import com.pshs.attendancesystem.entities.RfidCredentials;
 import com.pshs.attendancesystem.services.RfidService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +17,9 @@ import java.util.Optional;
 @Tag(name = "RFID Credentials", description = "The RFID Controller Endpoints")
 @RestController
 @RequestMapping("${api.root}/rfid")
-@PreAuthorize("hasRole('RFID_DEVICE')")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class RfidCredentialsController {
 
 	private final RfidService rfidService;

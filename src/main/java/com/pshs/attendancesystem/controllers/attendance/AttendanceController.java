@@ -5,6 +5,7 @@ import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.AttendanceServiceImpl;
 import com.pshs.attendancesystem.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Tag(name = "Attendance", description = "The Attendance Endpoints")
 @RequestMapping("${api.root}/attendance")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class AttendanceController {
 
 	private final AttendanceService attendanceService;

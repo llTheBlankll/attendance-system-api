@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.statistics.DateRange;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.services.AttendanceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,9 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.root}/attendance/stats/chart")
 @Tag(name = "Attendance Chart", description = "Get attendance chart data, gives List of Integers")
+@SecurityRequirement(
+	name = "JWT Authentication "
+)
 public class AttendanceChartController {
 
 	private final AttendanceService attendanceService;

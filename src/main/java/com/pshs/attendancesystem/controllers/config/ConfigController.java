@@ -4,6 +4,7 @@ import com.pshs.attendancesystem.impl.ConfigurationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,9 @@ import java.time.LocalTime;
 @RestController
 @RequestMapping("${api.root}/config")
 @Tag(name = "Config", description = "Config API")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class ConfigController {
 
 	private final ConfigurationService configurationService;

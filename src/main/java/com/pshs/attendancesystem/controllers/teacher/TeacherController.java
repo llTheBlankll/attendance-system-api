@@ -5,12 +5,16 @@ import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Teacher", description = "The Teacher Endpoints")
 @RestController
 @RequestMapping("${api.root}/teacher")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class TeacherController {
 
 	private final TeacherService teacherService;
