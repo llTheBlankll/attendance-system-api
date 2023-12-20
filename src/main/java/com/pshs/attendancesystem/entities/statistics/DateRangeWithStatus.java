@@ -4,13 +4,12 @@ import com.pshs.attendancesystem.enums.Status;
 
 public class DateRangeWithStatus {
 
+	private DateRange dateRange;
+	private Status status;
 	public DateRangeWithStatus(DateRange dateRange, Status status) {
 		this.dateRange = dateRange;
 		this.status = status;
 	}
-
-	private DateRange dateRange;
-	private Status status;
 
 	public DateRange getDateRange() {
 		return dateRange;

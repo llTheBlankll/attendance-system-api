@@ -19,6 +19,7 @@ public interface SectionService {
 	String deleteSection(Section section);
 
 	Iterable<Section> searchSectionByName(String sectionName);
+
 	List<Section> getAllSectionByTeacher(Teacher teacher);
 
 	boolean isSectionExist(Section section);
