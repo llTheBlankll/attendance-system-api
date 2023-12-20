@@ -17,7 +17,8 @@ INSERT INTO Roles (role_name)
 VALUES ('ADMIN'),
        ('PRINCIPAL'),
        ('TEACHER'),
-       ('STUDENT');
+       ('STUDENT'),
+       ('OTHER');
 
 -- ADD DUMMY USERS
 INSERT INTO Users (user_name, password, email, role_id, last_login)
