@@ -295,18 +295,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	/**
-	 * Retrieves the attendance records of a student in a specific section.
-	 *
-	 * @param sectionId the ID of the section
-	 * @return an iterable of Attendance objects representing the student's attendance records
-	 */
-	@Override
-	@Cacheable(value = "attendance", key = "#sectionId")
-	public Iterable<Attendance> getAttendanceInSectionId(Integer sectionId) {
-		return attendanceRepository.searchStudentSectionId(sectionId);
-	}
-
-	/**
 	 * Retrieves the student attendance records for a given section ID, attendance status, and date range.
 	 *
 	 * @param sectionId        the ID of the section
@@ -318,12 +306,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Cacheable(value = "attendance", key = "#sectionId + '-' + #attendanceStatus + '-' + #dateRange")
 	public Iterable<Attendance> getAttendanceInSectionByStatusBetweenDate(Integer sectionId, Status attendanceStatus, DateRange dateRange) {
 		return this.attendanceRepository.searchSectionIdBetweenDateAndStatus(sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
-	}
-
-	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #date")
-	public Iterable<Attendance> getAttendanceInSectionByDate(Integer sectionId, LocalDate date) {
-		return attendanceRepository.searchSectionIdBetweenDate(sectionId, date, date);
 	}
 
 	@Override
