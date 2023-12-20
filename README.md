@@ -94,6 +94,36 @@ This project is an Attendance System API built using Spring Boot, WebSocket, and
    ```
    in my case, it was listening on Port 8080
 
+### Long-term TODO List
+This section outlines areas that need attention, improvement, or future enhancements.
+
+- [ ] **Enhance Logging:** Improve and expand logging statements for better debugging and monitoring.
+
+- [ ] **Add Unit Tests:** Increase test coverage by adding unit tests for critical components and edge cases.
+
+- [ ] **Optimize Cache Configuration:** Fine-tune cache settings based on performance testing and usage patterns.
+
+- [ ] **Documentation Updates:** Keep the documentation up-to-date with any changes to the API, configurations, or endpoints.
+
+- [ ] **Security Audit:** Conduct a security audit to identify and address potential vulnerabilities.
+
+- [ ] **Improve Error Handling:** Enhance error handling mechanisms to provide more informative and user-friendly error messages.
+
+- [ ] **Code Refactoring:** Identify and refactor sections of the codebase for improved readability and maintainability.
+
+- [ ] **Performance Optimization:** Profile and optimize critical sections of the application for better performance.
+
+- [ ] **Feedback Mechanism:** Establish a system for collecting user feedback and improvement suggestions.
+
+- [ ] **Add Examples:** Provide more usage examples and code snippets in the documentation (**Spring Docs**).
+
+- [ ] **Add Rate Limiting:** Add Rate limiting to prevent DoS or DDoS.
+
+- [x] **Add Performance/Error Reporting** Add Third Party Performance and Error Tracker like Sentry IO
+
+### Additional TODO to be done soon.
+- [ ] Attendance Statistics, get all absent students. Get by count, List of object and more.
+
 ### Authentication
 Secure your API endpoints using JWT authentication. Include the JWT token in the request header:
 ```
