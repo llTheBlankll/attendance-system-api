@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 	"rfid",
 	"attendances"
 })
-public class Student {
+public class Student implements Serializable {
 	@Id
 	@Column(name = "lrn", nullable = false)
 	private Long lrn;

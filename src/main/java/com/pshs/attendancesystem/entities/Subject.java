@@ -2,9 +2,11 @@ package com.pshs.attendancesystem.entities;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "subjects")
-public class Subject {
+public class Subject implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "subject_id", nullable = false)
