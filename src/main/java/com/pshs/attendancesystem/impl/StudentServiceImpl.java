@@ -12,7 +12,6 @@ import com.pshs.attendancesystem.security.PasswordGenerator;
 import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -87,7 +86,6 @@ public class StudentServiceImpl implements StudentService {
 	 * @param student the student object to be added
 	 * @return a message indicating the success of the operation
 	 */
-	@CachePut(value = "student", key = "#student.lrn")
 	public String createStudent(Student student) {
 		if (student.getLrn() == null) {
 			return StudentMessages.STUDENT_INVALID_LRN;
@@ -128,7 +126,6 @@ public class StudentServiceImpl implements StudentService {
 	 * @param student the student object to be deleted
 	 * @return a string indicating the result of the deletion
 	 */
-	@CacheEvict(value = "student", key = "#student.lrn")
 	public String deleteStudent(@RequestBody Student student) {
 		if (!this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_NOT_FOUND;
@@ -144,7 +141,6 @@ public class StudentServiceImpl implements StudentService {
 	 * @param id the ID of the student to delete
 	 * @return a message indicating if the student was deleted or if they do not exist
 	 */
-	@CacheEvict(value = "student", key = "#id")
 	public String deleteStudentById(Long id) {
 		if (!this.studentRepository.existsById(id)) {
 			return StudentMessages.STUDENT_NOT_FOUND;
