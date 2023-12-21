@@ -13,6 +13,10 @@ public class ConfigurationService {
 		this.apiConfig = apiConfig;
 	}
 
+	public int getRedisPort() {
+		return apiConfig.getRedisPort();
+	}
+
 	public String getSecurityRequirement() {
 		return apiConfig.getSecurityRequirement();
 	}

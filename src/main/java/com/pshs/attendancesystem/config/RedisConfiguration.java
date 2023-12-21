@@ -31,7 +31,7 @@ public class RedisConfiguration {
 		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
 		redisStandaloneConfiguration.setHostName(configurationService.getRedisHost());
 		redisStandaloneConfiguration.setDatabase(0);
-		redisStandaloneConfiguration.setPort(6379);
+		redisStandaloneConfiguration.setPort(configurationService.getRedisPort());
 		redisStandaloneConfiguration.setPassword(configurationService.getRedisPassword());
 		logger.info("Redis Host: " + redisStandaloneConfiguration.getHostName());
 		logger.info("Redis Port: " + redisStandaloneConfiguration.getPort());
