@@ -9,13 +9,24 @@ import java.time.LocalTime;
 @Service
 public class ConfigurationService {
 	private final APIConfig apiConfig;
-
 	public ConfigurationService(APIConfig apiConfig) {
 		this.apiConfig = apiConfig;
 	}
 
 	public String getSecurityRequirement() {
 		return apiConfig.getSecurityRequirement();
+	}
+
+	public String getRedisUsername() {
+		return apiConfig.getRedisUsername();
+	}
+
+	public String getRedisPassword() {
+		return apiConfig.getRedisPassword();
+	}
+
+	public String getRedisHost() {
+		return apiConfig.getRedisHost();
 	}
 
 	public String updateFlagCeremonyTime(LocalTime flagCeremonyTime) {
