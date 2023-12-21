@@ -42,7 +42,6 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
 		if (isRateLimited(clientIp)) {
 			response.sendError(HttpStatus.TOO_MANY_REQUESTS.value());
-			logger.info("Client {} exceeded the rate limit.", clientIp);
 			return false;
 		}
 
@@ -64,11 +63,9 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 			long currentTime = System.currentTimeMillis();
 			long elapsedTime = currentTime - lastRequest;
 
-			logger.info("Client {} is in the rate limit.", clientId);
 			return elapsedTime < timeInterval && requestsTimeStamp.size() >= requestPerMinute;
 		}
 
-		logger.info("Client {} is not in the rate limit.", clientId);
 		return false;
 	}
 }
