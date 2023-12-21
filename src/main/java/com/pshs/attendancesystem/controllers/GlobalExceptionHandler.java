@@ -1,6 +1,8 @@
 package com.pshs.attendancesystem.controllers;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.io.DecodingException;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,5 +27,13 @@ public class GlobalExceptionHandler {
 		return "Your token has expired. Please login again.";
 	}
 
+	@ExceptionHandler(DecodingException.class)
+	public String handleDecodingException(DecodingException e) {
+		return "Your token is invalid. Please login again.";
+	}
 
+	@ExceptionHandler(ClientAbortException.class)
+	public String handleClientAbortException(ClientAbortException e) {
+		return e.getMessage();
+	}
 }
