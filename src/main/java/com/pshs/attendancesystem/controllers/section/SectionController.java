@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -35,6 +36,7 @@ public class SectionController {
 		description = SectionDocumentation.GET_ALL_SECTIONS
 	)
 	@GetMapping("/all")
+	@Cacheable(value = "section")
 	public Iterable<Section> getAllSection() {
 		return sectionService.getAllSection();
 	}

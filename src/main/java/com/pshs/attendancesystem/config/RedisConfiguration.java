@@ -1,6 +1,8 @@
 package com.pshs.attendancesystem.config;
 
 import com.pshs.attendancesystem.impl.ConfigurationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,8 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfiguration {
 
-	private ConfigurationService configurationService;
+	private final ConfigurationService configurationService;
+	private final Logger logger = LogManager.getLogger(this.getClass());
 
 	public RedisConfiguration(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
@@ -30,6 +33,9 @@ public class RedisConfiguration {
 		redisStandaloneConfiguration.setDatabase(0);
 		redisStandaloneConfiguration.setPort(6379);
 		redisStandaloneConfiguration.setPassword(configurationService.getRedisPassword());
+		logger.info("Redis Host: " + redisStandaloneConfiguration.getHostName());
+		logger.info("Redis Port: " + redisStandaloneConfiguration.getPort());
+		logger.info("Redis Successful Connection");
 		return new JedisConnectionFactory(redisStandaloneConfiguration);
 	}
 
@@ -47,6 +53,7 @@ public class RedisConfiguration {
 		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
 			.entryTtl(Duration.ofMinutes(5));
 
+		logger.info("Redis Cache Configuration successfully set");
 		return RedisCacheManager.builder(redisConnectionFactory)
 			.cacheDefaults(redisCacheConfiguration)
 			.build();

@@ -19,11 +19,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(NoResourceFoundException.class)
 	public String handleNoResourceFoundException(NoResourceFoundException e) {
-		return e.getMessage();
+		return "Invalid URL, please try again.";
 	}
 
 	@ExceptionHandler(ExpiredJwtException.class)
-	public String handleExpiredJwtException(ExpiredJwtException e) {
+	public String handleExpiredJwtException() {
 		return "Your token has expired. Please login again.";
 	}
 
