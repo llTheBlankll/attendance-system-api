@@ -6,6 +6,7 @@ import com.pshs.attendancesystem.entities.User;
 import com.pshs.attendancesystem.security.jwt.JwtService;
 import com.pshs.attendancesystem.services.AuthenticationService;
 import com.pshs.attendancesystem.services.UserService;
+import io.sentry.Sentry;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +39,10 @@ public class LoginController {
 	@PostMapping("/auth/login/api")
 	public String loginApi(@ModelAttribute LoginUserDTO loginUserDTO, Model model) {
 		try {
-			System.out.println("User: " + loginUserDTO.getUsername());
 			// Sign in
 			User authenticatedUser = authenticationService.signIn(loginUserDTO);
 
+			// Get login response.
 			LoginResponse loginResponse = new LoginResponse(
 				jwtService.generateToken(authenticatedUser)
 			);
@@ -52,6 +53,7 @@ public class LoginController {
 
 			return "token";
 		} catch (BadCredentialsException e) {
+			Sentry.captureMessage("Invalid username or password");
 			return "redirect:/auth/login/form?message=Invalid username or password";
 		}
 	}
