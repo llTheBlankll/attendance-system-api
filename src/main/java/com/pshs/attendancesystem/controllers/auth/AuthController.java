@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.controllers.pub.auth;
+package com.pshs.attendancesystem.controllers.auth;
 
 import com.pshs.attendancesystem.dto.LoginResponse;
 import com.pshs.attendancesystem.dto.LoginUserDTO;
