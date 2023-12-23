@@ -227,6 +227,12 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void informGuardian(Student student, String parentMessage) {
+		if (student.getGuardian() == null) {
+			logger.error("No guardian found");
+			logger.error("Student: {}, name: {}", student.getLrn(), getFullName(student));
+			return;
+		}
+
 		List<Guardian> guardianSet = student.getGuardian();
 		for (Guardian guardian : guardianSet) {
 			if (guardian.getContactNumber().equals("null")) {
