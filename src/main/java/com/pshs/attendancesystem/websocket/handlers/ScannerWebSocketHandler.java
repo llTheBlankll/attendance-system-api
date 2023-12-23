@@ -5,12 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.RfidCredentials;
-import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
-import com.pshs.attendancesystem.messages.RfidMessages;
-import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.services.AttendanceService;
 import com.pshs.attendancesystem.services.RfidService;
 import com.pshs.attendancesystem.threading.SMSThread;
@@ -19,28 +16,30 @@ import com.pshs.attendancesystem.websocket.communication.SectionCommunicationSer
 import com.pshs.attendancesystem.websocket.entities.WSSectionCommunicationServiceResponse;
 import com.pshs.attendancesystem.websocket.entities.WebSocketData;
 import com.pshs.attendancesystem.websocket.entities.WebSocketResponse;
-import jakarta.annotation.Nonnull;
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
+
+	// * Services
 	private final AttendanceService attendanceService;
 	private final RfidService rfidService;
+
+	// * WebSocket Communication Service
 	private final FrontEndCommunicationService frontEndCommunicationService;
 	private final SectionCommunicationService sectionCommunicationService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -71,6 +70,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	@Override
 	protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) throws IOException {
+		// Validate input.
 		String textMessage = message.getPayload();
 		if (textMessage.isEmpty()) {
 			return;
@@ -83,19 +83,12 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 		try {
 			// * Read the input of scanner websocket and convert it into WebSocketData class
 			WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
-			hashedLrn = webSocketData.getHashedLrn();
 
 			// * Get the hashed LRN.
 			String hashedLrn = webSocketData.getHashedLrn();
 
-			rfidCredentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn);
-			if (rfidCredentials.isPresent()) {
-				student = rfidCredentials.get().getStudent();
-				credentials = rfidCredentials.get();
-			} else {
-				response.setMessage("Invalid");
-				sendMessage(session, mapper.writeValueAsString(response));
 			// * Get RFID Credentials of Student with the given hashed LRN.
+			RfidCredentials credentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn).orElse(null);
 
 			// @ Check if credentials is null.
 			if (credentials == null) {
@@ -104,12 +97,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				return;
 			}
 
-			// Check if student already arrived.
-
-			if (webSocketData.getMode().equals("in")) {
-				handleInMode(session, credentials, student, currentLocalTime);
-			} else if (webSocketData.getMode().equals("out") && credentials.getLrn() != null) {
-				handleOutMode(session, credentials, student, currentLocalTime);
 			// * Handle the mode, if "in" then check in, else check out.
 			String mode = webSocketData.getMode();
 			if (mode.equals("in")) {
@@ -159,25 +146,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				informGuardian(student, parentMessage);
 			}
 
-				sendMessage(session, mapper.writeValueAsString(response));
-
-				sectionCommunicationService.sendUpdate(
-					mapper.writeValueAsString(
-						getSectionWSResponse(
-							student.getSection(),
-							student,
-							attendanceStatus,
-							currentLocalTime
-						)
-					)
-				);
-				frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
-			} else {
-				// Send a warning message, because there might be an error in scanner.
-				TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
-				session.sendMessage(invalidLrnMessage);
-				logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
-			}
 			// @ Send the response.
 			sessionSendMessage(session, mapper.writeValueAsString(response));
 			sectionCommunicationService.sendMessage(
@@ -237,8 +205,6 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 			response.setStatus(Status.OUT);
 			response.setStudent(student);
 
-			// Send response
-			sendMessage(session, mapper.writeValueAsString(response));
 			// @ Send response
 			sessionSendMessage(session, mapper.writeValueAsString(response));
 			frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
