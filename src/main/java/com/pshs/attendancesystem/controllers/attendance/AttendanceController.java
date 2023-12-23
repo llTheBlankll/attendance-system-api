@@ -1,7 +1,6 @@
 package com.pshs.attendancesystem.controllers.attendance;
 
 import com.pshs.attendancesystem.entities.Attendance;
-import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.impl.AttendanceServiceImpl;
 import com.pshs.attendancesystem.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,27 +43,26 @@ public class AttendanceController {
 		description = "Create attendance of a student using their LRN"
 	)
 	@PostMapping("/create")
-	public Status createAttendance(@RequestParam("q") Long studentLrn) {
-		return attendanceService.createAttendance(studentLrn);
+	public void createAttendance(@RequestParam("q") Long studentLrn) {
+		attendanceService.createAttendance(studentLrn);
 	}
 
 	/**
 	 * Deletes the attendance record with the specified ID.
 	 *
-	 * @return a message indicating whether the attendance record was successfully deleted or not
 	 */
 	@Operation(
 		summary = "Delete attendance",
 		description = "Delete attendance of a student using attendance id"
 	)
 	@PostMapping(value = "/delete", produces = "text/plain")
-	public String deleteAttendance(@RequestBody Attendance attendance) {
-		return attendanceService.deleteAttendance(attendance.getId());
+	public void deleteAttendance(@RequestBody Attendance attendance) {
+		attendanceService.deleteAttendance(attendance.getId());
 	}
 
 	@PostMapping(value = "/delete/id", produces = "text/plain")
-	public String deleteAttendanceById(@RequestParam("q") Integer id) {
-		return attendanceService.deleteAttendance(id);
+	public void deleteAttendanceById(@RequestParam("q") Integer id) {
+		attendanceService.deleteAttendance(id);
 	}
 
 	/**
@@ -83,13 +81,14 @@ public class AttendanceController {
 	}
 
 	@Operation(
-		summary = "Delete all attendance",
+		summary = "Delete all attendance (Will always return TRUE)",
 		description = "Use this endpoint to delete all attendance, please use with care as there is no confirmation. Principal only."
 	)
 	@PreAuthorize("hasRole('PRINCIPAL')")
 	@PostMapping(value = "/delete/all", produces = "text/plain")
-	public String deleteAllAttendance() {
-		return attendanceService.deleteAllAttendance();
+	public boolean deleteAllAttendance() {
+		attendanceService.deleteAllAttendance();
+		return true;
 	}
 
 	@Operation(

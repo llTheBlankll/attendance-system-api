@@ -11,12 +11,14 @@ import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
@@ -47,7 +49,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	@Cacheable(value = "attendance", key = "#lrn.toString()")
-	public Boolean isAlreadyArrived(Long lrn) {
+	public boolean isAlreadyArrived(Long lrn) {
 		return attendanceRepository.isLrnAndDateExist(lrn, LocalDate.now());
 	}
 
@@ -106,7 +108,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Creates an attendance record for a student.
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @return the status of the attendance record (ONTIME, LATE, or EARLY)
 	 */
 	@Override
 	@CachePut(value = "attendance", key = "#studentLrn")
@@ -165,7 +166,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * Checks the attendance status of a student and marks them as "out" if they are currently "in".
 	 *
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
-	 * @return true if the student's attendance was successfully marked as "out", false otherwise
 	 */
 	@Override
 	@CacheEvict(value = "attendance", key = "#studentLrn")
