@@ -70,9 +70,16 @@ public class WebSecurity {
 					.requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
 					.permitAll()
 
+					.requestMatchers("/css/**", "/js/**", "/img/**", "/error/**", "/favicon.ico")
+					.permitAll()
+
 					.anyRequest()
 					.authenticated()
 			)
+			.formLogin(loginForm -> loginForm.loginPage("/auth/login/form")
+				.usernameParameter("username")
+				.passwordParameter("password"))
+			.exceptionHandling(exception -> exception.accessDeniedPage("/error/403"))
 			.authenticationProvider(authenticationProvider)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
