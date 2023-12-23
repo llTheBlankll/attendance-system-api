@@ -60,6 +60,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return LocalDate.now().getDayOfWeek().equals(DayOfWeek.MONDAY);
 	}
 
+	@Override
+	public boolean isAttendanceExist(Integer attendanceId) {
+		return attendanceRepository.existsById(attendanceId);
+	}
+
 	/**
 	 * Checks if the student with the given LRN has already checked out for the day.
 	 *
@@ -68,14 +73,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	@Cacheable(value = "attendance", key = "#studentLrn.toString()")
-	public boolean isAlreadyOut(Long studentLrn) {
-		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
-		if (attendance.isPresent() && attendance.get().getTimeOut() != null) {
-			logger.debug("Student {} already left", studentLrn);
-			return true;
+	public Status isAlreadyOut(Long studentLrn) {
+		Optional<Attendance> attendanceOptional = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
+		// Check for the existence of Student LRN and if TimeOut is not null, which mean
+		// that the student has already checked out.
+		if (attendanceOptional.isPresent())  {
+			Attendance attendance = attendanceOptional.get();
+			if (attendance.getTimeOut() != null) {
+				return Status.OUT;
+			} else {
+				return Status.NOT_OUT;
+			}
 		}
 
-		return false;
+		return Status.NOT_FOUND;
 	}
 
 
@@ -99,68 +110,44 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	@CachePut(value = "attendance", key = "#studentLrn")
-	public Status createAttendance(Long studentLrn) {
+	@Async
+	public void createAttendance(Long studentLrn) {
 		try {
-			Optional<Student> student = this.studentRepository.findById(studentLrn);
+			// Get Student
+			Optional<Student> studentOptional = this.studentRepository.findById(studentLrn);
+
 			// Check for the existence of Student LRN
-			if (student.isEmpty()) {
+			if (studentOptional.isEmpty()) {
 				logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
-				return null;
+				return;
 			}
 
-			LocalTime lateArrivalTime;
-			LocalTime onTimeArrival = configurationService.getOnTimeArrival();
+			// Get Student and Attendance Status
+			Status status = getStatus();
+			Student student = studentOptional.get();
 
-			Time currentTime = new Time(System.currentTimeMillis());
-			LocalTime currentLocalTime = currentTime.toLocalTime();
-
-			// Get Student Data from the database.
-
-			// Flag Ceremony Time
-			if (isTodayMonday()) {
-				lateArrivalTime = configurationService.getFlagCeremonyTime();
-			} else {
-				lateArrivalTime = configurationService.getLateTimeArrival();
-			}
-
-			// Check if the data is valid.
+			// Set attendance info.
 			Attendance attendance = new Attendance();
-			attendance.setStudent(student.get());
-			Status status;
-
-			if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
-				attendance.setAttendanceStatus(Status.ONTIME);
-				status = Status.ONTIME;
-			} else if (currentLocalTime.isAfter(lateArrivalTime)) {
-				attendance.setAttendanceStatus(Status.LATE);
-				status = Status.LATE;
-			} else {
-				status = Status.ONTIME;// ADD CODE HERE FOR EARLY ARRIVAL.
-			}
-
+			attendance.setStudent(student);
+			attendance.setAttendanceStatus(status);
 			attendance.setTime(Time.valueOf(LocalTime.now()));
 			attendance.setDate(LocalDate.now());
 
+			// Save attendance.
 			this.attendanceRepository.save(attendance);
-
-			logger.debug("The student {} is {}, Time arrived: {}", student.get().getLrn(), attendance.getAttendanceStatus(), currentTime);
-			return status;
+			logger.debug("Student #{} is {}, Time arrived: {}", student.getLrn(), attendance.getAttendanceStatus(), attendance.getTime());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return null;
+			Sentry.captureException(e);
 		}
 	}
 
 	@Override
 	@CacheEvict(value = "attendance", key = "#attendanceId")
-	public String deleteAttendance(Integer attendanceId) {
+	public void deleteAttendance(Integer attendanceId) {
 		Optional<Attendance> attendance = this.attendanceRepository.findById(attendanceId);
-		if (attendance.isEmpty()) {
-			return AttendanceMessages.ATTENDANCE_NOT_FOUND;
-		} else {
-			attendance.ifPresent(attendanceRepository::delete);
-			return AttendanceMessages.ATTENDANCE_DELETED;
-		}
+
+		attendance.ifPresent(attendanceRepository::delete);
 	}
 
 	@Override
@@ -182,14 +169,16 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	@Override
 	@CacheEvict(value = "attendance", key = "#studentLrn")
-	public boolean attendanceOut(Long studentLrn) {
+	@Async
+	public void attendanceOut(Long studentLrn) {
 		if (studentLrn == null) {
-			return false;
+			return;
 		}
+
 		// Check for the existence of Student LRN
 		if (!studentRepository.existsById(studentLrn)) {
 			logger.info(StudentMessages.STUDENT_LRN_NOT_EXISTS);
-			return false;
+			return;
 		}
 
 		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
@@ -198,17 +187,15 @@ public class AttendanceServiceImpl implements AttendanceService {
 			Attendance getAttendance = attendance.get();
 			logger.debug("The student {} is out, Time left: {}", studentLrn, LocalTime.now());
 			this.attendanceRepository.studentAttendanceOut(LocalTime.now(), getAttendance.getId());
-			return true;
 		}
 
-		return false;
 	}
 
 	@Override
 	@CacheEvict(value = "attendance", allEntries = true)
-	public String deleteAllAttendance() {
+	@Async
+	public void deleteAllAttendance() {
 		this.attendanceRepository.deleteAll();
-		return AttendanceMessages.ATTENDANCE_DELETED;
 	}
 
 	/**
@@ -452,5 +439,29 @@ public class AttendanceServiceImpl implements AttendanceService {
 				setAsAbsent(student, today);
 			}
 		});
+	}
+
+	@Override
+	public Status getStatus() {
+		LocalTime lateArrivalTime;
+		LocalTime onTimeArrival = configurationService.getOnTimeArrival();
+
+		Time currentTime = new Time(System.currentTimeMillis());
+		LocalTime currentLocalTime = currentTime.toLocalTime();
+
+		// Flag Ceremony Time
+		if (isTodayMonday()) {
+			lateArrivalTime = configurationService.getFlagCeremonyTime();
+		} else {
+			lateArrivalTime = configurationService.getLateTimeArrival();
+		}
+
+		if (currentLocalTime.isBefore(lateArrivalTime) && currentLocalTime.isAfter(onTimeArrival)) {
+			return Status.ONTIME;
+		} else if (currentLocalTime.isAfter(lateArrivalTime)) {
+			return Status.LATE;
+		} else {
+			return Status.ONTIME;
+		}
 	}
 }

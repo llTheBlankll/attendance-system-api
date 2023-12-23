@@ -64,10 +64,18 @@ public interface AttendanceService {
 	Status getStatusToday(Long studentLrn);
 
 	boolean attendanceOut(Long studentLrn);
+	// getStatus(): Uses only the current time and takes it into account if the time is in within before the
+	// Flag Ceremony or after the Flag Ceremony. Or if it is within the Late Time.
+	Status getStatus();
 
-	Boolean isAlreadyArrived(Long lrn);
+	void deleteAllAttendance();
 
-	boolean isAlreadyOut(Long studentLrn);
+	void attendanceOut(Long studentLrn);
+
+	boolean isAlreadyArrived(Long lrn);
 
 	String deleteAllAttendance();
+	Status isAlreadyOut(Long studentLrn);
+
+	boolean isAttendanceExist(Integer attendanceId);
 }
