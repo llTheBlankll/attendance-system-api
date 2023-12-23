@@ -55,15 +55,14 @@ public interface AttendanceService {
 
 	void absentAllNoAttendanceToday();
 
-	Status createAttendance(Long studentLrn);
+	void createAttendance(Long studentLrn);
 
-	String deleteAttendance(Integer attendanceId);
+	void deleteAttendance(Integer attendanceId);
 
 	String updateAttendance(Attendance attendance);
 
 	Status getStatusToday(Long studentLrn);
 
-	boolean attendanceOut(Long studentLrn);
 	// getStatus(): Uses only the current time and takes it into account if the time is in within before the
 	// Flag Ceremony or after the Flag Ceremony. Or if it is within the Late Time.
 	Status getStatus();
@@ -74,7 +73,6 @@ public interface AttendanceService {
 
 	boolean isAlreadyArrived(Long lrn);
 
-	String deleteAllAttendance();
 	Status isAlreadyOut(Long studentLrn);
 
 	boolean isAttendanceExist(Integer attendanceId);
