@@ -6,12 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name:
+name: Stable Release
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: "v*"
+  pull_request:
+    tags: "v*"
 
 jobs:
   build:
@@ -35,7 +36,7 @@ jobs:
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
         title: "Attendance System API ${{ github.ref }}"
+        prerelease: false
         files: target/*.jar
 
