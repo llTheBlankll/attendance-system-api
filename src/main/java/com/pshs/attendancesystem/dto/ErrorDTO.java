@@ -6,7 +6,6 @@ public class ErrorDTO {
 	private String message;
 
 	public ErrorDTO() {
-
 	}
 
 	public ErrorDTO(Integer code, String message) {
