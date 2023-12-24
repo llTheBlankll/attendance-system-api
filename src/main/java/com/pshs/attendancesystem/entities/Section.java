@@ -1,11 +1,13 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -15,7 +17,10 @@ import java.util.List;
 	@Index(columnList = "grade_level"),
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "sectionId")
-public class Section {
+@JsonIgnoreProperties({
+	"students"
+})
+public class Section implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "section_id", nullable = false)
@@ -40,7 +45,7 @@ public class Section {
 	@JoinColumn(name = "teacher")
 	private Teacher teacher;
 
-	@OneToMany(mappedBy = "section", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "section", cascade = CascadeType.MERGE, targetEntity = Student.class, fetch = FetchType.LAZY)
 	private List<Student> students;
 
 	public Strand getStrand() {

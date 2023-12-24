@@ -35,10 +35,10 @@ CREATE TABLE Teachers
     first_name        VARCHAR(32),
     middle_name       VARCHAR(32),
     last_name         VARCHAR(32),
-    sex               VARCHAR(8),
-    subject_expertise INT,
-    PRIMARY KEY (teacher_id),
-    FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id) ON DELETE SET NULL
+--     sex               VARCHAR(8),
+--     subject_expertise INT,
+    PRIMARY KEY (teacher_id)
+--     FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id) ON DELETE SET NULL
 );
 CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 

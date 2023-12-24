@@ -12,6 +12,7 @@ import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import java.util.Collections;
 @Tag(name = "Attendance Statistics", description = "Manages attendance statistics.")
 @RestController
 @RequestMapping("${api.root}/attendance/stats")
+@SecurityRequirement(name = "JWT Authentication")
 public class AttendanceStatisticsController {
 	private final AttendanceService attendanceService;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -33,6 +35,22 @@ public class AttendanceStatisticsController {
 	public AttendanceStatisticsController(AttendanceRepository attendanceRepository,
 	                                      StudentRepository studentRepository, ConfigurationService configurationService) {
 		attendanceService = new AttendanceServiceImpl(attendanceRepository, studentRepository, configurationService);
+	}
+
+	private long countAttendanceBetweenDateStatus(DateRangeWithStatus dateRangeStatus) {
+		if (dateRangeStatus.getStatus() == Status.LATE) {
+			return attendanceService.getAllCountOfAttendanceBetweenDate(
+				dateRangeStatus.getDateRange(),
+				Status.LATE
+			);
+		} else if (dateRangeStatus.getStatus() == Status.ONTIME) {
+			return attendanceService.getAllCountOfAttendanceBetweenDate(
+				dateRangeStatus.getDateRange(),
+				Status.ONTIME
+			);
+		} else {
+			return attendanceService.countAttendanceBetweenDate(dateRangeStatus.getDateRange());
+		}
 	}
 
 	/**
@@ -55,7 +73,7 @@ public class AttendanceStatisticsController {
 			return null;
 		}
 
-		BetweenDate startEndYear = new BetweenDate(LocalDate.now().withDayOfYear(1), LocalDate.now().withDayOfYear(LocalDate.now().lengthOfYear()));
+		DateRange startEndYear = new DateRange(LocalDate.now().withDayOfYear(1), LocalDate.now().withDayOfYear(LocalDate.now().lengthOfYear()));
 
 		return attendanceService.getAttendanceBetweenDate(
 			studentLrn,
@@ -75,15 +93,15 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "date", description = "The date to filter the attendance records"),
 		}
 	)
-	@PostMapping("/get/date")
-	public Iterable<Attendance> getStudentsAttendanceByDate(@RequestBody DateRangeWithStatus dateStatus) {
+	@PostMapping("/all/date")
+	public Iterable<Attendance> getAllStudentsAttendanceByDate(@RequestBody DateRangeWithStatus dateStatus) {
 		if (dateStatus.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return null;
 		}
 
 		Status status = dateStatus.getStatus();
-		BetweenDate dateRange = dateStatus.getDateRange();
+		DateRange dateRange = dateStatus.getDateRange();
 
 		if (status == Status.LATE) {
 			return attendanceService.getAllAttendanceBetweenDateWithStatus(
@@ -113,8 +131,8 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "time", description = "The time period to filter the attendance. This can either be 'month', 'week', or 'today'"),
 		}
 	)
-	@PostMapping("/get/time")
-	public Iterable<Attendance> getStudentsAttendanceByTime(@RequestBody TimeWithStatus timeStatus) {
+	@PostMapping("/all/time")
+	public Iterable<Attendance> getAllStudentsAttendanceByTime(@RequestBody DayWithStatus timeStatus) {
 		Status status = timeStatus.getStatus();
 		String time = timeStatus.getTime();
 
@@ -124,17 +142,17 @@ public class AttendanceStatisticsController {
 		}
 
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -201,14 +219,14 @@ public class AttendanceStatisticsController {
 		description = "Retrieves the attendance count by date. Returns -3 if the date range is null."
 	)
 	@PostMapping("/count/date")
-	public long getAttendanceCountByDate(@RequestBody DateRangeWithStatus dateStatus) {
+	public long countAttendanceByDate(@RequestBody DateRangeWithStatus dateStatus) {
 		if (dateStatus.getDateRange() == null) {
 			logger.info(AttendanceMessages.ATTENDANCE_NULL);
 			return -3;
 		}
 
 		Status status = dateStatus.getStatus();
-		BetweenDate dateRange = dateStatus.getDateRange();
+		DateRange dateRange = dateStatus.getDateRange();
 
 		if (status == Status.LATE) {
 			return attendanceService.getAllCountOfAttendanceBetweenDate(
@@ -239,7 +257,7 @@ public class AttendanceStatisticsController {
 		}
 	)
 	@PostMapping(value = "/count/time")
-	public long getAttendanceCountByTime(@RequestBody TimeWithStatus timeStatus) {
+	public long countAttendanceByDay(@RequestBody DayWithStatus timeStatus) {
 		Status status = timeStatus.getStatus();
 		String time = timeStatus.getTime();
 
@@ -249,65 +267,37 @@ public class AttendanceStatisticsController {
 		}
 
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
 
 		switch (time) {
 			case "month" -> {
-				return countOfAttendanceByTime(START_END_MONTH, status);
+				return countAttendanceBetweenDateStatus(new DateRangeWithStatus(START_END_MONTH, status));
 			}
 
 			case "week" -> {
-				return countOfAttendanceByTime(START_END_WEEK, status);
+				return countAttendanceBetweenDateStatus(new DateRangeWithStatus(START_END_WEEK, status));
 			}
 
 			case "today" -> {
-				if (status == Status.LATE) {
-					return attendanceService.getAllCountOfAttendanceBetweenDate(
-						START_END_TODAY,
-						Status.LATE
-					);
-				} else if (status == Status.ONTIME) {
-					return attendanceService.getAllCountOfAttendanceBetweenDate(
-						START_END_TODAY,
-						Status.ONTIME
-					);
-				} else {
-					return attendanceService.countAttendanceBetweenDate(START_END_TODAY);
-				}
+				return countAttendanceBetweenDateStatus(new DateRangeWithStatus(START_END_TODAY, status));
 			}
 
 			default -> {
 				return -1;
 			}
-		}
-	}
-
-	private long countOfAttendanceByTime(BetweenDate dateRange, Status status) {
-		if (status == Status.LATE) {
-			return attendanceService.getAllCountOfAttendanceBetweenDate(
-				dateRange,
-				Status.LATE
-			);
-		} else if (status == Status.ONTIME) {
-			return attendanceService.getAllCountOfAttendanceBetweenDate(
-				dateRange,
-				Status.ONTIME
-			);
-		} else {
-			return attendanceService.countAttendanceBetweenDate(dateRange);
 		}
 	}
 
@@ -332,7 +322,7 @@ public class AttendanceStatisticsController {
 		}
 
 		Status status = dateStatus.getStatus();
-		BetweenDate dateRange = dateStatus.getDateRange();
+		DateRange dateRange = dateStatus.getDateRange();
 		Long studentLrn = dateStatus.getStudentLrn();
 
 		if (status == Status.LATE) {
@@ -373,17 +363,17 @@ public class AttendanceStatisticsController {
 		Long studentLrn = timeStatus.getStudentLrn();
 
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -421,7 +411,7 @@ public class AttendanceStatisticsController {
 		}
 	}
 
-	private long getStudentCountByTime(Status status, Long studentLrn, BetweenDate dateRange) {
+	private long getStudentCountByTime(Status status, Long studentLrn, DateRange dateRange) {
 		if (status == Status.LATE) {
 			return attendanceService.getAllCountOfAttendanceBetweenDate(
 				studentLrn,
@@ -460,7 +450,7 @@ public class AttendanceStatisticsController {
 		}
 
 		Status status = dateRangeWithStatusLrn.getStatus();
-		BetweenDate dateRange = dateRangeWithStatusLrn.getDateRange();
+		DateRange dateRange = dateRangeWithStatusLrn.getDateRange();
 		Long studentLrn = dateRangeWithStatusLrn.getStudentLrn();
 
 		if (status == Status.LATE) {
@@ -486,24 +476,24 @@ public class AttendanceStatisticsController {
 			@Parameter(name = "Time with Status and LRN", description = "The start and end dates, attendance status, and student LRN. Need to pass TimeWithStatusLrn Object."),
 		}
 	)
-	@PostMapping("/student/get/time")
+	@PostMapping("/student/all/time")
 	public Iterable<Attendance> getStudentAttendanceByTime(@RequestBody TimeWithStatusLrn timeWithStatus) {
 		Status status = timeWithStatus.getStatus();
 		String time = timeWithStatus.getTime();
 		Long studentLrn = timeWithStatus.getStudentLrn();
 
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -559,7 +549,7 @@ public class AttendanceStatisticsController {
 						Status.ONTIME
 					);
 				} else {
-					return attendanceService.getAttendanceBetweenDate(studentLrn, new BetweenDate(LocalDate.now(), LocalDate.now()));
+					return attendanceService.getAttendanceBetweenDate(studentLrn, new DateRange(LocalDate.now(), LocalDate.now()));
 				}
 			}
 
@@ -582,7 +572,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getTodayAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -604,7 +594,7 @@ public class AttendanceStatisticsController {
 	@GetMapping("/week")
 	public Iterable<Attendance> getWeekAttendance() {
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
@@ -627,7 +617,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getTodayOnTimeAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -647,7 +637,7 @@ public class AttendanceStatisticsController {
 	@GetMapping("/week/ontime")
 	public Iterable<Attendance> getWeekOnTimeAttendance() {
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
@@ -668,7 +658,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getTodayLateAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -687,7 +677,7 @@ public class AttendanceStatisticsController {
 	@GetMapping("/week/late")
 	public Iterable<Attendance> getWeekLateAttendance() {
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
@@ -708,7 +698,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getMonthAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
@@ -726,7 +716,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getMonthOnTimeAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
@@ -747,7 +737,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getMonthLateAttendance() {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
@@ -763,7 +753,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getSectionAttendanceToday(@NonNull @RequestBody Section section) {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_TODAY = new BetweenDate(
+		DateRange START_END_TODAY = new DateRange(
 			today,
 			today
 		);
@@ -779,7 +769,7 @@ public class AttendanceStatisticsController {
 	@PostMapping("/section/week")
 	public Iterable<Attendance> getSectionAttendanceWeek(@NonNull @RequestBody Section section) {
 		LocalDate today = LocalDate.now();
-		BetweenDate START_END_WEEK = new BetweenDate(
+		DateRange START_END_WEEK = new DateRange(
 			today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 			today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 		);
@@ -797,7 +787,7 @@ public class AttendanceStatisticsController {
 	public Iterable<Attendance> getSectionAttendanceMonth(@NonNull @RequestBody Section section) {
 		LocalDate today = LocalDate.now();
 
-		BetweenDate START_END_MONTH = new BetweenDate(
+		DateRange START_END_MONTH = new DateRange(
 			today.withDayOfMonth(1),
 			today.withDayOfMonth(today.lengthOfMonth())
 		);
@@ -814,7 +804,7 @@ public class AttendanceStatisticsController {
 		}
 	)
 	@PostMapping("/section")
-	public Iterable<Attendance> getAttendanceInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+	public Iterable<Attendance> getAttendanceInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody DateRange dateRange) {
 		if (status == null) {
 			return attendanceService.getAttendanceInSection(sectionId, dateRange);
 		} else {
@@ -831,7 +821,7 @@ public class AttendanceStatisticsController {
 		}
 	)
 	@PostMapping("/count/section")
-	public long getAttendanceCountInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody BetweenDate dateRange) {
+	public long getAttendanceCountInSection(@RequestParam("section-id") Integer sectionId, @RequestParam Status status, @RequestBody DateRange dateRange) {
 		return attendanceService.countAttendanceInSection(sectionId, dateRange, status);
 	}
 

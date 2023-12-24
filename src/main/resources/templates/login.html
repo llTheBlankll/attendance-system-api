@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login JWT Token | PSHS Attendance System API</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<form class='login-form' method="post" th:object="${loginDTO}" th:action="@{/auth/login/api}">
+    <div class="flex-row">
+        <input id="username" class='lf--input' placeholder='Username' type='text' th:field="*{username}">
+    </div>
+    <div class="flex-row">
+        <input id="password" class='lf--input' placeholder='Password' type='password' th:field="*{password}">
+    </div>
+    <div class="flex-row" th:if="${message != false}">
+        <div class="alert" th:text="${message}">
+        </div>
+    </div>
+    <input class='lf--submit' type='submit' value='LOGIN'>
+</form>
+<a class='lf--forgot' th:href="@{/}">Forgot password?</a>
+</body>
+</html>

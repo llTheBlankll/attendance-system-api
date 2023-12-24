@@ -2,6 +2,8 @@ package com.pshs.attendancesystem.websocket.communication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -10,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Lazy
 @Service
 public class FrontEndCommunicationService {
 
@@ -20,6 +23,7 @@ public class FrontEndCommunicationService {
 		sessionList.add(session);
 	}
 
+	@Async
 	public void sendMessageToAllFrontEnd(String message) {
 		try {
 			for (WebSocketSession session : this.sessionList) {

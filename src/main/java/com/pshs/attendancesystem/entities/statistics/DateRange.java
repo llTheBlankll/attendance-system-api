@@ -2,16 +2,16 @@ package com.pshs.attendancesystem.entities.statistics;
 
 import java.time.LocalDate;
 
-public class BetweenDate {
+public class DateRange {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
-	public BetweenDate(LocalDate startDate, LocalDate endDate) {
+	public DateRange(LocalDate startDate, LocalDate endDate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	public BetweenDate() {
+	public DateRange() {
 	}
 
 	public LocalDate getStartDate() {

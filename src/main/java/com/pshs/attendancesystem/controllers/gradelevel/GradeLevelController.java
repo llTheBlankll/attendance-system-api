@@ -5,12 +5,16 @@ import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.services.GradeLevelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Grade Level", description = "Manage grade levels in the system")
 @RestController
 @RequestMapping("${api.root}/gradelevel")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class GradeLevelController {
 
 	private final GradeLevelService gradeLevelService;

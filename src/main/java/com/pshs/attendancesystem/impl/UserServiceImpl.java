@@ -5,8 +5,10 @@ import com.pshs.attendancesystem.repositories.UserRepository;
 import com.pshs.attendancesystem.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,12 +20,17 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
+
 	public UserServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
+
 	@Override
-	@CachePut(value = "user", key = "#username")
+	@Caching(
+		evict = @CacheEvict(value = "user", key = "#username"),
+		put = @CachePut(value = "user", key = "#username")
+	)
 	public void updateUserLastLogin(String username) {
 		if (userRepository.updateUserLastLogin(LocalDateTime.now(), username) <= 0) {
 			logger.info("User not found");

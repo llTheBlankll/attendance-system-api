@@ -2,7 +2,7 @@ package com.pshs.attendancesystem.entities.statistics;
 
 import com.pshs.attendancesystem.enums.Status;
 
-public class TimeWithStatus {
+public class DayWithStatus {
 	private String time;
 	private Status status;
 

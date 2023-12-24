@@ -2,17 +2,22 @@ package com.pshs.attendancesystem.controllers.section;
 
 import com.pshs.attendancesystem.documentation.SectionDocumentation;
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.SectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.List;
 
 @Tag(name = "Section", description = "The Section Endpoints")
 @RestController
 @RequestMapping("${api.root}/section")
+@SecurityRequirement(name = "JWT Authentication")
 public class SectionController {
 
 	private final SectionService sectionService;
@@ -31,6 +36,7 @@ public class SectionController {
 		description = SectionDocumentation.GET_ALL_SECTIONS
 	)
 	@GetMapping("/all")
+	@Cacheable(value = "section")
 	public Iterable<Section> getAllSection() {
 		return sectionService.getAllSection();
 	}
@@ -125,5 +131,10 @@ public class SectionController {
 	@GetMapping("/get")
 	public Section getSection(@RequestParam("q") Integer sectionId) {
 		return sectionService.getSectionBySectionId(sectionId);
+	}
+
+	@PostMapping("/all/section/teacher")
+	public List<Section> getAllSectionByTeacher(@RequestBody Teacher teacher) {
+		return sectionService.getAllSectionByTeacher(teacher);
 	}
 }

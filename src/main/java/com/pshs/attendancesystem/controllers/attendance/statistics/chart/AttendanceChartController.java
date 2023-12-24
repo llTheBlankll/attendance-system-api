@@ -3,9 +3,10 @@ package com.pshs.attendancesystem.controllers.attendance.statistics.chart;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
-import com.pshs.attendancesystem.entities.statistics.BetweenDate;
+import com.pshs.attendancesystem.entities.statistics.DateRange;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.services.AttendanceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,9 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.root}/attendance/stats/chart")
 @Tag(name = "Attendance Chart", description = "Get attendance chart data, gives List of Integers")
+@SecurityRequirement(
+	name = "JWT Authentication "
+)
 public class AttendanceChartController {
 
 	private final AttendanceService attendanceService;
@@ -34,17 +38,17 @@ public class AttendanceChartController {
 		this.attendanceService = attendanceService;
 	}
 
-	private List<Long> countSectionAttendance(@RequestBody Section section, BetweenDate dateRange, Status status) {
+	private List<Long> countSectionAttendance(@RequestBody Section section, DateRange dateRange, Status status) {
 		List<Long> countAttendances = new ArrayList<>();
 		for (LocalDate date = dateRange.getStartDate(); date.isBefore(dateRange.getEndDate().plusDays(1)); date = date.plusDays(1)) {
 			switch (status) {
 				case ONTIME -> countAttendances.add(
-					attendanceService.countAttendanceInSection(section.getSectionId(), new BetweenDate(date, date), Status.ONTIME)
+					attendanceService.countAttendanceInSection(section.getSectionId(), new DateRange(date, date), Status.ONTIME)
 				);
 
 
 				case LATE -> countAttendances.add(
-					attendanceService.countAttendanceInSection(section.getSectionId(), new BetweenDate(date, date), Status.LATE)
+					attendanceService.countAttendanceInSection(section.getSectionId(), new DateRange(date, date), Status.LATE)
 				);
 
 
@@ -55,7 +59,7 @@ public class AttendanceChartController {
 		return countAttendances;
 	}
 
-	private List<Long> countStrandAttendance(@RequestBody Strand strand, BetweenDate dateRange, Status status) {
+	private List<Long> countStrandAttendance(@RequestBody Strand strand, DateRange dateRange, Status status) {
 		List<Long> countAttendances = new ArrayList<>();
 		for (LocalDate date = dateRange.getStartDate(); date.isBefore(dateRange.getEndDate().plusDays(1)); date = date.plusDays(1)) {
 			countAttendances.add(attendanceService.countByStudentStrandAndDate(strand, date, status));
@@ -64,7 +68,7 @@ public class AttendanceChartController {
 		return countAttendances;
 	}
 
-	private List<Long> getChartGradeLevelWeek(@RequestBody Gradelevel gradeLevel, BetweenDate dateRange, Status status) {
+	private List<Long> getChartGradeLevelWeek(@RequestBody Gradelevel gradeLevel, DateRange dateRange, Status status) {
 		List<Long> countAttendances = new ArrayList<>();
 		for (LocalDate date = dateRange.getStartDate();
 		     date.isBefore(dateRange.getEndDate().plusDays(1));
@@ -80,7 +84,7 @@ public class AttendanceChartController {
 	public List<Long> getChartSectionWeek(@RequestBody Section section, @RequestParam Status status) {
 		return countSectionAttendance(
 			section,
-			new BetweenDate(startWeek, endWeek),
+			new DateRange(startWeek, endWeek),
 			status
 		);
 	}
@@ -89,7 +93,7 @@ public class AttendanceChartController {
 	public List<Long> getChartSectionMonth(@RequestBody Section section, @RequestParam Status status) {
 		return countSectionAttendance(
 			section,
-			new BetweenDate(startMonth, endMonth),
+			new DateRange(startMonth, endMonth),
 			status
 		);
 	}
@@ -98,7 +102,7 @@ public class AttendanceChartController {
 	public List<Long> getChartSectionYear(@RequestBody Section section, @RequestParam Status status) {
 		return countSectionAttendance(
 			section,
-			new BetweenDate(startYear, endYear),
+			new DateRange(startYear, endYear),
 			status
 		);
 	}
@@ -107,7 +111,7 @@ public class AttendanceChartController {
 	public List<Long> getChartStrandWeek(@RequestBody Strand strand, @RequestParam Status status) {
 		return countStrandAttendance(
 			strand,
-			new BetweenDate(startWeek, endWeek),
+			new DateRange(startWeek, endWeek),
 			status
 		);
 	}
@@ -116,7 +120,7 @@ public class AttendanceChartController {
 	public List<Long> getChartStrandMonth(@RequestBody Strand strand, @RequestParam Status status) {
 		return countStrandAttendance(
 			strand,
-			new BetweenDate(startMonth, endMonth),
+			new DateRange(startMonth, endMonth),
 			status
 		);
 	}
@@ -125,7 +129,7 @@ public class AttendanceChartController {
 	public List<Long> getChartStrandYear(@RequestBody Strand strand, @RequestParam Status status) {
 		return countStrandAttendance(
 			strand,
-			new BetweenDate(startYear, endYear),
+			new DateRange(startYear, endYear),
 			status
 		);
 	}
@@ -134,7 +138,7 @@ public class AttendanceChartController {
 	public List<Long> getChartGradeLevelWeek(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
 		return getChartGradeLevelWeek(
 			gradeLevel,
-			new BetweenDate(startWeek, endWeek),
+			new DateRange(startWeek, endWeek),
 			status
 		);
 	}
@@ -143,7 +147,7 @@ public class AttendanceChartController {
 	public List<Long> getChartGradeLevelMonth(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
 		return getChartGradeLevelWeek(
 			gradeLevel,
-			new BetweenDate(startMonth, endMonth),
+			new DateRange(startMonth, endMonth),
 			status
 		);
 	}
@@ -152,7 +156,7 @@ public class AttendanceChartController {
 	public List<Long> getChartGradeLevelYear(@RequestBody Gradelevel gradeLevel, @RequestParam Status status) {
 		return getChartGradeLevelWeek(
 			gradeLevel,
-			new BetweenDate(startYear, endYear),
+			new DateRange(startYear, endYear),
 			status
 		);
 	}

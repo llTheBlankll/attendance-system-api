@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "rfid_credentials", indexes = {
 	@Index(columnList = "lrn")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
 
-public class RfidCredentials {
+public class RfidCredentials implements Serializable {
 	@Id
 	@Column(name = "lrn", nullable = false)
 	private Long lrn;

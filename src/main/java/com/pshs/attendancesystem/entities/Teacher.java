@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "teachers")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Teacher {
+public class Teacher implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "teacher_id", nullable = false)
@@ -24,7 +25,7 @@ public class Teacher {
 	@Column(name = "last_name", length = 32)
 	private String lastName;
 
-	@OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER, targetEntity = Section.class, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "teacher", targetEntity = Section.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Section> sections;
 
 

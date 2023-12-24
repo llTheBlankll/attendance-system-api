@@ -5,12 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pshs.attendancesystem.entities.Guardian;
 import com.pshs.attendancesystem.entities.RfidCredentials;
-import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.messages.AttendanceMessages;
-import com.pshs.attendancesystem.messages.RfidMessages;
-import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.services.AttendanceService;
 import com.pshs.attendancesystem.services.RfidService;
 import com.pshs.attendancesystem.threading.SMSThread;
@@ -19,28 +16,30 @@ import com.pshs.attendancesystem.websocket.communication.SectionCommunicationSer
 import com.pshs.attendancesystem.websocket.entities.WSSectionCommunicationServiceResponse;
 import com.pshs.attendancesystem.websocket.entities.WebSocketData;
 import com.pshs.attendancesystem.websocket.entities.WebSocketResponse;
-import jakarta.annotation.Nonnull;
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ScannerWebSocketHandler extends TextWebSocketHandler {
+
+	// * Services
 	private final AttendanceService attendanceService;
 	private final RfidService rfidService;
+
+	// * WebSocket Communication Service
 	private final FrontEndCommunicationService frontEndCommunicationService;
 	private final SectionCommunicationService sectionCommunicationService;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -56,18 +55,13 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 	}
 
-
-	private void sendErrorMessage(WebSocketSession session, TextMessage textMessage) throws IOException {
-		session.sendMessage(textMessage);
-	}
-
-	private void sendMessage(WebSocketSession session, String message) throws IOException {
+	@Async
+	protected void sessionSendMessage(WebSocketSession session, String message) throws IOException {
 		session.sendMessage(new TextMessage(message));
 	}
 
-	private WSSectionCommunicationServiceResponse getSectionWSResponse(Section section, Student student, Status status, LocalTime time) {
+	private WSSectionCommunicationServiceResponse getSectionWSResponse(Student student, Status status, LocalTime time) {
 		return new WSSectionCommunicationServiceResponse(
-			section,
 			student,
 			status,
 			time
@@ -76,59 +70,51 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 
 	@Override
 	protected void handleTextMessage(@NonNull WebSocketSession session, TextMessage message) throws IOException {
+		// Validate input.
 		String textMessage = message.getPayload();
 		if (textMessage.isEmpty()) {
 			return;
 		}
-
-		String hashedLrn;
-		Optional<RfidCredentials> rfidCredentials;
-		Student student;
-		RfidCredentials credentials;
 
 		// Get the current time
 		Time currentTime = new Time(System.currentTimeMillis());
 		LocalTime currentLocalTime = currentTime.toLocalTime();
 
 		try {
+			// * Read the input of scanner websocket and convert it into WebSocketData class
 			WebSocketData webSocketData = mapper.readValue(textMessage, WebSocketData.class);
-			hashedLrn = webSocketData.getHashedLrn();
 
-			rfidCredentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn);
-			if (rfidCredentials.isPresent()) {
-				student = rfidCredentials.get().getStudent();
-				credentials = rfidCredentials.get();
-			} else {
-				response.setMessage("Invalid");
-				sendMessage(session, mapper.writeValueAsString(response));
+			// * Get the hashed LRN.
+			String hashedLrn = webSocketData.getHashedLrn();
+
+			// * Get RFID Credentials of Student with the given hashed LRN.
+			RfidCredentials credentials = this.rfidService.getRfidCredentialByHashedLrn(hashedLrn).orElse(null);
+
+			// @ Check if credentials is null.
+			if (credentials == null) {
+				response.setMessage("Invalid LRN!");
+				sessionSendMessage(session, mapper.writeValueAsString(response));
 				return;
 			}
 
-			// Check if student already arrived.
-
-			if (webSocketData.getMode().equals("in")) {
-				handleInMode(session, credentials, student, currentLocalTime);
-			} else if (webSocketData.getMode().equals("out") && credentials.getLrn() != null) {
-				handleOutMode(session, credentials, student, currentLocalTime);
+			// * Handle the mode, if "in" then check in, else check out.
+			String mode = webSocketData.getMode();
+			if (mode.equals("in")) {
+				handleInMode(session, credentials, currentLocalTime);
+			} else if (mode.equals("out") && credentials.getLrn() != null) {
+				handleOutMode(session, credentials, currentLocalTime);
 			}
 		} catch (JsonParseException e) {
 			logger.error(e.getMessage());
-		} catch (SocketException exception) {
-			logger.error("Socket error: {}", exception.getMessage());
+			Sentry.captureException(e);
 		}
 	}
 
-	private void handleInMode(WebSocketSession session, @Nonnull RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
+	private void handleInMode(@NonNull WebSocketSession session, @NonNull RfidCredentials credentials, LocalTime currentLocalTime) {
 		try {
-			if (credentials.getHashedLrn() != null && !this.rfidService.isHashedLrnExist(credentials.getHashedLrn())) {
-				response.setMessage("Invalid");
-				sendErrorMessage(session, new TextMessage(
-					mapper.writeValueAsString(response)
-				));
-				logger.warn("Hashed LRN does not exist in the database.");
-				return;
-			}
+			Student student = credentials.getStudent();
 
+			// Check if student already arrived.
 			if (student.getLrn() != null && attendanceService.isAlreadyArrived(student.getLrn())) {
 				Status attendanceStatus = attendanceService.getStatusToday(student.getLrn());
 				response.setMessage("Already arrived!");
@@ -136,93 +122,95 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				response.setTime(Time.valueOf(LocalTime.now()));
 				response.setStudent(student);
 				response.setStatus(attendanceStatus);
-				sendMessage(session, mapper.writeValueAsString(response));
+				sessionSendMessage(session, mapper.writeValueAsString(response));
 				return;
 			}
 
-			// Check if no matching lrn was found.
-			if (credentials.getLrn() != null) {
-				// Change flag ceremony time if today is monday.
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(calendar.getTime());
+			// Configure the response to be sent.
+			Status attendanceStatus = attendanceService.getStatus();
+			response.setMessage("You are " + attendanceStatus);
+			response.setStatus(attendanceStatus);
+			response.setStudentLrn(student.getLrn());
+			response.setTime(Time.valueOf(LocalTime.now()));
+			response.setStudent(student);
+			response.setStatus(attendanceStatus);
 
-				// Now add attendance.
-				Status attendanceStatus = attendanceService.createAttendance(credentials.getLrn());
-				response.setMessage("You are " + attendanceStatus);
-				response.setStatus(attendanceStatus);
-				response.setStudentLrn(credentials.getLrn());
-				response.setTime(Time.valueOf(LocalTime.now()));
-				response.setStudent(student);
-				response.setStatus(attendanceStatus);
+			// @ Create attendance for student.
+			attendanceService.createAttendance(student.getLrn());
 
-				if (attendanceStatus == Status.LATE) {
-					String parentMessage = AttendanceMessages.onLateAttendanceMessage(getFullName(student), currentLocalTime.toString());
-					informGuardian(student, parentMessage);
-				} else if (attendanceStatus == Status.ONTIME) {
-					String parentMessage = AttendanceMessages.onTimeAttendanceMessage(getFullName(student), currentLocalTime.toString());
-					informGuardian(student, parentMessage);
-				}
-
-				sendMessage(session, mapper.writeValueAsString(response));
-
-				sectionCommunicationService.sendUpdate(
-					mapper.writeValueAsString(
-						getSectionWSResponse(
-							student.getSection(),
-							student,
-							attendanceStatus,
-							currentLocalTime
-						)
-					)
-				);
-				frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
-			} else {
-				// Send a warning message, because there might be an error in scanner.
-				TextMessage invalidLrnMessage = new TextMessage(StudentMessages.STUDENT_INVALID_LRN);
-				session.sendMessage(invalidLrnMessage);
-				logger.warn(RfidMessages.HASHED_LRN_NOT_FOUND);
+			if (attendanceStatus == Status.LATE) {
+				String parentMessage = AttendanceMessages.onLateAttendanceMessage(getFullName(student), currentLocalTime.toString());
+				informGuardian(student, parentMessage);
+			} else if (attendanceStatus == Status.ONTIME) {
+				String parentMessage = AttendanceMessages.onTimeAttendanceMessage(getFullName(student), currentLocalTime.toString());
+				informGuardian(student, parentMessage);
 			}
+
+			// @ Send the response.
+			sessionSendMessage(session, mapper.writeValueAsString(response));
+			sectionCommunicationService.sendMessage(
+				mapper.writeValueAsString(
+					getSectionWSResponse(
+						student,
+						attendanceStatus,
+						currentLocalTime
+					)
+				)
+			);
+
+			// @ Send message to Front End server the attendance update.
+			frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
 		} catch (IOException | IllegalArgumentException e) {
 			logger.error(e.getMessage());
 		}
 	}
 
 
-	private void handleOutMode(WebSocketSession session, RfidCredentials credentials, Student student, LocalTime currentLocalTime) {
+	private void handleOutMode(WebSocketSession session, RfidCredentials credentials, LocalTime currentLocalTime) {
 		try {
-			if (attendanceService.isAlreadyOut(credentials.getLrn())) {
+			// @ Get student object from credentials.
+			Student student = credentials.getStudent();
+
+			// @ Check if student is already out.
+			Status attendanceExistence = attendanceService.isAlreadyOut(credentials.getLrn());
+
+			// * Check if student is already out.
+			if (attendanceExistence == Status.OUT) {
+				// ^^ If it is already out then send a message.
 				Status attendanceStatus = attendanceService.getStatusToday(credentials.getLrn());
 				response.setMessage("Already check out");
 				response.setStatus(attendanceStatus);
 				response.setStudentLrn(credentials.getLrn());
 				response.setTime(Time.valueOf(LocalTime.now()));
 				response.setStudent(student);
-				sendMessage(session, mapper.writeValueAsString(response));
+				sessionSendMessage(session, mapper.writeValueAsString(response));
 				return;
-			}
-
-			if (!attendanceService.attendanceOut(credentials.getLrn())) {
+			} else if (attendanceExistence == Status.NOT_FOUND) {
+				// ^ If it is not found then send a message that the student need to check in.
 				response.setMessage("Check in first");
-				sendMessage(session, mapper.writeValueAsString(response));
+				sessionSendMessage(session, mapper.writeValueAsString(response));
 				logger.warn("Check in first: {}", credentials.getLrn());
 				return;
+			} else {
+				// ^ If it is not out then check the student out.
+				attendanceService.attendanceOut(student.getLrn());
 			}
+
 			logger.info("Student {} has left at {}", credentials.getLrn(), Time.valueOf(LocalTime.now()));
 
-			// Get Attendance
+			// @ Set response
 			response.setMessage("Bye Bye :)");
 			response.setStudentLrn(credentials.getLrn());
 			response.setTime(Time.valueOf(LocalTime.now()));
 			response.setStatus(Status.OUT);
 			response.setStudent(student);
 
-			// Send response
-			sendMessage(session, mapper.writeValueAsString(response));
+			// @ Send response
+			sessionSendMessage(session, mapper.writeValueAsString(response));
 			frontEndCommunicationService.sendMessageToAllFrontEnd(mapper.writeValueAsString(response));
-			sectionCommunicationService.sendUpdate(
+			sectionCommunicationService.sendMessage(
 				mapper.writeValueAsString(
 					getSectionWSResponse(
-						student.getSection(),
 						student,
 						Status.OUT,
 						currentLocalTime
@@ -230,7 +218,7 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				)
 			);
 
-			// Inform Guardians
+			// @ Inform Guardians
 			String parentMessage = AttendanceMessages.studentOutOfFacility(getFullName(student), currentLocalTime.toString());
 			informGuardian(student, parentMessage);
 		} catch (IOException | IllegalArgumentException e) {
@@ -239,6 +227,12 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	private void informGuardian(Student student, String parentMessage) {
+		if (student.getGuardian() == null) {
+			logger.error("No guardian found");
+			logger.error("Student: {}, name: {}", student.getLrn(), getFullName(student));
+			return;
+		}
+
 		List<Guardian> guardianSet = student.getGuardian();
 		for (Guardian guardian : guardianSet) {
 			if (guardian.getContactNumber().equals("null")) {

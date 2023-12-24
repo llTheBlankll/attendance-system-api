@@ -23,10 +23,65 @@ public class APIConfig {
 	@Value("${attendance.absent-schedule}")
 	private String previousAbsentSchedule;
 
+	@Value("${api.security.requirement}")
+	private String securityRequirement;
+
+	@Value("${redis.username}")
+	private String redisUsername;
+
+	@Value("${redis.password}")
+	private String redisPassword;
+
+	@Value("${redis.host}")
+	private String redisHost;
+
+	@Value("${redis.port}")
+	private int redisPort;
+
 	@Value("${api.version}")
 	private String API_VERSION;
 	private String SPRING_DOCS_TITLE = "Attendance System API";
 	private String SPRING_DOCS_DESCRIPTION = "The Spring Boot REST API for the attendance system is a robust and scalable solution designed to streamline attendance management. Leveraging Spring Security for authentication and authorization, the API provides secure endpoints for retrieving, adding, and modifying attendance records. Real-time updates are facilitated through technologies like WebSocket, ensuring immediate reflection of changes in attendance status. The API supports report generation and analytics, allowing users to glean insights into attendance patterns. With configurable settings, comprehensive documentation, and adherence to security best practices, this API serves as a versatile and secure backend for applications seeking to automate attendance tracking and integrate attendance data seamlessly with other business systems.";
+
+	public int getRedisPort() {
+		return redisPort;
+	}
+
+	public void setRedisPort(int redisPort) {
+		this.redisPort = redisPort;
+	}
+
+	public String getRedisUsername() {
+		return redisUsername;
+	}
+
+	public void setRedisUsername(String redisUsername) {
+		this.redisUsername = redisUsername;
+	}
+
+	public String getRedisPassword() {
+		return redisPassword;
+	}
+
+	public void setRedisPassword(String redisPassword) {
+		this.redisPassword = redisPassword;
+	}
+
+	public String getRedisHost() {
+		return redisHost;
+	}
+
+	public void setRedisHost(String redisHost) {
+		this.redisHost = redisHost;
+	}
+
+	public String getSecurityRequirement() {
+		return securityRequirement;
+	}
+
+	public void setSecurityRequirement(String securityRequirement) {
+		this.securityRequirement = securityRequirement;
+	}
 
 	public String getPreviousAbsentSchedule() {
 		return previousAbsentSchedule;

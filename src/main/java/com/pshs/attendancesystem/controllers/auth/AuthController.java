@@ -1,5 +1,6 @@
 package com.pshs.attendancesystem.controllers.auth;
 
+import com.pshs.attendancesystem.dto.ErrorDTO;
 import com.pshs.attendancesystem.dto.LoginResponse;
 import com.pshs.attendancesystem.dto.LoginUserDTO;
 import com.pshs.attendancesystem.dto.RegisterUserDTO;
@@ -7,11 +8,20 @@ import com.pshs.attendancesystem.entities.User;
 import com.pshs.attendancesystem.security.jwt.JwtService;
 import com.pshs.attendancesystem.services.AuthenticationService;
 import com.pshs.attendancesystem.services.UserService;
+import io.sentry.Sentry;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class AuthController {
 
 	private final JwtService jwtService;
@@ -30,20 +40,26 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public LoginResponse login(@RequestBody LoginUserDTO loginUserDTO) {
-		User authenticatedUser = authenticationService.signIn(loginUserDTO);
+	public ResponseEntity<?> login(@RequestBody LoginUserDTO loginUserDTO) {
+		try {
+			User authenticatedUser = authenticationService.signIn(loginUserDTO);
 
-		LoginResponse loginResponse = new LoginResponse(
-			jwtService.generateToken(authenticatedUser)
-		);
+			LoginResponse loginResponse = new LoginResponse(
+				jwtService.generateToken(authenticatedUser)
+			);
 
-		// Update User Last Log in
-		userService.updateUserLastLogin(authenticatedUser.getUsername());
+			// Update User Last Log in
+			userService.updateUserLastLogin(authenticatedUser.getUsername());
 
-		return loginResponse;
+			return ResponseEntity.ok(loginResponse);
+		} catch (BadCredentialsException badCredentialsException) {
+			Sentry.captureMessage(badCredentialsException.getMessage());
+			ErrorDTO errorDTO = new ErrorDTO(400, badCredentialsException.getMessage());
+			return ResponseEntity.badRequest().body(errorDTO);
+		}
 	}
 
-	@GetMapping("/ping")
+	@GetMapping(value = "/ping")
 	@PreAuthorize("hasAnyRole('ADMIN', 'TEACHER', 'PRINCIPAL')")
 	public String ping() {
 		return "pong";

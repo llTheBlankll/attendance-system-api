@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.services;
 
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Teacher;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public interface SectionService {
 	String deleteSection(Section section);
 
 	Iterable<Section> searchSectionByName(String sectionName);
+
+	List<Section> getAllSectionByTeacher(Teacher teacher);
 
 	boolean isSectionExist(Section section);
 

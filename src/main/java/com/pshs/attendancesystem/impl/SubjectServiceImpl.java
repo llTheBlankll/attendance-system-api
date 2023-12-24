@@ -6,8 +6,6 @@ import com.pshs.attendancesystem.repositories.SubjectRepository;
 import com.pshs.attendancesystem.services.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +20,6 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	@CachePut(value = "subject", key = "#subject.id")
 	public String createSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
@@ -64,7 +61,6 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	@CacheEvict(value = "subject", key = "#subject.id")
 	public String deleteSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
@@ -81,7 +77,6 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	@CachePut(value = "subject", key = "#subject.id")
 	public String updateSubject(Subject subject) {
 		if (subject.getId() == null) {
 			logger.info(SubjectMessages.SUBJECT_NULL);
@@ -98,7 +93,6 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	@CacheEvict(value = "subject", key = "#subjectId")
 	public String deleteSubjectById(Integer subjectId) {
 		if (subjectId < 0) {
 			logger.info(SubjectMessages.SUBJECT_NULL);

@@ -5,12 +5,16 @@ import com.pshs.attendancesystem.entities.Subject;
 import com.pshs.attendancesystem.services.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Subjects", description = "The Operations related to Subjects")
 @RestController
 @RequestMapping("${api.root}/subject")
+@SecurityRequirement(
+	name = "JWT Authentication"
+)
 public class SubjectsController {
 	private final SubjectService subjectService;
 
