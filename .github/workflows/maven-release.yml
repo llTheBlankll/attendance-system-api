@@ -36,5 +36,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         title: "Attendance System API ${{ github.event.pull_request.title }}"
         prerelease: false
+        automatic_release_tag: "stable"
         files: target/*.jar
 
