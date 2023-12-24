@@ -3,6 +3,8 @@ package com.pshs.attendancesystem.controllers;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.sentry.Sentry;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -17,8 +19,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice(annotations = Controller.class)
 public class ControllerGlobalExceptionHandler {
 
+	private final Logger logger = LogManager.getLogger(this.getClass());
+
 	@ExceptionHandler(AccessDeniedException.class)
 	public String handleAccessDeniedException(AccessDeniedException e) {
+		logger.error(e.getMessage(), e);
 		return "error/403";
 	}
 
@@ -34,6 +39,7 @@ public class ControllerGlobalExceptionHandler {
 
 	@ExceptionHandler(DecodingException.class)
 	public String handleDecodingException(DecodingException e) {
+		logger.error(e.getMessage(), e);
 		return "error/403";
 	}
 
@@ -41,6 +47,7 @@ public class ControllerGlobalExceptionHandler {
 	public String handleClientAbortException(ClientAbortException e, Model model) {
 		model.addAttribute("message", e.getMessage());
 		Sentry.captureException(e);
+		logger.error(e.getMessage(), e);
 		return "error/500";
 	}
 
@@ -48,12 +55,14 @@ public class ControllerGlobalExceptionHandler {
 	public String handleNullPointerException(NullPointerException e, Model model) {
 		model.addAttribute("message", e.getMessage());
 		Sentry.captureException(e);
+		logger.error(e.getMessage(), e);
 		return "error/500";
 	}
 
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	public String handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, Model model) {
 		model.addAttribute("message", e.getMessage());
+		Sentry.captureException(e);
 		return "error/500";
 	}
 
