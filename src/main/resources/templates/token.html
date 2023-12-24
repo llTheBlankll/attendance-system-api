@@ -19,7 +19,7 @@
 <div class="container">
     <h1>Token Acquired!</h1>
     <p>access granted</p>
-    <p style="font-size: 24px;" th:text="${loginResponse.getToken()}" th:if="${loginResponse.getToken() != null}"></p>
+    <input type="text" name="token" id="token" th:value="${loginResponse.getToken()}">
     <svg class="keyhole">
         <use href="#keyhole"/>
     </svg>
