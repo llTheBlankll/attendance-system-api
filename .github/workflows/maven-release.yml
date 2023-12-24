@@ -6,12 +6,12 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: Stable Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [ "master" ]
+    tags: "v*"
 
 jobs:
   build:
