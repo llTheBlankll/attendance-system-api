@@ -2,9 +2,9 @@ package com.pshs.attendancesystem.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
-public class UserNotAuthenticated extends AuthenticationException {
+public class UserNotAuthenticatedException extends AuthenticationException {
 
-	public UserNotAuthenticated(String message) {
+	public UserNotAuthenticatedException(String message) {
 		super(message);
 	}
 
