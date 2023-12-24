@@ -7,6 +7,7 @@ import com.pshs.attendancesystem.security.jwt.JwtService;
 import com.pshs.attendancesystem.services.AuthenticationService;
 import com.pshs.attendancesystem.services.UserService;
 import io.sentry.Sentry;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +30,7 @@ public class LoginController {
 	}
 
 	@GetMapping("/auth/login/form")
+	@Cacheable(value = "login")
 	public String loginForm(Model model, @RequestParam(required = false) String message) {
 		model.addAttribute("loginDTO", new LoginUserDTO());
 		model.addAttribute("message", (message != null) ? message : false);
