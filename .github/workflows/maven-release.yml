@@ -10,9 +10,7 @@ name: Stable Release
 
 on:
   push:
-    tags: "v*"
-  pull_request:
-    tags: "v*"
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -36,7 +34,7 @@ jobs:
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        title: "Attendance System API ${{ github.ref }}"
+        title: "Attendance System API ${{ github.event.pull_request.title }}"
         prerelease: false
         files: target/*.jar
             
