@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,21 +33,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 		final String authHeader = request.getHeader("Authorization");
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-
 		try {
-			final String jwt = authHeader.substring(7);
-			final String username = jwtService.extractUsername(jwt);
+			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+
+			final String token = authHeader.substring(7);
+			final String username = jwtService.extractUsername(token);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 			if (username != null && authentication == null) {
 				UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-				if (jwtService.isTokenValid(jwt, userDetails)) {
+				if (jwtService.isTokenValid(token, userDetails)) {
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 						userDetails,
 						null,
@@ -58,6 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 			filterChain.doFilter(request, response);
+		} catch (HttpRequestMethodNotSupportedException | HttpMediaTypeException exception) {
+			response.sendRedirect("/error/404");
 		} catch (Exception exception) {
 			Sentry.captureException(exception);
 		}
