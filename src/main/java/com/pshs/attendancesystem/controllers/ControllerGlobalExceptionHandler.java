@@ -1,25 +1,21 @@
 package com.pshs.attendancesystem.controllers;
 
-import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.sentry.Sentry;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 
-@ControllerAdvice
-public class GlobalExceptionHandler {
-
-	private final AttendanceRepository attendanceRepository;
-
-	public GlobalExceptionHandler(AttendanceRepository attendanceRepository) {
-		this.attendanceRepository = attendanceRepository;
-	}
+@ControllerAdvice(annotations = Controller.class)
+public class ControllerGlobalExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public String handleAccessDeniedException(AccessDeniedException e) {
@@ -42,18 +38,28 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ClientAbortException.class)
-	public String handleClientAbortException(ClientAbortException e) {
-		return "error/500";
-	}
-
-	@ExceptionHandler(NullPointerException.class)
-	public String handleNullPointerException(NullPointerException e) {
+	public String handleClientAbortException(ClientAbortException e, Model model) {
+		model.addAttribute("message", e.getMessage());
 		Sentry.captureException(e);
 		return "error/500";
 	}
 
+	@ExceptionHandler(NullPointerException.class)
+	public String handleNullPointerException(NullPointerException e, Model model) {
+		model.addAttribute("message", e.getMessage());
+		Sentry.captureException(e);
+		return "error/500";
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public String handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, Model model) {
+		model.addAttribute("message", e.getMessage());
+		return "error/500";
+	}
+
 	@ExceptionHandler(Exception.class)
-	public String handleException(Exception e) {
+	public String handleException(Exception e, Model model) {
+		model.addAttribute("message", e.getMessage());
 		Sentry.captureException(e);
 		return "error/500";
 	}
