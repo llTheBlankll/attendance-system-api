@@ -35,8 +35,21 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public User login(@RequestBody RegisterUserDTO registerUserDTO) {
-		return authenticationService.signUp(registerUserDTO);
+	public ResponseEntity<?> login(@RequestBody RegisterUserDTO registerUserDTO) {
+		if (registerUserDTO.getPassword().length() < 8) {
+			Sentry.captureMessage("Password must be at least 8 characters long");
+			ErrorDTO errorDTO = new ErrorDTO(400, "Password must be at least 8 characters long");
+			return ResponseEntity.status(400).body(errorDTO);
+		}
+
+		User user = authenticationService.signUp(registerUserDTO);
+
+		if (user == null) {
+			ErrorDTO error = new ErrorDTO(400, "User already exist");
+			return ResponseEntity.status(400).body(error);
+		} else {
+			return ResponseEntity.ok(user);
+		}
 	}
 
 	@PostMapping("/login")
