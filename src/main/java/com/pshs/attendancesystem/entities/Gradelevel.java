@@ -13,7 +13,6 @@ import java.util.List;
 @Table(name = "gradelevels")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({
-	"sections",
 	"students"
 })
 public class Gradelevel implements Serializable {

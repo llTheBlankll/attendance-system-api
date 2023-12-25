@@ -1,7 +1,7 @@
 package com.pshs.attendancesystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -12,7 +12,9 @@ import java.io.Serializable;
 	@Index(columnList = "lrn")
 })
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
-
+@JsonIgnoreProperties({
+	"salt"
+})
 public class RfidCredentials implements Serializable {
 	@Id
 	@Column(name = "lrn", nullable = false)
@@ -22,7 +24,6 @@ public class RfidCredentials implements Serializable {
 	private String hashedLrn;
 
 	@Column(name = "salt", length = 32)
-	@JsonIgnore
 	private String salt;
 
 	@OneToOne(cascade = CascadeType.ALL)
