@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public User signUp(RegisterUserDTO registerDTO) {
 		User user = new User();
-		user.setUserName(registerDTO.getUsername());
+		user.setUsername(registerDTO.getUsername());
 		user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 		user.setEmail(registerDTO.getEmail());
 		user.setRoles(registerDTO.getRoles());

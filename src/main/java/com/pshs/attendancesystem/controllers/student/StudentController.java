@@ -134,8 +134,8 @@ public class StudentController {
 	}
 
 	@Operation(
-		summary = "Get all students with section id",
-		description = "Get all students with section id",
+		summary = "Get all students by section id",
+		description = "Get all students by section id",
 		parameters = {
 			@Parameter(name = "id", description = "The id of the section")
 		}
