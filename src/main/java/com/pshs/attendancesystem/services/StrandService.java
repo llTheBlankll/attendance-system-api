@@ -12,4 +12,6 @@ public interface StrandService {
 	Iterable<Strand> searchStrandByName(String strandName);
 
 	String updateStrand(Strand strand);
+
+	String updateGradeLevelWithStrand(Strand strand, Integer gradeLevelId);
 }

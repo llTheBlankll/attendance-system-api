@@ -24,11 +24,23 @@ public class Gradelevel implements Serializable {
 	@Column(name = "grade_name", nullable = false)
 	private String gradeName;
 
+	@JoinColumn(name = "grade_strand")
+	@ManyToOne(targetEntity = Strand.class, cascade = CascadeType.ALL)
+	private Strand strand;
+
 	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
 	private List<Section> sections = new ArrayList<>();
 
 	@OneToMany(mappedBy = "gradeLevel", cascade = CascadeType.ALL)
 	private List<Student> students = new ArrayList<>();
+
+	public Strand getStrand() {
+		return strand;
+	}
+
+	public void setStrand(Strand strand) {
+		this.strand = strand;
+	}
 
 	public List<Section> getSections() {
 		return sections;

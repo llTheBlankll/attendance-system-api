@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.messages.StrandMessages;
+import com.pshs.attendancesystem.repositories.GradeLevelRepository;
 import com.pshs.attendancesystem.repositories.StrandRepository;
 import com.pshs.attendancesystem.services.StrandService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,9 +15,11 @@ import org.springframework.stereotype.Service;
 public class StrandServiceImpl implements StrandService {
 
 	private final StrandRepository strandRepository;
+	private final GradeLevelRepository gradeLevelRepository;
 
-	public StrandServiceImpl(StrandRepository strandRepository) {
+	public StrandServiceImpl(StrandRepository strandRepository, GradeLevelRepository gradeLevelRepository) {
 		this.strandRepository = strandRepository;
+		this.gradeLevelRepository = gradeLevelRepository;
 	}
 
 	@Override
@@ -73,5 +76,14 @@ public class StrandServiceImpl implements StrandService {
 
 		this.strandRepository.save(strand);
 		return StrandMessages.STRAND_UPDATED;
+	}
+
+	@Override
+	public String updateGradeLevelWithStrand(Strand strand, Integer gradeLevelId) {
+		if (gradeLevelRepository.updateStrandById(strand, gradeLevelId) > 0) {
+			return StrandMessages.STRAND_UPDATED;
+		} else {
+			return StrandMessages.STRAND_NO_NAME;
+		}
 	}
 }

@@ -24,8 +24,19 @@ public class Strand implements Serializable {
 	@Column(name = "strand_name", nullable = false)
 	private String strandName;
 
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "strand", targetEntity = Gradelevel.class)
+	private List<Gradelevel> gradeLevels = new ArrayList<>();
+
 	@OneToMany(mappedBy = "strand", targetEntity = Section.class, fetch = FetchType.EAGER)
 	private List<Section> sections = new ArrayList<>();
+
+	public List<Gradelevel> getGradeLevels() {
+		return gradeLevels;
+	}
+
+	public void setGradeLevels(List<Gradelevel> gradeLevels) {
+		this.gradeLevels = gradeLevels;
+	}
 
 	public Integer getId() {
 		return id;

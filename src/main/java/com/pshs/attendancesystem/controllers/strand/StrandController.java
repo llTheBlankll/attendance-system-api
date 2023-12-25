@@ -68,7 +68,12 @@ public class StrandController {
 		}
 	)
 	@GetMapping("/search/strand-name")
-	public Iterable<Strand> searchStrandByStrandName(@RequestParam("q") String name) {
+	public Iterable<Strand> searchStrandByStrandName(@RequestParam("name") String name) {
 		return strandService.searchStrandByName(name);
+	}
+
+	@PostMapping("/gradelevel/update")
+	public String updateGradeLevel(@RequestBody Strand strand, @RequestParam("gradelevel-id") Integer gradeLevelId) {
+		return strandService.updateGradeLevelWithStrand(strand, gradeLevelId);
 	}
 }
