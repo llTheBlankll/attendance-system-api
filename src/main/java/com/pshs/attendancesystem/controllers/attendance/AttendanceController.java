@@ -56,13 +56,13 @@ public class AttendanceController {
 		description = "Delete attendance of a student using attendance id"
 	)
 	@PostMapping(value = "/delete", produces = "text/plain")
-	public void deleteAttendance(@RequestBody Attendance attendance) {
-		attendanceService.deleteAttendance(attendance.getId());
+	public String deleteAttendance(@RequestBody Attendance attendance) {
+		return attendanceService.deleteAttendance(attendance.getId());
 	}
 
 	@PostMapping(value = "/delete/id", produces = "text/plain")
-	public void deleteAttendanceById(@RequestParam("q") Integer id) {
-		attendanceService.deleteAttendance(id);
+	public String deleteAttendanceById(@RequestParam("q") Integer id) {
+		return attendanceService.deleteAttendance(id);
 	}
 
 	/**

@@ -14,12 +14,13 @@ import com.pshs.attendancesystem.services.AttendanceService;
 import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.time.DayOfWeek;
@@ -27,7 +28,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
-@Component
+@Service
+@CacheConfig(cacheNames = "attendance")
 public class AttendanceServiceImpl implements AttendanceService {
 
 	private final AttendanceRepository attendanceRepository;
@@ -48,7 +50,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return true if the student has already arrived, false otherwise
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#lrn.toString()")
+	@Cacheable(key = "#lrn.toString()")
 	public boolean isAlreadyArrived(Long lrn) {
 		return attendanceRepository.isLrnAndDateExist(lrn, LocalDate.now());
 	}
@@ -74,7 +76,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return true if the student has already checked out, false otherwise
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn.toString()")
+	@Cacheable(key = "#studentLrn.toString()")
 	public Status isAlreadyOut(Long studentLrn) {
 		Optional<Attendance> attendanceOptional = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
 		// Check for the existence of Student LRN and if TimeOut is not null, which mean
@@ -93,7 +95,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn")
+	@Cacheable(key = "#studentLrn")
 	public Status getStatusToday(Long studentLrn) {
 		Optional<Attendance> attendance = this.attendanceRepository.findByStudent_LrnAndDate(studentLrn, LocalDate.now());
 		return attendance.map(Attendance::getAttendanceStatus).orElse(null);
@@ -110,7 +112,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
 	 */
 	@Override
-	@CachePut(value = "attendance", key = "#studentLrn")
+	@CachePut(key = "#studentLrn")
 	@Async
 	public void createAttendance(Long studentLrn) {
 		try {
@@ -144,15 +146,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	@CacheEvict(value = "attendance", key = "#attendanceId")
-	public void deleteAttendance(Integer attendanceId) {
+	@CacheEvict(key = "#attendanceId")
+	public String deleteAttendance(Integer attendanceId) {
 		Optional<Attendance> attendance = this.attendanceRepository.findById(attendanceId);
 
-		attendance.ifPresent(attendanceRepository::delete);
+		if (attendance.isPresent()) {
+			this.attendanceRepository.delete(attendance.get());
+			return AttendanceMessages.ATTENDANCE_DELETED;
+		} else {
+			return AttendanceMessages.ATTENDANCE_NOT_FOUND;
+		}
 	}
 
 	@Override
-	@CachePut(value = "attendance", key = "#attendance.id")
+	@CachePut(key = "#attendance.id")
 	public String updateAttendance(Attendance attendance) {
 		if (attendance.getId() != null) {
 			return AttendanceMessages.ATTENDANCE_NOT_FOUND;
@@ -168,7 +175,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @param studentLrn the LRN (Learner Reference Number) of the student
 	 */
 	@Override
-	@CacheEvict(value = "attendance", key = "#studentLrn")
+	@CacheEvict(key = "#studentLrn")
 	@Async
 	public void attendanceOut(Long studentLrn) {
 		if (studentLrn == null) {
@@ -192,7 +199,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	@CacheEvict(value = "attendance", allEntries = true)
+	@CacheEvict(allEntries = true)
 	@Async
 	public void deleteAllAttendance() {
 		this.attendanceRepository.deleteAll();
@@ -206,7 +213,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return an iterable collection of attendance records
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#dateRange + '-' + #status")
+	@Cacheable(key = "#dateRange + '-' + #status")
 	public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(DateRange dateRange, Status status) {
 		return attendanceRepository.searchBetweenDateAndStatus(dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
@@ -218,7 +225,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return an iterable collection of attendance records between the start and end dates
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#dateRange")
+	@Cacheable(key = "#dateRange")
 	public Iterable<Attendance> getAllAttendanceBetweenDate(DateRange dateRange) {
 		return attendanceRepository.searchBetweenDate(dateRange.getStartDate(), dateRange.getEndDate());
 	}
@@ -233,7 +240,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * filtered by the specified attendance status
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#dateRange + '-' + #status")
+	@Cacheable(key = "#dateRange + '-' + #status")
 	public long getAllCountOfAttendanceBetweenDate(DateRange dateRange, Status status) {
 		return attendanceRepository.countBetweenDateAndStatus(dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
@@ -249,7 +256,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * the attendance records of the student
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn + '-' + #dateRange + '-' + #status")
+	@Cacheable(key = "#studentLrn + '-' + #dateRange + '-' + #status")
 	public Iterable<Attendance> getStudentAttendanceBetweenDateStatus(long studentLrn, DateRange dateRange, Status status) {
 		return attendanceRepository.searchLrnBetweenDateAndStatus(studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
@@ -262,7 +269,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return an iterable collection of Attendance objects representing the student's attendance between the specified dates
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn + '-' + #dateRange")
+	@Cacheable(key = "#studentLrn + '-' + #dateRange")
 	public Iterable<Attendance> getAttendanceBetweenDate(long studentLrn, DateRange dateRange) {
 		return this.attendanceRepository.searchLrnBetwenDate(studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
 	}
@@ -276,7 +283,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the total count of student attendance records
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn + '-' + #dateRange + '-' + #status")
+	@Cacheable(key = "#studentLrn + '-' + #dateRange + '-' + #status")
 	public long getAllCountOfAttendanceBetweenDate(long studentLrn, DateRange dateRange, Status status) {
 		return attendanceRepository.countLrnBetweenDateAndStatus(studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
 	}
@@ -290,19 +297,19 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return an iterable collection of Attendance objects representing the student attendance records
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #attendanceStatus + '-' + #dateRange")
+	@Cacheable(key = "#sectionId + '-' + #attendanceStatus + '-' + #dateRange")
 	public Iterable<Attendance> getAttendanceInSectionByStatusBetweenDate(Integer sectionId, Status attendanceStatus, DateRange dateRange) {
 		return this.attendanceRepository.searchSectionIdBetweenDateAndStatus(sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #dateRange")
+	@Cacheable(key = "#sectionId + '-' + #dateRange")
 	public Iterable<Attendance> getStudentAttendanceInSectionBetweenDate(@NonNull Integer sectionId, DateRange dateRange) {
 		return this.attendanceRepository.searchSectionIdBetweenDate(sectionId, dateRange.getStartDate(), dateRange.getEndDate());
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #dateRange + '-' + #status")
+	@Cacheable(key = "#sectionId + '-' + #dateRange + '-' + #status")
 	public Iterable<Attendance> getAttendanceInSection(@NonNull Integer sectionId, @NonNull DateRange dateRange, Status status) {
 		switch (status) {
 			case ONTIME -> {
@@ -320,13 +327,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #dateRange")
+	@Cacheable(key = "#sectionId + '-' + #dateRange")
 	public Iterable<Attendance> getAttendanceInSection(Integer sectionId, DateRange dateRange) {
 		return this.getStudentAttendanceInSectionBetweenDate(sectionId, dateRange);
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #dateRange + '-' + #status")
+	@Cacheable(key = "#sectionId + '-' + #dateRange + '-' + #status")
 	public long countAttendanceInSection(@NonNull Integer sectionId, DateRange dateRange, Status status) {
 		switch (status) {
 			case ONTIME -> {
@@ -352,7 +359,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the number of student attendances
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #attendanceStatus + '-' + #date")
+	@Cacheable(key = "#sectionId + '-' + #attendanceStatus + '-' + #date")
 	public long countAttendanceInSectionByStatusAndDate(@NonNull Integer sectionId, Status attendanceStatus, LocalDate date) {
 		return this.attendanceRepository.countSectionIdDateAndStatus(sectionId, attendanceStatus, date);
 	}
@@ -366,13 +373,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the number of student attendance records that match the given criteria
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #attendanceStatus + '-' + #dateRange")
+	@Cacheable(key = "#sectionId + '-' + #attendanceStatus + '-' + #dateRange")
 	public long countAttendanceInSectionByStatusAndBetweenDate(@NonNull Integer sectionId, Status attendanceStatus, DateRange dateRange) {
 		return this.attendanceRepository.countSectionIdBetweenDateAndStatus(sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#sectionId + '-' + #date")
+	@Cacheable(key = "#sectionId + '-' + #date")
 	public long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date) {
 		return this.attendanceRepository.countSectionIdAndDate(sectionId, date);
 	}
@@ -384,7 +391,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the number of attendances between the start and end dates
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#dateRange")
+	@Cacheable(key = "#dateRange")
 	public long countAttendanceBetweenDate(DateRange dateRange) {
 		return this.attendanceRepository.countBetweenDate(dateRange.getStartDate(), dateRange.getEndDate());
 	}
@@ -397,19 +404,19 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the number of attendances for the student within the specified period
 	 */
 	@Override
-	@Cacheable(value = "attendance", key = "#studentLrn + '-' + #dateRange")
+	@Cacheable(key = "#studentLrn + '-' + #dateRange")
 	public long countStudentAttendanceBetweenDate(Long studentLrn, DateRange dateRange) {
 		return this.attendanceRepository.countLrnBetweenDate(studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#strand.id + '-' + #date")
+	@Cacheable(key = "#strand.id + '-' + #date")
 	public long countByStudentStrandAndDate(Strand strand, LocalDate date, Status status) {
 		return this.attendanceRepository.countSectionStrandAndStatus(strand, date, status);
 	}
 
 	@Override
-	@Cacheable(value = "attendance", key = "#gradeLevel.id + '-' + #date")
+	@Cacheable(key = "#gradeLevel.id + '-' + #date")
 	public long countByStudentGradeLevelByStatusAndDate(Gradelevel gradeLevel, Status status, LocalDate date) {
 		return this.attendanceRepository.countStudentGradeLevelAndDateAndStatus(gradeLevel, date, status);
 	}
@@ -420,7 +427,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	@CacheEvict(value = "attendance", key = "#student.lrn + '-' + #date")
+	@CacheEvict(key = "#student.lrn + '-' + #date")
 	public void setAsAbsent(Student student, LocalDate date) {
 		Attendance attendance = new Attendance();
 		attendance.setDate(date);
