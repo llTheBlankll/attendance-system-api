@@ -57,7 +57,7 @@ public interface AttendanceService {
 
 	void createAttendance(Long studentLrn);
 
-	void deleteAttendance(Integer attendanceId);
+	String deleteAttendance(Integer attendanceId);
 
 	String updateAttendance(Attendance attendance);
 
