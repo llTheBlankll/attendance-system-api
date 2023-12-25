@@ -2,12 +2,15 @@ package com.pshs.attendancesystem.controllers.gradelevel;
 
 import com.pshs.attendancesystem.documentation.GradeLevelDocumentation;
 import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.GradeLevelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Grade Level", description = "Manage grade levels in the system")
 @RestController
@@ -107,5 +110,10 @@ public class GradeLevelController {
 	@GetMapping("/search/name")
 	public Iterable<Gradelevel> searchGradeLevelByName(@RequestParam("q") String name) {
 		return gradeLevelService.searchGradeLevelByName(name);
+	}
+
+	@GetMapping("/students/grade-level")
+	public List<Student> getStudentByGradeLevel(@RequestParam("q") String gradeName) {
+		return gradeLevelService.getAllStudentByGradeLevel(gradeName);
 	}
 }

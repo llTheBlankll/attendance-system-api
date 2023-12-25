@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.messages.GradeLevelMessages;
 import com.pshs.attendancesystem.repositories.GradeLevelRepository;
 import com.pshs.attendancesystem.services.GradeLevelService;
@@ -8,6 +9,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GradeLevelServiceImpl implements GradeLevelService {
@@ -70,5 +75,19 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	@Cacheable(value = "gradelevel", key = "#name")
 	public Iterable<Gradelevel> searchGradeLevelByName(String name) {
 		return gradeLevelRepository.searchGradeLevelByName(name);
+	}
+
+	@Override
+	public List<Student> getAllStudentByGradeLevel(String gradeName) {
+		Optional<Gradelevel> gradelevelOptional = gradeLevelRepository.getAllStudentByGradeName(gradeName);
+
+		// check if gradelevel exists
+		if (gradelevelOptional.isPresent()) {
+			// get students
+			Gradelevel gradelevel = gradelevelOptional.get();
+			return gradelevel.getStudents();
+		} else {
+			return Collections.emptyList();
+		}
 	}
 }
