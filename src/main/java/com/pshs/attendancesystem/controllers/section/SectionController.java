@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.controllers.section;
 
 import com.pshs.attendancesystem.documentation.SectionDocumentation;
 import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.services.SectionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -128,12 +129,17 @@ public class SectionController {
 			@Parameter(name = "q", description = "The ID of the section to be retrieved")
 		}
 	)
-	@GetMapping("/get")
+	@GetMapping("/get/section-id")
 	public Section getSection(@RequestParam("q") Integer sectionId) {
 		return sectionService.getSectionBySectionId(sectionId);
 	}
 
-	@PostMapping("/all/section/teacher")
+	@GetMapping("/students/section-id")
+	public Iterable<Student> getAllStudentWithSectionId(@RequestParam("q") Integer sectionId) {
+		return sectionService.getSectionBySectionId(sectionId).getStudents();
+	}
+
+	@PostMapping("/sections/teacher")
 	public List<Section> getAllSectionByTeacher(@RequestBody Teacher teacher) {
 		return sectionService.getAllSectionByTeacher(teacher);
 	}
