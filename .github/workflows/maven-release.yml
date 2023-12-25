@@ -34,8 +34,7 @@ jobs:
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        title: "Attendance System API ${{ github.event.pull_request.title }}"
+        title: "Attendance System API ${{ github.event.workflow_run.head_commit.message }}"
         prerelease: false
         automatic_release_tag: "stable"
         files: target/*.jar
-

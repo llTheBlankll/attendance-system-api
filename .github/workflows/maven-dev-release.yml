@@ -37,7 +37,7 @@ jobs:
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        title: "Attendance System API - Development Release - ${{ github.ref }}"
+        title: "Attendance System API - Development Release - ${{ github.event.workflow_run.head_commit.message }}"
         prerelease: true
         automatic_release_tag: "Pre-release"
         files: target/*.jar
