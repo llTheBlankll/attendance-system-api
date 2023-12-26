@@ -6,12 +6,16 @@ import com.pshs.attendancesystem.repositories.TeacherRepository;
 import com.pshs.attendancesystem.services.TeacherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Optional;
 
 @Service
+@CacheConfig(cacheNames = {
+	"teacher"
+})
 public class TeacherServiceImpl implements TeacherService {
 
 	private final TeacherRepository teacherRepository;

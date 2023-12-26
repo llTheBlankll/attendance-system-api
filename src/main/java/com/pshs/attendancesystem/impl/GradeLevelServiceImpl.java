@@ -5,6 +5,7 @@ import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.messages.GradeLevelMessages;
 import com.pshs.attendancesystem.repositories.GradeLevelRepository;
 import com.pshs.attendancesystem.services.GradeLevelService;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@CacheConfig(cacheNames = {"gradelevel"})
 public class GradeLevelServiceImpl implements GradeLevelService {
 	private final GradeLevelRepository gradeLevelRepository;
 
@@ -28,7 +30,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
-	@CachePut(value = "gradelevel", key = "#gradelevel.id")
+	@CachePut(key = "#gradelevel.id")
 	public String addGradeLevel(Gradelevel gradelevel) {
 		if (!gradelevel.getGradeName().isEmpty()) {
 			gradeLevelRepository.save(gradelevel);
@@ -39,7 +41,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
-	@CacheEvict(value = "gradelevel", key = "#gradelevel.id")
+	@CacheEvict(key = "#gradelevel.id")
 	public String deleteGradeLevel(Gradelevel gradelevel) {
 		if (gradelevel.getId() != null && this.gradeLevelRepository.existsById(gradelevel.getId())) {
 			this.gradeLevelRepository.delete(gradelevel);
@@ -50,7 +52,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
-	@CacheEvict(value = "gradelevel", key = "#id")
+	@CacheEvict(key = "#id")
 	public String deleteGradeLevelById(Integer id) {
 		if (id != null && this.gradeLevelRepository.existsById(id)) {
 			this.gradeLevelRepository.deleteById(id);
@@ -61,7 +63,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
-	@CachePut(value = "gradelevel", key = "#gradelevel.id")
+	@CachePut(key = "#gradelevel.id")
 	public String updateGradeLevel(Gradelevel gradelevel) {
 		if (gradelevel.getGradeName().isEmpty()) {
 			return GradeLevelMessages.GRADELEVEL_EMPTY;
@@ -72,7 +74,7 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 	}
 
 	@Override
-	@Cacheable(value = "gradelevel", key = "#name")
+	@Cacheable(key = "#name")
 	public Iterable<Gradelevel> searchGradeLevelByName(String name) {
 		return gradeLevelRepository.searchGradeLevelByName(name);
 	}

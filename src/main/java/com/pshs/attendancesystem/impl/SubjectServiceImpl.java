@@ -6,10 +6,14 @@ import com.pshs.attendancesystem.repositories.SubjectRepository;
 import com.pshs.attendancesystem.services.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = {
+	"subject"
+})
 public class SubjectServiceImpl implements SubjectService {
 
 	private final SubjectRepository subjectRepository;
@@ -37,25 +41,25 @@ public class SubjectServiceImpl implements SubjectService {
 	}
 
 	@Override
-	@Cacheable(value = "subject", key = "#subjectId")
+	@Cacheable(key = "#subjectId")
 	public Subject getSubject(Integer subjectId) {
 		return this.subjectRepository.findById(subjectId).orElseGet(Subject::new);
 	}
 
 	@Override
-	@Cacheable(value = "subject", key = "#subjectName")
+	@Cacheable(key = "#subjectName")
 	public Iterable<Subject> searchSubjectsByName(String subjectName) {
 		return this.subjectRepository.searchSubjectsByName(subjectName);
 	}
 
 	@Override
-	@Cacheable(value = "subject", key = "#subjectName")
+	@Cacheable(key = "#subjectName")
 	public Subject getSubjectByName(String subjectName) {
 		return this.subjectRepository.getSubjectByName(subjectName);
 	}
 
 	@Override
-	@Cacheable(value = "subject", key = "#subjectDescription")
+	@Cacheable(key = "#subjectDescription")
 	public Iterable<Subject> searchSubjectsByDescription(String subjectDescription) {
 		return this.subjectRepository.searchSubjectsByDescription(subjectDescription);
 	}

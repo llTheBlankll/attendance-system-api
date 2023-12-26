@@ -5,6 +5,7 @@ import com.pshs.attendancesystem.entities.Teacher;
 import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.repositories.SectionRepository;
 import com.pshs.attendancesystem.services.SectionService;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@CacheConfig(cacheNames = {
+	"section"
+})
 public class SectionServiceImpl implements SectionService {
 	private final SectionRepository sectionRepository;
 
@@ -27,7 +31,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	@CacheEvict(value = "section", key = "#id")
+	@CacheEvict(key = "#id")
 	public String deleteSectionById(Integer id) {
 		if (id == null) {
 			return SectionMessages.SECTION_NULL;
@@ -42,7 +46,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	@CachePut(value = "section", key = "#section.sectionId")
+	@CachePut(key = "#section.sectionId")
 	public String addSection(Section section) {
 		Optional<Section> databaseSection = this.sectionRepository.findBySectionName(section.getSectionName());
 		if (databaseSection.isPresent()) {
@@ -57,7 +61,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	@CachePut(value = "section", key = "#section.sectionId")
+	@CachePut(key = "#section.sectionId")
 	public String updateSection(Section section) {
 		if (section.getSectionId() == null) {
 			return SectionMessages.SECTION_NULL;
@@ -72,19 +76,19 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	@Cacheable(value = "section", key = "#teacher.id")
+	@Cacheable(key = "#teacher.id")
 	public List<Section> getAllSectionByTeacher(Teacher teacher) {
 		return sectionRepository.getAllSectionByTeacher(teacher);
 	}
 
 	@Override
-	@Cacheable(value = "section", key = "#sectionId")
+	@Cacheable(key = "#sectionId")
 	public Section getSectionBySectionId(Integer sectionId) {
 		return this.sectionRepository.findBySectionId(sectionId);
 	}
 
 	@Override
-	@CacheEvict(value = "section", key = "#section.sectionId")
+	@CacheEvict(key = "#section.sectionId")
 	public String deleteSection(Section section) {
 		if (section.getSectionId() == null) {
 			return SectionMessages.SECTION_NOT_FOUND;
@@ -99,7 +103,7 @@ public class SectionServiceImpl implements SectionService {
 	}
 
 	@Override
-	@Cacheable(value = "section", key = "#sectionName")
+	@Cacheable(key = "#sectionName")
 	public Iterable<Section> searchSectionByName(String sectionName) {
 		return this.sectionRepository.searchSectionName(sectionName);
 	}

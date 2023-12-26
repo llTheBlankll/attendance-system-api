@@ -12,6 +12,7 @@ import com.pshs.attendancesystem.security.PasswordGenerator;
 import com.pshs.attendancesystem.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Service
+@CacheConfig(cacheNames = {
+	"student"
+})
 public class StudentServiceImpl implements StudentService {
 	private final StudentRepository studentRepository;
 	private final RfidCredentialsRepository rfidCredentialsRepository;
@@ -158,7 +162,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @param gradeName the name of the grade level to search for
 	 * @return an iterable collection of Student objects
 	 */
-	@Cacheable(value = "student", key = "#gradeName")
+	@Cacheable(key = "#gradeName")
 	public Iterable<Student> getStudentByGradeLevel(String gradeName) {
 		if (!this.studentRepository.isGradeNameExist(gradeName)) {
 			Stream<Student> empty = Stream.empty();
@@ -169,7 +173,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#lrn")
+	@Cacheable(key = "#lrn")
 	public boolean isStudentAttended(Long lrn, LocalDate date) {
 		return studentRepository.isStudentAttended(lrn, LocalDate.now());
 	}
@@ -181,7 +185,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @return the student with the specified LRN, or null if not found
 	 */
 	@Override
-	@Cacheable(value = "student", key = "#lrn")
+	@Cacheable(key = "#lrn")
 	public Student getStudentById(Long lrn) {
 		if (!this.studentRepository.existsById(lrn)) {
 			return new Student();
@@ -197,7 +201,7 @@ public class StudentServiceImpl implements StudentService {
 	 * @return a string indicating the result of the update
 	 */
 	@Override
-	@CachePut(value = "student", key = "#student.lrn")
+	@CachePut(key = "#student.lrn")
 	public String updateStudent(@RequestBody Student student) {
 		if (!this.studentRepository.existsById(student.getLrn())) {
 			return StudentMessages.STUDENT_NOT_FOUND;
@@ -208,31 +212,31 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#sectionId")
+	@Cacheable(key = "#sectionId")
 	public Iterable<Student> getAllStudentWithSectionId(Integer sectionId) {
 		return this.studentRepository.getStudentBySectionId(sectionId);
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#sectionId")
+	@Cacheable(key = "#sectionId")
 	public long countStudentsBySectionId(Integer sectionId) {
 		return this.studentRepository.countStudentsBySectionId(sectionId);
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#name")
+	@Cacheable(key = "#name")
 	public Iterable<Student> searchStudentByLastName(String name) {
 		return studentRepository.searchByLastName(name);
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#name")
+	@Cacheable(key = "#name")
 	public Iterable<Student> searchStudentByFirstName(String name) {
 		return studentRepository.searchByFirstName(name);
 	}
 
 	@Override
-	@Cacheable(value = "student", key = "#firstName + '-' + #lastName")
+	@Cacheable(key = "#firstName + '-' + #lastName")
 	public Iterable<Student> searchStudentByFirstAndLastName(String firstName, String lastName) {
 		return studentRepository.searchByFirstAndLastName(firstName, lastName);
 	}
