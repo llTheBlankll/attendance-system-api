@@ -29,7 +29,7 @@ public class User implements UserDetails, Serializable {
 
 	@Size(max = 255)
 	@Column(name = "user_name")
-	private String username;
+	private String userName;
 
 	@Size(max = 255)
 	@Column(name = "password")
@@ -59,8 +59,8 @@ public class User implements UserDetails, Serializable {
 		this.id = id;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUsername(String userName) {
+		this.userName = userName;
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class User implements UserDetails, Serializable {
 
 	@Override
 	public String getUsername() {
-		return username;
+		return userName;
 	}
 
 	@Override
