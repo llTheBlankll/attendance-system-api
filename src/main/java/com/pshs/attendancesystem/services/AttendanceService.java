@@ -55,7 +55,7 @@ public interface AttendanceService {
 
   void attendanceOut(Long studentLrn);
 
-  boolean isAlreadyArrived(Long lrn);
+  Boolean isAlreadyArrived(Long lrn);
 
   Status isAlreadyOut(Long studentLrn);
 

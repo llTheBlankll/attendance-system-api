@@ -54,8 +54,7 @@ public class AttendanceServiceImpl implements AttendanceService {
    * @return true if the student has already arrived, false otherwise
    */
   @Override
-  @Cacheable(key = "#lrn.toString()")
-  public boolean isAlreadyArrived(Long lrn) {
+  public Boolean isAlreadyArrived(Long lrn) {
     return attendanceRepository.isLrnAndDateExist(lrn, LocalDate.now());
   }
 
