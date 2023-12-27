@@ -69,4 +69,70 @@ public class RfidCredentialsServiceImpl implements RfidService {
 	public boolean isLrnExist(Long lrn) {
 		return rfidCredentialsRepository.isLrnExist(lrn);
 	}
+
+	// * TOGGLE THE STATUS OF RFID CARD
+
+	@Override
+	public boolean toggleRfidStatus(Long lrn) {
+		if (lrn == null) {
+			return false;
+		}
+
+		Optional<RfidCredentials> rfidCredentialsOptional = rfidCredentialsRepository.findByLrn(lrn);
+		if (rfidCredentialsOptional.isPresent()) {
+			RfidCredentials rfidCredentials = rfidCredentialsOptional.get();
+			rfidCredentials.setEnabled(!rfidCredentials.isEnabled());
+			rfidCredentialsRepository.save(rfidCredentials);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean toggleRfidStatus(String hashedLrn) {
+		if (hashedLrn.isEmpty()) {
+			return false;
+		}
+
+		Optional<RfidCredentials> rfidCredentialsOptional = rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+		if (rfidCredentialsOptional.isPresent()) {
+			RfidCredentials rfidCredentials = rfidCredentialsOptional.get();
+			rfidCredentials.setEnabled(!rfidCredentials.isEnabled());
+			rfidCredentialsRepository.save(rfidCredentials);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isRfidEnabled(Long lrn) {
+		if (lrn == null) {
+			return false;
+		}
+
+		Optional<RfidCredentials> rfidCredentialsOptional = rfidCredentialsRepository.findByLrn(lrn);
+		if (rfidCredentialsOptional.isPresent()) {
+			RfidCredentials rfidCredentials = rfidCredentialsOptional.get();
+			return rfidCredentials.isEnabled();
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isRfidEnabled(String hashedLrn) {
+		if (hashedLrn.isEmpty()) {
+			return false;
+		}
+
+		Optional<RfidCredentials> rfidCredentialsOptional = rfidCredentialsRepository.findByHashedLrn(hashedLrn);
+		if (rfidCredentialsOptional.isPresent()) {
+			RfidCredentials rfidCredentials = rfidCredentialsOptional.get();
+			return rfidCredentials.isEnabled();
+		} else {
+			return false;
+		}
+	}
 }

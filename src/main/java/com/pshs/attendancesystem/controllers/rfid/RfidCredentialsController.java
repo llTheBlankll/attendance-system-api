@@ -2,15 +2,13 @@ package com.pshs.attendancesystem.controllers.rfid;
 
 import com.pshs.attendancesystem.documentation.RFIDDocumentation;
 import com.pshs.attendancesystem.entities.RfidCredentials;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.RfidService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -64,5 +62,25 @@ public class RfidCredentialsController {
 		} else {
 			return rfidService.getRfidCredentialByStudentLrn(Long.parseLong(data));
 		}
+	}
+
+	@PostMapping("/toggle/student")
+	public boolean toggleRfidStatus(@RequestBody Student student) {
+		return rfidService.toggleRfidStatus(student.getLrn());
+	}
+
+	@GetMapping("/toggle/hash")
+	public boolean toggleRfidStatus(@RequestParam String hash) {
+		return rfidService.toggleRfidStatus(hash);
+	}
+
+	@GetMapping("/toggle/lrn")
+	public boolean toggleRfidStatus(@RequestParam Long lrn) {
+		return rfidService.toggleRfidStatus(lrn);
+	}
+
+	@PostMapping("/toggle")
+	public boolean toggleRfidStatus(@RequestBody RfidCredentials credentials) {
+		return rfidService.toggleRfidStatus(credentials.getHashedLrn());
 	}
 }
