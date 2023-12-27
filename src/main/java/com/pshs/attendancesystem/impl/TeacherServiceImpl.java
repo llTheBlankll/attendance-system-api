@@ -70,7 +70,7 @@ public class TeacherServiceImpl implements TeacherService {
 	}
 
 	@Override
-	public Iterable<Teacher> getTeacherByLastName(String lastName) {
+	public Iterable<Teacher> searchTeacherByLastName(String lastName) {
 		if (lastName.isEmpty()) {
 			return Collections.emptyList();
 		}

@@ -39,9 +39,9 @@ public class TeacherController {
 			@Parameter(name = "last-name", description = "The Last Name of the Teacher object to be retrieved")
 		}
 	)
-	@GetMapping("/get/last-name")
-	public Iterable<Teacher> getTeachersByLastName(@RequestParam("name") String lastName) {
-		return teacherService.getTeacherByLastName(lastName);
+	@GetMapping("/search/last-name")
+	public Iterable<Teacher> getTeachersByLastName(@RequestParam("q") String lastName) {
+		return teacherService.searchTeacherByLastName(lastName);
 	}
 
 	@Operation(
@@ -78,8 +78,8 @@ public class TeacherController {
 			@Parameter(name = "teacher-id", description = "The ID of the Teacher object to be retrieved")
 		}
 	)
-	@GetMapping("/get/id")
-	public Teacher getTeacher(@RequestParam("id") Integer teacherId) {
+	@GetMapping("/id")
+	public Teacher getTeacher(@RequestParam("q") Integer teacherId) {
 		return teacherService.getTeacher(teacherId);
 	}
 }

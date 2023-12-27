@@ -9,7 +9,7 @@ public interface TeacherService {
 
 	Teacher getTeacher(Integer teacherId);
 
-	Iterable<Teacher> getTeacherByLastName(String lastName);
+	Iterable<Teacher> searchTeacherByLastName(String lastName);
 
 	String updateTeacher(Teacher teacher);
 
