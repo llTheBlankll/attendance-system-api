@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.controllers;
 
 import com.pshs.attendancesystem.dto.ErrorDTO;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.Ordered;
@@ -47,6 +48,14 @@ public class RestControllerGlobalExceptionHandler {
 		logger.info(e.getMessage());
 		return ResponseEntity.status(405).body(
 			new ErrorDTO(405, e.getMessage())
+		);
+	}
+
+	@ExceptionHandler(ClientAbortException.class)
+	public ResponseEntity<ErrorDTO> handleClientAbortException(ClientAbortException e) {
+		logger.error(e.getMessage());
+		return ResponseEntity.status(500).body(
+			new ErrorDTO(500, e.getMessage())
 		);
 	}
 }
