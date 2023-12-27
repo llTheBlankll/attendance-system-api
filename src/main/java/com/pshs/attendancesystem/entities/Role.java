@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "roles")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Role.class)
 @JsonIgnoreProperties({
 	"users"
 })

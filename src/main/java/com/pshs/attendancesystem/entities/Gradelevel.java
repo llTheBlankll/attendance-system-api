@@ -11,9 +11,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "gradelevels")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Gradelevel.class)
 @JsonIgnoreProperties({
-	"students"
+	"students",
+	"sections"
 })
 public class Gradelevel implements Serializable {
 	@Id
@@ -28,7 +29,7 @@ public class Gradelevel implements Serializable {
 	@ManyToOne(targetEntity = Strand.class, cascade = CascadeType.ALL)
 	private Strand strand;
 
-	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "gradeLevel", targetEntity = Section.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Section> sections = new ArrayList<>();
 
 	@OneToMany(mappedBy = "gradeLevel", cascade = CascadeType.ALL)

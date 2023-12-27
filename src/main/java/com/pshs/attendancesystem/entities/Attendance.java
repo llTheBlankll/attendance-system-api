@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Table(name = "attendance", indexes = {
 	@Index(name = "attendance_student_id_idx", columnList = "student_id")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Attendance.class)
 public class Attendance {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

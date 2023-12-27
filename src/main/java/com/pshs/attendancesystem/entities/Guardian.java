@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Table(name = "guardians", indexes = {
 	@Index(columnList = "student_lrn")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Guardian.class)
 public class Guardian implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

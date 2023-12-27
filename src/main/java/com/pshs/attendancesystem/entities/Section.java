@@ -16,7 +16,7 @@ import java.util.List;
 	@Index(columnList = "strand"),
 	@Index(columnList = "grade_level"),
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "sectionId")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "sectionId", scope = Section.class)
 @JsonIgnoreProperties({
 	"students"
 })

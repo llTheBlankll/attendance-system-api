@@ -11,9 +11,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "strand")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Strand.class)
 @JsonIgnoreProperties({
-	"sections"
+	"sections",
+	"gradeLevels"
 })
 public class Strand implements Serializable {
 	@Id

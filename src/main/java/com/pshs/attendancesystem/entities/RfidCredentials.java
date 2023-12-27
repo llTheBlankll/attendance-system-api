@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Table(name = "rfid_credentials", indexes = {
 	@Index(columnList = "lrn")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn", scope = RfidCredentials.class)
 @JsonIgnoreProperties({
 	"salt"
 })

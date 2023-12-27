@@ -15,7 +15,7 @@ import java.util.Set;
 	@Index(columnList = "grade_level"),
 	@Index(columnList = "section_id")
 })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "lrn", scope = Student.class)
 @JsonIgnoreProperties({
 	"rfid",
 	"attendances"
