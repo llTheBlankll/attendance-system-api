@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.pshs</groupId>
     <artifactId>attendance-system</artifactId>
-    <version>1.0.9-NIGHTLY</version>
+    <version>1.1.0-NIGHTLY</version>
     <name>attendance-system</name>
     <description>Attendance System API for PSHS</description>
     <properties>
