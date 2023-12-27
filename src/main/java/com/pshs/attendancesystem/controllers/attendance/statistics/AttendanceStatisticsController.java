@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.controllers.attendance.statistics;
 
-import com.pshs.attendancesystem.dto.AttendanceStatisticsOverAllDTO;
+import com.pshs.attendancesystem.dto.statistics.AttendanceStatisticsOverAllDTO;
+import com.pshs.attendancesystem.dto.statistics.StudentAttendanceStatistics;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
@@ -185,6 +186,46 @@ public class AttendanceStatisticsController {
 			),
 			strand
 		);
+	}
+
+	// * STUDENT * //
+	@GetMapping("/today/student")
+	public StudentAttendanceStatistics getStudentAttendanceStatistics(@RequestBody Long lrn) {
+		return statisticsService.getStudentAttendanceStatistics(
+			new DateRange(
+				LocalDate.now(),
+				LocalDate.now()
+			), lrn);
+	}
+
+	@GetMapping("/month/student")
+	public StudentAttendanceStatistics getStudentAttendanceStatisticsMonth(@RequestParam Long lrn) {
+		LocalDate today = LocalDate.now();
+		return statisticsService.getStudentAttendanceStatistics(
+			new DateRange(
+				today.withDayOfMonth(1),
+				today.withDayOfMonth(today.lengthOfMonth())
+			), lrn);
+	}
+
+	@GetMapping("/week/student")
+	public StudentAttendanceStatistics getStudentAttendanceStatisticsWeek(@RequestParam Long lrn) {
+		LocalDate today = LocalDate.now();
+		return statisticsService.getStudentAttendanceStatistics(
+			new DateRange(
+				today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+				today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+			), lrn);
+	}
+
+	@GetMapping("/today/student")
+	public StudentAttendanceStatistics getStudentAttendanceStatisticsToday(@RequestParam Long lrn) {
+		LocalDate today = LocalDate.now();
+		return statisticsService.getStudentAttendanceStatistics(
+			new DateRange(
+				today,
+				today
+			), lrn);
 	}
 }
 

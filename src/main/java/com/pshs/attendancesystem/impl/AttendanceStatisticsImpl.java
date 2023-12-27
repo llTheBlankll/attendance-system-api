@@ -1,6 +1,7 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.dto.AttendanceStatisticsOverAllDTO;
+import com.pshs.attendancesystem.dto.statistics.AttendanceStatisticsOverAllDTO;
+import com.pshs.attendancesystem.dto.statistics.StudentAttendanceStatistics;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
@@ -155,8 +156,8 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 
 		return (
 			(double) getTotalPresentsBetweenDate(dateRange)
-			/
-			(double) (getTotalNumberOfStudents() * ((days == 0) ? 1L : days))
+				/
+				(double) (getTotalNumberOfStudents() * ((days == 0) ? 1L : days))
 		) * 100;
 	}
 
@@ -223,7 +224,7 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 		Long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
 		return (
 			(double) getTotalPresentsBetweenDate(dateRange, gradeLevel) /
-			(double) (getTotalNumberOfStudents(gradeLevel) * days)
+				(double) (getTotalNumberOfStudents(gradeLevel) * days)
 		) * 100;
 	}
 
@@ -273,7 +274,7 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 		Long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
 		return (
 			(double) getTotalPresentsBetweenDate(dateRange, section) /
-			(double) (getTotalNumberOfStudents(section) * days)
+				(double) (getTotalNumberOfStudents(section) * days)
 		) * 100;
 	}
 
@@ -322,7 +323,56 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 		Long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
 		return (
 			(double) getTotalPresentsBetweenDate(dateRange, strand) /
-			(double) (getTotalNumberOfStudents(strand) * days)
+				(double) (getTotalNumberOfStudents(strand) * days)
+		) * 100;
+	}
+
+	// * STUDENT
+
+	@Override
+	public StudentAttendanceStatistics getStudentAttendanceStatistics(DateRange dateRange, Long lrn) {
+		StudentAttendanceStatistics statistics = new StudentAttendanceStatistics();
+		statistics.setTotalAbsents(getTotalAbsences(dateRange, lrn));
+		statistics.setTotalPresent(getTotalPresents(dateRange, lrn));
+		statistics.setTotalLate(getTotalLate(dateRange, lrn));
+		statistics.setTotalOnTime(getTotalOnTime(dateRange, lrn));
+		statistics.setAverageAttendancePercentage(calculateAverageAttendancePercentage(dateRange, lrn));
+
+		return statistics;
+	}
+
+	@Override
+	public Long getTotalAbsences(DateRange dateRange, Long lrn) {
+		return attendanceRepository.countAttendanceByDateRangeAndLrn(dateRange.getStartDate(), dateRange.getEndDate(), lrn, Status.ABSENT);
+	}
+
+	@Override
+	public Long getTotalPresents(DateRange dateRange, Long lrn) {
+		return attendanceRepository.countAttendanceByDateRangeAndLrn(dateRange.getStartDate(), dateRange.getEndDate(), lrn, Status.ONTIME) +
+			attendanceRepository.countAttendanceByDateRangeAndLrn(dateRange.getStartDate(), dateRange.getEndDate(), lrn, Status.LATE);
+	}
+
+	@Override
+	public Long getTotalLate(DateRange dateRange, Long lrn) {
+		return attendanceRepository.countAttendanceByDateRangeAndLrn(dateRange.getStartDate(), dateRange.getEndDate(), lrn, Status.LATE);
+	}
+
+	@Override
+	public Long getTotalOnTime(DateRange dateRange, Long lrn) {
+		return attendanceRepository.countAttendanceByDateRangeAndLrn(dateRange.getStartDate(), dateRange.getEndDate(), lrn, Status.ONTIME);
+	}
+
+	@Override
+	public Double calculateAverageAttendancePercentage(DateRange dateRange, Long lrn) {
+		if (dateRange.getStartDate() == null || dateRange.getEndDate() == null) {
+			return -1D;
+		}
+
+		long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
+
+		return (
+			(double) getTotalPresents(dateRange, lrn) /
+				(double) (days) // * Only days because only one student. 1 * days is equal to days.
 		) * 100;
 	}
 }
