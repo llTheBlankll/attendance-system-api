@@ -189,12 +189,14 @@ public class AttendanceStatisticsController {
 	}
 
 	// * STUDENT * //
+
 	@GetMapping("/today/student")
-	public StudentAttendanceStatistics getStudentAttendanceStatistics(@RequestBody Long lrn) {
+	public StudentAttendanceStatistics getStudentAttendanceStatisticsToday(@RequestParam Long lrn) {
+		LocalDate today = LocalDate.now();
 		return statisticsService.getStudentAttendanceStatistics(
 			new DateRange(
-				LocalDate.now(),
-				LocalDate.now()
+				today,
+				today
 			), lrn);
 	}
 
@@ -215,16 +217,6 @@ public class AttendanceStatisticsController {
 			new DateRange(
 				today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
 				today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
-			), lrn);
-	}
-
-	@GetMapping("/today/student")
-	public StudentAttendanceStatistics getStudentAttendanceStatisticsToday(@RequestParam Long lrn) {
-		LocalDate today = LocalDate.now();
-		return statisticsService.getStudentAttendanceStatistics(
-			new DateRange(
-				today,
-				today
 			), lrn);
 	}
 }
