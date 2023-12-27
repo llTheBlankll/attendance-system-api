@@ -1,4 +1,4 @@
-package com.pshs.attendancesystem.dto;
+package com.pshs.attendancesystem.dto.statistics;
 
 public class AttendanceStatisticsOverAllDTO {
 

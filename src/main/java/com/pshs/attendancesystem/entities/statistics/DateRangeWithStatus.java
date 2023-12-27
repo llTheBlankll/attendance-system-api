@@ -6,6 +6,7 @@ public class DateRangeWithStatus {
 
 	private DateRange dateRange;
 	private Status status;
+
 	public DateRangeWithStatus(DateRange dateRange, Status status) {
 		this.dateRange = dateRange;
 		this.status = status;

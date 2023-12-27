@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 	Student findStudentByLrn(Long studentLrn);
+
 	@Query("select s from Student s where s.gradeLevel.gradeName = ?1")
 	Iterable<Student> getStudentByGradeName(String gradeName);
 

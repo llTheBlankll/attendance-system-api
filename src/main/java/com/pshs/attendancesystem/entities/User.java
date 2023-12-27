@@ -59,10 +59,6 @@ public class User implements UserDetails, Serializable {
 		this.id = id;
 	}
 
-	public void setUsername(String userName) {
-		this.userName = userName;
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -97,6 +93,10 @@ public class User implements UserDetails, Serializable {
 	@Override
 	public String getUsername() {
 		return userName;
+	}
+
+	public void setUsername(String userName) {
+		this.userName = userName;
 	}
 
 	@Override

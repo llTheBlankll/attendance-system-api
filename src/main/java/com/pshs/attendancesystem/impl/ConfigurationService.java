@@ -9,6 +9,7 @@ import java.time.LocalTime;
 @Service
 public class ConfigurationService {
 	private final APIConfig apiConfig;
+
 	public ConfigurationService(APIConfig apiConfig) {
 		this.apiConfig = apiConfig;
 	}
