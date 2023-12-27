@@ -97,6 +97,13 @@ public class ScannerWebSocketHandler extends TextWebSocketHandler {
 				return;
 			}
 
+			// ! Check if the credentials is enabled or not.
+			if (!credentials.isEnabled()) {
+				response.setMessage("Card disabled");
+				sessionSendMessage(session, mapper.writeValueAsString(response));
+				return;
+			}
+
 			// * Handle the mode, if "in" then check in, else check out.
 			String mode = webSocketData.getMode();
 			if (mode.equals("in")) {

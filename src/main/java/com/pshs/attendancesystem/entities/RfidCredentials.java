@@ -26,9 +26,20 @@ public class RfidCredentials implements Serializable {
 	@Column(name = "salt", length = 32)
 	private String salt;
 
+	@Column(name = "enabled", nullable = false)
+	private boolean enabled;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "lrn", referencedColumnName = "lrn", nullable = false)
 	private Student student;
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public Student getStudent() {
 		return student;
