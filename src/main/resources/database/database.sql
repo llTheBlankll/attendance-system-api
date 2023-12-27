@@ -80,6 +80,7 @@ CREATE TABLE rfid_credentials
     lrn        BIGINT NOT NULL PRIMARY KEY,
     hashed_lrn CHAR(32),
     salt       VARCHAR(16),
+    enabled    BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (lrn) REFERENCES students (lrn) ON DELETE CASCADE
 );
 CREATE INDEX rfid_credentials_lrn_idx ON rfid_credentials (lrn);
