@@ -1,5 +1,8 @@
 package com.pshs.attendancesystem.repositories;
 
+import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Section;
+import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +40,16 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 		select s from Student s
 		where upper(s.firstName) like upper(concat('%', ?1, '%')) and upper(s.lastName) like upper(concat('%', ?2, '%'))""")
 	Iterable<Student> searchByFirstAndLastName(String firstName, String lastName);
+
+	@Query("select count(s) from Student s")
+	Long countAllStudents();
+
+	@Query("select count(s) from Student s where s.gradeLevel = ?1")
+	long countAllStudentsByGradelevel(Gradelevel gradeLevel);
+
+	@Query("select count(s) from Student s where s.section.strand = ?1")
+	long countAllStudentsByStrand(Strand strand);
+
+	@Query("select count(s) from Student s where s.section = ?1")
+	long countAllStudentsBySection(Section section);
 }

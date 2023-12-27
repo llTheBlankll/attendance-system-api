@@ -1,8 +1,6 @@
 package com.pshs.attendancesystem.impl;
 
-import com.pshs.attendancesystem.entities.Guardian;
-import com.pshs.attendancesystem.entities.RfidCredentials;
-import com.pshs.attendancesystem.entities.Student;
+import com.pshs.attendancesystem.entities.*;
 import com.pshs.attendancesystem.messages.SectionMessages;
 import com.pshs.attendancesystem.messages.StudentMessages;
 import com.pshs.attendancesystem.repositories.RfidCredentialsRepository;
@@ -219,8 +217,28 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	@Cacheable(key = "#sectionId")
-	public long countStudentsBySectionId(Integer sectionId) {
+	public Long countStudentsBySectionId(Integer sectionId) {
 		return this.studentRepository.countStudentsBySectionId(sectionId);
+	}
+
+	@Override
+	public Long getAllStudentsCount() {
+		return studentRepository.countAllStudents();
+	}
+
+	@Override
+	public Long getAllStudentsCount(Gradelevel gradelevel) {
+		return studentRepository.countAllStudentsByGradelevel(gradelevel);
+	}
+
+	@Override
+	public Long getAllStudentsCount(Strand strand) {
+		return studentRepository.countAllStudentsByStrand(strand);
+	}
+
+	@Override
+	public Long getAllStudentsCount(Section section) {
+		return studentRepository.countAllStudentsBySection(section);
 	}
 
 	@Override
