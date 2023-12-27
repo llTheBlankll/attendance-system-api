@@ -119,4 +119,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 		select count(a) from Attendance a
 		where a.date between ?1 and ?2 and a.student.section.strand = ?3 and a.attendanceStatus = ?4""")
 	long countAttendanceByDateRangeAndStrandAndStatus(LocalDate dateStart, LocalDate dateEnd, Strand strand, Status attendanceStatus);
+
+	@Query("select count(a) from Attendance a where a.date between ?1 and ?2 and a.student.lrn = ?3 and a.attendanceStatus = ?4")
+	long countAttendanceByDateRangeAndLrn(LocalDate dateStart, LocalDate dateEnd, Long lrn, Status status);
 }
