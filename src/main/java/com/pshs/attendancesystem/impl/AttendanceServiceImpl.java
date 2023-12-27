@@ -12,11 +12,6 @@ import com.pshs.attendancesystem.repositories.AttendanceRepository;
 import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceService;
 import io.sentry.Sentry;
-import java.sql.Time;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
@@ -26,6 +21,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.sql.Time;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Optional;
 
 @Service
 @CacheConfig(cacheNames = "attendance")
@@ -72,12 +73,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     return attendanceRepository.existsById(attendanceId);
   }
 
-  /**
-   * Checks if the student with the given LRN has already checked out for the day.
-   *
-   * @param studentLrn the LRN (Learner Reference Number) of the student
-   * @return true if the student has already checked out, false otherwise
-   */
   @Override
   @Cacheable(key = "#studentLrn.toString()")
   public Status isAlreadyOut(Long studentLrn) {
@@ -214,98 +209,6 @@ public class AttendanceServiceImpl implements AttendanceService {
   }
 
   /**
-   * Retrieves all attendance records between a given start date and end date, filtered by status.
-   *
-   * @param dateRange the date range to filter the attendance records by
-   * @param status the status to filter the attendance records by
-   * @return an iterable collection of attendance records
-   */
-  @Override
-  @Cacheable(key = "#dateRange + '-' + #status")
-  public Iterable<Attendance> getAllAttendanceBetweenDateWithStatus(
-      DateRange dateRange, Status status) {
-    return attendanceRepository.searchBetweenDateAndStatus(
-        dateRange.getStartDate(), dateRange.getEndDate(), status);
-  }
-
-  /**
-   * Retrieves all attendance records between the specified start date and end date.
-   *
-   * @param dateRange the date range to filter the attendance records by
-   * @return an iterable collection of attendance records between the start and end dates
-   */
-  @Override
-  @Cacheable(key = "#dateRange")
-  public Iterable<Attendance> getAllAttendanceBetweenDate(DateRange dateRange) {
-    return attendanceRepository.searchBetweenDate(dateRange.getStartDate(), dateRange.getEndDate());
-  }
-
-  /**
-   * Returns the total count of attendance records between the given start date and end date,
-   * filtered by the specified attendance status.
-   *
-   * @param dateRange The date range between two time.
-   * @param status the attendance status to filter by
-   * @return the total count of attendance records between the start date and end date, filtered by
-   *     the specified attendance status
-   */
-  @Override
-  @Cacheable(key = "#dateRange + '-' + #status")
-  public long getAllCountOfAttendanceBetweenDate(DateRange dateRange, Status status) {
-    return attendanceRepository.countBetweenDateAndStatus(
-        dateRange.getStartDate(), dateRange.getEndDate(), status);
-  }
-
-  /**
-   * Retrieves the attendance records of a student between a specified start and end date, filtered
-   * by the attendance status.
-   *
-   * @param studentLrn the LRN (Learner Reference Number) of the student
-   * @param dateRange the range of dates to filter the records by
-   * @param status the attendance status to filter the records by
-   * @return an iterable collection of Attendance objects representing the attendance records of the
-   *     student
-   */
-  @Override
-  @Cacheable(key = "#studentLrn + '-' + #dateRange + '-' + #status")
-  public Iterable<Attendance> getStudentAttendanceBetweenDateStatus(
-      long studentLrn, DateRange dateRange, Status status) {
-    return attendanceRepository.searchLrnBetweenDateAndStatus(
-        studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
-  }
-
-  /**
-   * Retrieves the attendance records of a student between the specified start and end dates.
-   *
-   * @param studentLrn the LRN (Learner Reference Number) of the student
-   * @param dateRange the start and end dates of the range
-   * @return an iterable collection of Attendance objects representing the student's attendance
-   *     between the specified dates
-   */
-  @Override
-  @Cacheable(key = "#studentLrn + '-' + #dateRange")
-  public Iterable<Attendance> getAttendanceBetweenDate(long studentLrn, DateRange dateRange) {
-    return this.attendanceRepository.searchLrnBetwenDate(
-        studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
-  }
-
-  /**
-   * Retrieves the total count of student attendance records between the specified dates.
-   *
-   * @param studentLrn the LRN (Learner Reference Number) of the student
-   * @param dateRange the start and end dates of the range
-   * @param status the attendance status to filter by
-   * @return the total count of student attendance records
-   */
-  @Override
-  @Cacheable(key = "#studentLrn + '-' + #dateRange + '-' + #status")
-  public long getAllCountOfAttendanceBetweenDate(
-      long studentLrn, DateRange dateRange, Status status) {
-    return attendanceRepository.countLrnBetweenDateAndStatus(
-        studentLrn, dateRange.getStartDate(), dateRange.getEndDate(), status);
-  }
-
-  /**
    * Retrieves the student attendance records for a given section ID, attendance status, and date
    * range.
    *
@@ -329,31 +232,6 @@ public class AttendanceServiceImpl implements AttendanceService {
       @NonNull Integer sectionId, DateRange dateRange) {
     return this.attendanceRepository.searchSectionIdBetweenDate(
         sectionId, dateRange.getStartDate(), dateRange.getEndDate());
-  }
-
-  @Override
-  @Cacheable(key = "#sectionId + '-' + #dateRange + '-' + #status")
-  public Iterable<Attendance> getAttendanceInSection(
-      @NonNull Integer sectionId, @NonNull DateRange dateRange, Status status) {
-    switch (status) {
-      case ONTIME -> {
-        return this.getAttendanceInSectionByStatusBetweenDate(sectionId, Status.ONTIME, dateRange);
-      }
-
-      case LATE -> {
-        return this.getAttendanceInSectionByStatusBetweenDate(sectionId, Status.LATE, dateRange);
-      }
-
-      default -> {
-        return this.getStudentAttendanceInSectionBetweenDate(sectionId, dateRange);
-      }
-    }
-  }
-
-  @Override
-  @Cacheable(key = "#sectionId + '-' + #dateRange")
-  public Iterable<Attendance> getAttendanceInSection(Integer sectionId, DateRange dateRange) {
-    return this.getStudentAttendanceInSectionBetweenDate(sectionId, dateRange);
   }
 
   @Override
@@ -408,39 +286,6 @@ public class AttendanceServiceImpl implements AttendanceService {
       @NonNull Integer sectionId, Status attendanceStatus, DateRange dateRange) {
     return this.attendanceRepository.countSectionIdBetweenDateAndStatus(
         sectionId, dateRange.getStartDate(), dateRange.getEndDate(), attendanceStatus);
-  }
-
-  @Override
-  @Cacheable(key = "#sectionId + '-' + #date")
-  public long countAttendanceBySectionAndDate(Integer sectionId, LocalDate date) {
-    return this.attendanceRepository.countSectionIdAndDate(sectionId, date);
-  }
-
-  /**
-   * Counts the number of attendances between two given dates.
-   *
-   * @param dateRange The start and end dates of the range
-   * @return the number of attendances between the start and end dates
-   */
-  @Override
-  @Cacheable(key = "#dateRange")
-  public long countAttendanceBetweenDate(DateRange dateRange) {
-    return this.attendanceRepository.countBetweenDate(
-        dateRange.getStartDate(), dateRange.getEndDate());
-  }
-
-  /**
-   * Counts the number of attendances for a student between two given dates.
-   *
-   * @param studentLrn the LRN (Learner Reference Number) of the student
-   * @param dateRange the start and end dates of the range
-   * @return the number of attendances for the student within the specified period
-   */
-  @Override
-  @Cacheable(key = "#studentLrn + '-' + #dateRange")
-  public long countStudentAttendanceBetweenDate(Long studentLrn, DateRange dateRange) {
-    return this.attendanceRepository.countLrnBetweenDate(
-        studentLrn, dateRange.getStartDate(), dateRange.getEndDate());
   }
 
   @Override
