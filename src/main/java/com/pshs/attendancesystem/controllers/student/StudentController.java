@@ -1,13 +1,14 @@
 package com.pshs.attendancesystem.controllers.student;
 
 import com.pshs.attendancesystem.documentation.StudentDocumentation;
+import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,8 +37,7 @@ public class StudentController {
 		description = StudentDocumentation.GET_ALL_STUDENTS
 	)
 	@GetMapping("/all")
-	@Cacheable("student")
-	public Iterable<Student> getAllStudent() {
+	public Page<Student> getAllStudent() {
 		return studentService.getAllStudent();
 	}
 
@@ -91,7 +91,7 @@ public class StudentController {
 	/**
 	 * Retrieves a list of students by grade level.
 	 *
-	 * @param gradeName the name of the grade level to search for
+	 * @param gradelevel the name of the grade level to search for
 	 * @return an iterable collection of Student objects
 	 */
 	@Operation(
@@ -99,8 +99,8 @@ public class StudentController {
 		description = StudentDocumentation.SEARCH_STUDENTS_BY_GRADE_LEVEL
 	)
 	@GetMapping("/search/gradelevel")
-	public Iterable<Student> getStudentByGradeLevel(@RequestParam("q") String gradeName) {
-		return studentService.getStudentByGradeLevel(gradeName);
+	public Iterable<Student> getStudentByGradeLevel(@RequestBody Gradelevel gradelevel) {
+		return studentService.getStudentByGradeLevel(gradelevel);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class StudentController {
 			@Parameter(name = "id", description = "The id of the section")
 		}
 	)
-	@GetMapping("/get/students/section-id")
+	@GetMapping("/students/section-id")
 	public Iterable<Student> getAllStudentWithSectionId(@RequestParam("q") Integer sectionId) {
 		return studentService.getAllStudentWithSectionId(sectionId);
 	}
@@ -152,7 +152,7 @@ public class StudentController {
 			@Parameter(name = "id", description = "The id of the section")
 		}
 	)
-	@GetMapping("/count/students/section-id")
+	@GetMapping("/count/section-id")
 	public long countStudentsBySectionId(@RequestParam("q") Integer sectionId) {
 		return studentService.countStudentsBySectionId(sectionId);
 	}
@@ -164,7 +164,7 @@ public class StudentController {
 			@Parameter(name = "name", description = "The first name of the student")
 		}
 	)
-	@GetMapping("/search/firstname")
+	@GetMapping("/search/first-name")
 	public Iterable<Student> searchStudentByFirstName(@RequestParam("q") String name) {
 		return studentService.searchStudentByFirstName(name);
 	}
@@ -176,7 +176,7 @@ public class StudentController {
 			@Parameter(name = "name", description = "The last name of the student")
 		}
 	)
-	@GetMapping("/search/lastname")
+	@GetMapping("/search/last-name")
 	public Iterable<Student> searchStudentByLastName(@RequestParam("q") String name) {
 		return studentService.searchStudentByLastName(name);
 	}
@@ -214,7 +214,7 @@ public class StudentController {
 		}
 	)
 	@GetMapping("/is-student-attended")
-	public boolean isStudentAttended(@RequestParam("lrn") Long lrn, @RequestParam("date") LocalDate date) {
+	public Boolean isStudentAttended(@RequestParam("lrn") Long lrn, @RequestParam("date") LocalDate date) {
 		return studentService.isStudentAttended(lrn, date);
 	}
 }

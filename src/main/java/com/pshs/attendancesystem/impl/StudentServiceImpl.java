@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -73,8 +76,9 @@ public class StudentServiceImpl implements StudentService {
 	 *
 	 * @return an iterable of student objects
 	 */
-	public Iterable<Student> getAllStudent() {
-		return this.studentRepository.findAll();
+	public Page<Student> getAllStudent() {
+		Pageable page = PageRequest.of(0, 25);
+		return this.studentRepository.findAll(page);
 	}
 
 	@Override
@@ -160,19 +164,19 @@ public class StudentServiceImpl implements StudentService {
 	 * @param gradeName the name of the grade level to search for
 	 * @return an iterable collection of Student objects
 	 */
-	@Cacheable(key = "#gradeName")
-	public Iterable<Student> getStudentByGradeLevel(String gradeName) {
-		if (!this.studentRepository.isGradeNameExist(gradeName)) {
+	@Cacheable(key = "#gradelevel.id")
+	public Iterable<Student> getStudentByGradeLevel(Gradelevel gradelevel) {
+		if (!this.studentRepository.isGradeNameExist(gradelevel.getGradeName())) {
 			Stream<Student> empty = Stream.empty();
 			return empty::iterator; // Return empty.
 		}
 
-		return this.studentRepository.getStudentByGradeName(gradeName);
+		return this.studentRepository.getStudentByGradeName(gradelevel.getGradeName());
 	}
 
 	@Override
 	@Cacheable(key = "#lrn")
-	public boolean isStudentAttended(Long lrn, LocalDate date) {
+	public Boolean isStudentAttended(Long lrn, LocalDate date) {
 		return studentRepository.isStudentAttended(lrn, LocalDate.now());
 	}
 

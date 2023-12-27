@@ -4,6 +4,7 @@ import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,7 @@ public interface StudentService {
 
 	String deleteStudentById(Long id);
 
-	Iterable<Student> getStudentByGradeLevel(String gradeLevel);
+	Iterable<Student> getStudentByGradeLevel(Gradelevel gradeLevel);
 
 	Student getStudentById(Long lrn);
 
@@ -22,7 +23,7 @@ public interface StudentService {
 
 	Iterable<Student> getAllStudentWithSectionId(Integer sectionId);
 
-	Iterable<Student> getAllStudent();
+	Page<Student> getAllStudent();
 
 	Iterable<Student> searchStudentByLastName(String name);
 
@@ -42,5 +43,5 @@ public interface StudentService {
 
 	boolean isLrnExist(Long lrn);
 
-	boolean isStudentAttended(Long lrn, LocalDate date);
+	Boolean isStudentAttended(Long lrn, LocalDate date);
 }
