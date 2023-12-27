@@ -2,6 +2,7 @@ package com.pshs.attendancesystem.repositories;
 
 import com.pshs.attendancesystem.entities.Attendance;
 import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -97,4 +98,25 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Modifying
 	@Transactional
 	void studentAttendanceOut(LocalTime timeOut, Integer id);
+
+	@Query("select count(distinct a) from Attendance a")
+	long countDistinctDays();
+
+	@Query("select count(a) from Attendance a where a.date between ?1 and ?2 and a.attendanceStatus = ?3")
+	long countAttendanceByDateRangeStatus(LocalDate dateStart, LocalDate dateEnd, Status attendanceStatus);
+
+	@Query("""
+		select count(a) from Attendance a
+		where a.date between ?1 and ?2 and a.student.gradeLevel = ?3 and a.attendanceStatus = ?4""")
+	long countAttendanceByDateRangeAndGradeLevelAndStatus(LocalDate dateStart, LocalDate dateEnd, Gradelevel gradeLevel, Status attendanceStatus);
+
+	@Query("""
+		select count(distinct a) from Attendance a
+		where a.date between ?1 and ?2 and a.student.section = ?3 and a.attendanceStatus = ?4""")
+	long countAttendanceByDateRangeAndSectionAndStatus(LocalDate dateStart, LocalDate dateEnd, Section section, Status attendanceStatus);
+
+	@Query("""
+		select count(a) from Attendance a
+		where a.date between ?1 and ?2 and a.student.section.strand = ?3 and a.attendanceStatus = ?4""")
+	long countAttendanceByDateRangeAndStrandAndStatus(LocalDate dateStart, LocalDate dateEnd, Strand strand, Status attendanceStatus);
 }
