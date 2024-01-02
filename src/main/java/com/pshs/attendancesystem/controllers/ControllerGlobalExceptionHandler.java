@@ -5,6 +5,8 @@ import io.sentry.Sentry;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice(annotations = Controller.class)
 public class ControllerGlobalExceptionHandler {
 
