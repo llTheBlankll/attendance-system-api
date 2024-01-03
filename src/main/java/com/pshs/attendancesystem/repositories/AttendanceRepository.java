@@ -14,44 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
-
-	@Query("select a from Attendance a where a.date >= ?1 and a.date <= ?2 and a.attendanceStatus = ?3")
-	Iterable<Attendance> searchBetweenDateAndStatus(LocalDate startdate, LocalDate endDate, Status attendanceStatus);
-
-	@Query("select a from Attendance a where a.student.lrn = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4")
-	Iterable<Attendance> searchLrnBetweenDateAndStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
-
-	@Query("select a from Attendance a where a.student.lrn = ?1 and a.date between ?2 and ?3")
-	Iterable<Attendance> searchLrnBetwenDate(Long studentLrn, LocalDate startDate, LocalDate endDate);
-
-	@Query("select a from Attendance a where a.student.section.sectionId = ?1")
-	Iterable<Attendance> searchStudentSectionId(Integer sectionId);
 
 	@Query("""
 		select a from Attendance a
 		where a.student.section.sectionId = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
 	Iterable<Attendance> searchSectionIdBetweenDateAndStatus(Integer sectionId, LocalDate startDate, LocalDate endDate, Status attendanceStatus);
 
-	@Query("select a from Attendance a where a.date between ?1 and ?2")
-	Iterable<Attendance> searchBetweenDate(LocalDate startDate, LocalDate endDate);
-
 	@Query("select a from Attendance a where a.student.section.sectionId = ?1 and a.date between ?2 and ?3")
 	Iterable<Attendance> searchSectionIdBetweenDate(Integer sectionId, LocalDate startDate, LocalDate endDate);
 
 	@Query("SELECT a FROM Attendance a JOIN a.student s WHERE s.lrn = :studentLrn AND a.date = :date")
 	Optional<Attendance> findByStudent_LrnAndDate(@Param("studentLrn") Long studentLrn, @Param("date") LocalDate date);
-
-	@Query("select count(a) from Attendance a where a.date between ?1 and ?2 and a.attendanceStatus = ?3")
-	long countBetweenDateAndStatus(LocalDate startDate, LocalDate endDate, Status attendanceStatus);
-
-	@Query("""
-		select count(a) from Attendance a
-		where a.student.lrn = ?1 and a.date between ?2 and ?3 and a.attendanceStatus = ?4""")
-	long countLrnBetweenDateAndStatus(Long studentLrn, LocalDate startDate, LocalDate endDate, Status status);
 
 	@Query("""
 		select count(a) from Attendance a
@@ -66,14 +44,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Query("select count(a) from Attendance a where a.date between ?1 and ?2")
 	long countBetweenDate(LocalDate startDate, LocalDate endDate);
 
-	@Query("select count(a) from Attendance a where a.student.lrn = ?1 and a.date between ?2 and ?3")
-	long countLrnBetweenDate(Long studentLrn, LocalDate startDate, LocalDate endDate);
-
 	@Query("select count(a) from Attendance a where a.student.section.sectionId = ?1 and a.date between ?2 and ?3")
 	long countSectionIdBetweenDate(Integer studentSectionId, LocalDate startDate, LocalDate endDate);
-
-	@Query("select count(a) from Attendance a where a.student.section.sectionId = ?1 and a.date = ?2")
-	long countSectionIdAndDate(Integer sectionId, LocalDate date);
 
 	@Query("""
 		select count(a) from Attendance a
@@ -99,9 +71,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 	@Transactional
 	void studentAttendanceOut(LocalTime timeOut, Integer id);
 
-	@Query("select count(distinct a) from Attendance a")
-	long countDistinctDays();
-
 	@Query("select count(a) from Attendance a where a.date between ?1 and ?2 and a.attendanceStatus = ?3")
 	long countAttendanceByDateRangeStatus(LocalDate dateStart, LocalDate dateEnd, Status attendanceStatus);
 
@@ -122,4 +91,19 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
 	@Query("select count(a) from Attendance a where a.date between ?1 and ?2 and a.student.lrn = ?3 and a.attendanceStatus = ?4")
 	long countAttendanceByDateRangeAndLrn(LocalDate dateStart, LocalDate dateEnd, Long lrn, Status status);
+
+	@Query("""
+		select a from Attendance a
+		where a.attendanceStatus = ?1 and a.student.section = ?2 and a.date between ?3 and ?4""")
+	List<Attendance> getAllStudentsWithStatusBySectionAndDateRange(Status attendanceStatus, Section section, LocalDate dateStart, LocalDate dateEnd);
+
+	@Query("""
+		select a from Attendance a
+		where a.attendanceStatus = ?1 and a.student.section.strand = ?2 and a.date between ?3 and ?4""")
+	List<Attendance> getAllStudentsWithStatusByStrandAndDateRange(Status attendanceStatus, Strand strand, LocalDate dateStart, LocalDate dateEnd);
+
+	@Query("""
+		select a from Attendance a
+		where a.attendanceStatus = ?1 and a.student.gradeLevel = ?2 and a.date between ?3 and ?4""")
+	List<Attendance> getAllStudentsWithStatusByGradelevelAndDateRange(Status attendanceStatus, Gradelevel gradelevel, LocalDate dateStart, LocalDate dateEnd);
 }
