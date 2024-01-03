@@ -2,13 +2,10 @@ package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.dto.statistics.AttendanceStatisticsOverAllDTO;
 import com.pshs.attendancesystem.dto.statistics.StudentAttendanceStatistics;
-import com.pshs.attendancesystem.entities.Gradelevel;
-import com.pshs.attendancesystem.entities.Section;
-import com.pshs.attendancesystem.entities.Strand;
+import com.pshs.attendancesystem.entities.*;
 import com.pshs.attendancesystem.entities.statistics.DateRange;
 import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.repositories.AttendanceRepository;
-import com.pshs.attendancesystem.repositories.StudentRepository;
 import com.pshs.attendancesystem.services.AttendanceStatisticsService;
 import com.pshs.attendancesystem.services.StudentService;
 import org.apache.logging.log4j.LogManager;
@@ -17,20 +14,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("DuplicatedCode")
 @Service
 public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 
 	private final StudentService studentService;
 	private final AttendanceRepository attendanceRepository;
 	private final Logger logger = LogManager.getLogger(this.getClass());
-	private final StudentRepository studentRepository;
 
-	public AttendanceStatisticsImpl(StudentService studentService, AttendanceRepository attendanceRepository,
-	                                StudentRepository studentRepository) {
+	public AttendanceStatisticsImpl(StudentService studentService, AttendanceRepository attendanceRepository) {
 		this.studentService = studentService;
 		this.attendanceRepository = attendanceRepository;
-		this.studentRepository = studentRepository;
 	}
 
 	@Override
@@ -152,7 +149,7 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 			return -1D;
 		}
 
-		Long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
+		long days = ChronoUnit.DAYS.between(dateRange.getStartDate(), dateRange.getEndDate());
 
 		return (
 			(double) getTotalPresentsBetweenDate(dateRange)
@@ -184,7 +181,7 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 	public AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAllDateRange(DateRange dateRange, Gradelevel gradeLevel) {
 		AttendanceStatisticsOverAllDTO statistics = new AttendanceStatisticsOverAllDTO();
 
-		statistics.setAverageAttendancePercentage(calculateAverageAttendancePercentageBetweenDate(dateRange));
+		statistics.setAverageAttendancePercentage(calculateAverageAttendancePercentageBetweenDate(dateRange, gradeLevel));
 		statistics.setTotalAbsents(getTotalAbsencesBetweenDate(dateRange, gradeLevel));
 		statistics.setTotalPresents(getTotalPresentsBetweenDate(dateRange, gradeLevel));
 		statistics.setTotalLate(getTotalLateBetweenDate(dateRange, gradeLevel));
@@ -374,5 +371,23 @@ public class AttendanceStatisticsImpl implements AttendanceStatisticsService {
 			(double) getTotalPresents(dateRange, lrn) /
 				(double) (days) // * Only days because only one student. 1 * days is equal to days.
 		) * 100;
+	}
+
+	@Override
+	public List<Student> getStudentsStatus(Status status, Section section, DateRange dateRange) {
+		List<Attendance> attendanceList = attendanceRepository.getAllStudentsWithStatusBySectionAndDateRange(status, section, dateRange.getStartDate(), dateRange.getEndDate());
+		return attendanceList.stream().map(Attendance::getStudent).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Student> getStudentsStatus(Status status, Strand strand, DateRange dateRange) {
+		List<Attendance> attendanceList = attendanceRepository.getAllStudentsWithStatusByStrandAndDateRange(status, strand, dateRange.getStartDate(), dateRange.getEndDate());
+		return attendanceList.stream().map(Attendance::getStudent).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Student> getStudentsStatus(Status status, Gradelevel gradelevel, DateRange dateRange) {
+		List<Attendance> attendanceList = attendanceRepository.getAllStudentsWithStatusByGradelevelAndDateRange(status, gradelevel, dateRange.getStartDate(), dateRange.getEndDate());
+		return attendanceList.stream().map(Attendance::getStudent).collect(Collectors.toList());
 	}
 }
