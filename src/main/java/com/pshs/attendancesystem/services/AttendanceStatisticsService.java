@@ -5,7 +5,11 @@ import com.pshs.attendancesystem.dto.statistics.StudentAttendanceStatistics;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.DateRange;
+import com.pshs.attendancesystem.enums.Status;
+
+import java.util.List;
 
 public interface AttendanceStatisticsService {
 	Long getTotalNumberOfStudents();
@@ -29,7 +33,7 @@ public interface AttendanceStatisticsService {
 
 	AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAll();
 
-	// * DATE RANGES
+	// Region: Date Ranges, no objects
 	Long getTotalAbsencesBetweenDate(DateRange dateRange);
 
 	Long getTotalPresentsBetweenDate(DateRange dateRange);
@@ -42,7 +46,10 @@ public interface AttendanceStatisticsService {
 
 	AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAllDateRange(DateRange dateRange);
 
-	// * SECTION
+	// End
+
+	// Region: Section
+
 	AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAllDateRange(DateRange dateRange, Section section);
 
 	Long getTotalAbsencesBetweenDate(DateRange dateRange, Section section);
@@ -55,7 +62,9 @@ public interface AttendanceStatisticsService {
 
 	Double calculateAverageAttendancePercentageBetweenDate(DateRange dateRange, Section section);
 
-	// * Grade Level
+	// End
+
+	// Region: Grade level
 	AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAllDateRange(DateRange dateRange, Gradelevel gradeLevel);
 
 	Long getTotalAbsencesBetweenDate(DateRange dateRange, Gradelevel gradeLevel);
@@ -68,7 +77,10 @@ public interface AttendanceStatisticsService {
 
 	Double calculateAverageAttendancePercentageBetweenDate(DateRange dateRange, Gradelevel gradeLevel);
 
-	// * Strand
+	// End
+
+	// Region: STRAND
+
 	AttendanceStatisticsOverAllDTO getAttendanceStatisticsOverAllDateRange(DateRange dateRange, Strand strand);
 
 	Long getTotalAbsencesBetweenDate(DateRange dateRange, Strand strand);
@@ -81,7 +93,10 @@ public interface AttendanceStatisticsService {
 
 	Double calculateAverageAttendancePercentageBetweenDate(DateRange dateRange, Strand strand);
 
-	// * STUDENTS * //
+	// End
+
+	// Region: STUDENTS
+
 	StudentAttendanceStatistics getStudentAttendanceStatistics(DateRange dateRange, Long lrn);
 
 	Long getTotalAbsences(DateRange dateRange, Long lrn);
@@ -93,4 +108,16 @@ public interface AttendanceStatisticsService {
 	Long getTotalOnTime(DateRange dateRange, Long lrn);
 
 	Double calculateAverageAttendancePercentage(DateRange dateRange, Long lrn);
+
+	// End
+
+	// Region: Get Student Status By Section, Strand, Grade level
+
+	List<Student> getStudentsStatus(Status status, Section section, DateRange dateRange);
+
+	List<Student> getStudentsStatus(Status status, Strand strand, DateRange dateRange);
+
+	List<Student> getStudentsStatus(Status status, Gradelevel gradelevel, DateRange dateRange);
+
+	// End
 }
