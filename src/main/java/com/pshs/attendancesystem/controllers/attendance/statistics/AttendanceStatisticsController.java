@@ -5,24 +5,24 @@ import com.pshs.attendancesystem.dto.statistics.StudentAttendanceStatistics;
 import com.pshs.attendancesystem.entities.Gradelevel;
 import com.pshs.attendancesystem.entities.Section;
 import com.pshs.attendancesystem.entities.Strand;
+import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.entities.statistics.DateRange;
+import com.pshs.attendancesystem.enums.Status;
 import com.pshs.attendancesystem.services.AttendanceStatisticsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Tag(name = "Attendance Statistics", description = "Manages attendance statistics.")
 @RestController
 @RequestMapping("${api.root}/attendance/stats")
 @SecurityRequirement(name = "JWT Authentication")
 public class AttendanceStatisticsController {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final AttendanceStatisticsService statisticsService;
 
 	public AttendanceStatisticsController(AttendanceStatisticsService statisticsService) {
@@ -40,7 +40,7 @@ public class AttendanceStatisticsController {
 	}
 
 
-	// * DAY * //
+	// Region: DAY
 	@GetMapping("/month")
 	public AttendanceStatisticsOverAllDTO getAttendanceStatisticsMonth() {
 		LocalDate today = LocalDate.now();
@@ -73,8 +73,9 @@ public class AttendanceStatisticsController {
 			)
 		);
 	}
+	// End
 
-	// * SECTION
+	// Region: Section
 
 	@GetMapping("/month/section")
 	public AttendanceStatisticsOverAllDTO getAttendanceStatisticsMonthBySection(@RequestBody Section section) {
@@ -112,7 +113,9 @@ public class AttendanceStatisticsController {
 		);
 	}
 
-	// * GRADE LEVEL
+	// End Section
+
+	// Region: Grade level
 
 	@GetMapping("/month/gradelevel")
 	public AttendanceStatisticsOverAllDTO getAttendanceStatisticsMonthByGradelevel(@RequestBody Gradelevel gradelevel) {
@@ -150,7 +153,9 @@ public class AttendanceStatisticsController {
 		);
 	}
 
-	// * STRAND
+	// End Gradelevel
+
+	// Region: Strand
 
 	@GetMapping("/month/strand")
 	public AttendanceStatisticsOverAllDTO getAttendanceStatisticsMonthByStrand(@RequestBody Strand strand) {
@@ -188,7 +193,9 @@ public class AttendanceStatisticsController {
 		);
 	}
 
-	// * STUDENT * //
+	// End Strand
+
+	// Region: Student
 
 	@GetMapping("/today/student")
 	public StudentAttendanceStatistics getStudentAttendanceStatisticsToday(@RequestParam Long lrn) {
@@ -219,5 +226,38 @@ public class AttendanceStatisticsController {
 				today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
 			), lrn);
 	}
+
+	// End Student
+
+	// Region: Student Lists
+	@PostMapping("/students/{status}/section")
+	public List<Student> getStudents(@RequestBody Section section, @PathVariable("status") Status status , @RequestParam("start-date") LocalDate startDate, @RequestParam("end-date") LocalDate endDate) {
+		return statisticsService.getStudentsStatus(status, section, new DateRange(
+			startDate,
+			endDate
+		));
+	}
+
+	@PostMapping("/students/{status}/gradelevel")
+	public List<Student> getStudents(@RequestBody Gradelevel gradelevel, @PathVariable("status") Status status, @RequestParam("start-date") LocalDate startDate, @RequestParam("end-date") LocalDate endDate) {
+		return statisticsService.getStudentsStatus(status, gradelevel, new DateRange(
+			startDate,
+			endDate
+		));
+	}
+
+	@PostMapping("/students/{status}/strand")
+	public List<Student> getStudents(@RequestBody Strand strand, @PathVariable("status") Status status, @RequestParam("start-date") LocalDate startDate, @RequestParam("end-date") LocalDate endDate) {
+		return statisticsService.getStudentsStatus(status, strand, new DateRange(
+			startDate,
+			endDate
+		));
+	}
+
+
+
+	// End Student Lists
+
+	
 }
 
