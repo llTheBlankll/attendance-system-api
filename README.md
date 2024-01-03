@@ -162,7 +162,7 @@ This project is an Attendance System API built using Spring Boot, WebSocket, and
 
 - [x]  Develop CRUD operations for managing RFID credentials used by microcontrollers.
 - [x]  Implement searching for RFID credentials based on device ID and associated users.
-- [ ]  Include an endpoint to deactivate RFID credentials in case of loss or replacement.
+- [x]  Include an endpoint to deactivate RFID credentials in case of loss or replacement.
 
 ### Attendance:
 
