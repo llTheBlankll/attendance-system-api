@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalTime;
 
@@ -24,7 +27,7 @@ public class ConfigController {
 		this.configurationService = configurationService;
 	}
 
-	@PostMapping(value = "/set/flag-ceremony", produces = "text/plain")
+	@GetMapping(value = "/set/flag-ceremony", produces = "text/plain")
 	@Operation(
 		summary = "Set Flag Ceremony Time",
 		description = "Set Flag Ceremony Time",
@@ -43,7 +46,7 @@ public class ConfigController {
 			@Parameter(name = "time", description = "The time of the late arrival", schema = @Schema(name = "time", type = "string", example = "07:00:00"))
 		}
 	)
-	@PostMapping(value = "/set/late-time", produces = "text/plain")
+	@GetMapping(value = "/set/late-time", produces = "text/plain")
 	public String setLateTimeArrival(@RequestParam LocalTime time) {
 		return configurationService.updateLateTimeArrival(time);
 	}
@@ -55,12 +58,12 @@ public class ConfigController {
 			@Parameter(name = "time", description = "The time of the on-time arrival", schema = @Schema(name = "time", type = "string", example = "05:00:00"))
 		}
 	)
-	@PostMapping(value = "/set/on-time-arrival", produces = "text/plain")
+	@GetMapping(value = "/set/on-time-arrival", produces = "text/plain")
 	public String setOnTimeArrival(@RequestParam LocalTime time) {
 		return configurationService.updateOnTimeArrival(time);
 	}
 
-	@PostMapping(value = "/set/absent-schedule", produces = "text/plain")
+	@GetMapping(value = "/set/absent-schedule", produces = "text/plain")
 	@Operation(
 		summary = "Set Absent Schedule",
 		description = "Set Absent Schedule. Uses cron format. E.g: '0 18 * * * *'; Runs every 6 PM." +
