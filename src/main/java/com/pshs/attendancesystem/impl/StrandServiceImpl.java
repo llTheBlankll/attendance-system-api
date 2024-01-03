@@ -79,10 +79,14 @@ public class StrandServiceImpl implements StrandService {
 
 	@Override
 	public String updateGradeLevelWithStrand(Strand strand, Integer gradeLevelId) {
-		if (gradeLevelRepository.updateStrandById(strand, gradeLevelId) > 0) {
-			return StrandMessages.STRAND_UPDATED;
-		} else {
+		if (strandRepository.existsById(strand.getId())) {
+			if (gradeLevelRepository.updateStrandById(strand, gradeLevelId) > 0) {
+				return StrandMessages.STRAND_UPDATED;
+			}
+
 			return StrandMessages.STRAND_NO_NAME;
+		} else {
+			return StrandMessages.STRAND_NOT_FOUND;
 		}
 	}
 }
