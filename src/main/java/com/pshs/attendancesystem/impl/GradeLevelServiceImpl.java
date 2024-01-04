@@ -1,9 +1,12 @@
 package com.pshs.attendancesystem.impl;
 
 import com.pshs.attendancesystem.entities.Gradelevel;
+import com.pshs.attendancesystem.entities.Strand;
 import com.pshs.attendancesystem.entities.Student;
 import com.pshs.attendancesystem.messages.GradeLevelMessages;
+import com.pshs.attendancesystem.messages.StrandMessages;
 import com.pshs.attendancesystem.repositories.GradeLevelRepository;
+import com.pshs.attendancesystem.repositories.StrandRepository;
 import com.pshs.attendancesystem.services.GradeLevelService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,9 +22,11 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"gradelevel"})
 public class GradeLevelServiceImpl implements GradeLevelService {
 	private final GradeLevelRepository gradeLevelRepository;
+	private final StrandRepository strandRepository;
 
-	public GradeLevelServiceImpl(GradeLevelRepository gradeLevelRepository) {
+	public GradeLevelServiceImpl(GradeLevelRepository gradeLevelRepository, StrandRepository strandRepository) {
 		this.gradeLevelRepository = gradeLevelRepository;
+		this.strandRepository = strandRepository;
 	}
 
 	@Override
@@ -71,6 +76,28 @@ public class GradeLevelServiceImpl implements GradeLevelService {
 
 		this.gradeLevelRepository.save(gradelevel);
 		return GradeLevelMessages.GRADELEVEL_UPDATED;
+	}
+
+	@Override
+	public String updateGradeLevelWithStrand(Gradelevel gradelevel, Integer strandId) {
+		// @ Check if gradelevel and strand exists
+		if (gradeLevelRepository.existsById(gradelevel.getId())) {
+			// @ Check if strand exists
+			if (strandRepository.existsById(strandId)) {
+
+				// @ Check if Present
+				Optional<Strand> strandOptional = strandRepository.findById(strandId);
+				if (strandOptional.isPresent()) {
+					gradelevel.setStrand(strandRepository.findById(strandId).get());
+					this.gradeLevelRepository.save(gradelevel);
+					return GradeLevelMessages.GRADELEVEL_UPDATED;
+				}
+			} else {
+				return StrandMessages.STRAND_NOT_FOUND;
+			}
+		}
+
+		return GradeLevelMessages.GRADELEVEL_NOT_FOUND;
 	}
 
 	@Override

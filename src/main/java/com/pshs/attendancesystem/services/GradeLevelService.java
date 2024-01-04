@@ -16,6 +16,8 @@ public interface GradeLevelService {
 
 	String updateGradeLevel(Gradelevel gradelevel);
 
+	String updateGradeLevelWithStrand(Gradelevel gradelevel, Integer strandId);
+
 	Iterable<Gradelevel> searchGradeLevelByName(String name);
 
 	List<Student> getAllStudentByGradeLevel(String gradeName);

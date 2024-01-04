@@ -72,7 +72,7 @@ public class StrandController {
 		return strandService.searchStrandByName(name);
 	}
 
-	@PostMapping("/gradelevel/update")
+	@PostMapping("/gradelevel/update") // TODO: FIX THIS FUNCTION, Has error.
 	public String updateGradeLevel(@RequestBody Strand strand, @RequestParam("gradelevel-id") Integer gradeLevelId) {
 		return strandService.updateGradeLevelWithStrand(strand, gradeLevelId);
 	}

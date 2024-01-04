@@ -116,4 +116,9 @@ public class GradeLevelController {
 	public List<Student> getStudentByGradeLevel(@RequestParam("q") String gradeName) {
 		return gradeLevelService.getAllStudentByGradeLevel(gradeName);
 	}
+
+	@PostMapping("/assign/strand")
+	public String updateGradeLevelWithStrand(@RequestBody Gradelevel gradelevel, @RequestParam("q") Integer strandId) {
+		return gradeLevelService.updateGradeLevelWithStrand(gradelevel, strandId);
+	}
 }
