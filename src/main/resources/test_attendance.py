@@ -6,14 +6,14 @@ from websockets.client import connect
 
 async def request() -> str:
     session: requests.Session = requests.Session()
-    headers: dict = {"Authorization": "Basic cHJpbmNpcGFsOjEyMzQ="}
-    data: str = session.get("http://roundhouse.proxy.rlwy.net:42552/api/v1/rfid/credentials", headers=headers).json()
+    headers: dict = {"Authorization": "Bearer cHJpbmNpcGFsOjEyMzQ="}
+    data: str = session.get("http://localhost:8080/api/rfid/all", headers=headers).json()
     return data
 
 async def main():
     print("Hello")
     credentials: list[dict] = await request()
-    ws = await connect("ws://esp32:1234@roundhouse.proxy.rlwy.net:42552/websocket/scanner")
+    ws = await connect("ws://esp32:1234@localhost:8080/websocket/scanner")
     for credential in credentials:
         data: dict = {
             "mode": "out",
