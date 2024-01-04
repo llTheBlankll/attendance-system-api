@@ -98,6 +98,43 @@ This project is an Attendance System API built using Spring Boot, WebSocket, and
 
 ### 1. Define API Endpoints:
 
+### Notification Controller
+- [ ] Integrate a notification system to alert users about upcoming events, important announcements, or attendance-related notifications. This could be implemented via email, SMS, or in-app notifications.
+
+### To-Do List for Holiday and Leave Management
+
+- [ ] **Get List of Holidays:**
+    - Endpoint: `GET /api/holidays`
+    - Description: Retrieve a list of holidays with details such as name, date, and any additional information.
+
+- [ ] **Add a Holiday:**
+    - Endpoint: `POST /api/holidays`
+    - Description: Add a new holiday to the system, specifying details such as name and date.
+
+- [ ] **Update Holiday Details:**
+    - Endpoint: `PUT /api/holidays/{holidayId}`
+    - Description: Update the details of an existing holiday, including name, date, or any other relevant information.
+
+- [ ] **Delete a Holiday:**
+    - Endpoint: `DELETE /api/holidays/{holidayId}`
+    - Description: Remove a holiday from the system.
+
+- [ ] **Request Leave:**
+    - Endpoint: `POST /api/leave-requests`
+    - Description: Allow users (students or staff) to submit leave requests, specifying the start and end dates, reason, and any supporting information.
+
+- [ ] **View Leave Requests:**
+    - Endpoint: `GET /api/leave-requests`
+    - Description: Retrieve a list of leave requests with details such as the requester, dates, status, and reason.
+
+- [ ] **Approve/Reject Leave Request:**
+    - Endpoint: `PUT /api/leave-requests/{requestId}`
+    - Description: Allow administrators or authorized personnel to approve or reject leave requests, updating the status accordingly.
+
+- [ ] **View Leave Balance:**
+    - Endpoint: `GET /api/leave-balance/{userId}`
+    - Description: Retrieve the remaining leave balance for a user, considering approved leaves.
+
 ### User Controller:
 
 - [x]  Create endpoints for creating, updating, and retrieving user information.
