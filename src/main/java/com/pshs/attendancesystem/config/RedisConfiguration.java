@@ -3,6 +3,7 @@ package com.pshs.attendancesystem.config;
 import com.pshs.attendancesystem.impl.ConfigurationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import java.time.Duration;
 
 @Configuration
 @EnableCaching
+@ConditionalOnProperty(value = "api.cache.enabled", havingValue = "true")
 public class RedisConfiguration {
 
 	private final ConfigurationService configurationService;
