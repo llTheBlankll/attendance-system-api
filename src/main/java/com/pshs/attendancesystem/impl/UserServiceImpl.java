@@ -32,10 +32,11 @@ public class UserServiceImpl implements UserService {
 		put = @CachePut(key = "#username")
 	)
 	public void updateUserLastLogin(String username) {
-		if (userRepository.updateUserLastLogin(LocalDateTime.now(), username) <= 0) {
-			logger.info("User not found");
+		LocalDateTime now = LocalDateTime.now();
+		if (userRepository.updateUserLastLogin(now, username) <= 0) {
+			logger.info("User" + username + " not found");
 		} else {
-			logger.debug("User last login updated");
+			logger.debug("User " + username + " last login updated: " + now);
 		}
 	}
 

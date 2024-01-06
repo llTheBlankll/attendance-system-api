@@ -40,7 +40,7 @@ CREATE TABLE Teachers
 	PRIMARY KEY (teacher_id)
 --     FOREIGN KEY (subject_expertise) REFERENCES Subjects (subject_id) ON DELETE SET NULL
 );
-CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
+-- CREATE INDEX teachers_subject_expertise_idx ON Teachers (subject_expertise);
 
 -- * SECTIONS TABLE
 CREATE TABLE Sections
@@ -114,9 +114,6 @@ CREATE INDEX attendance_date_idx on Attendance (date);
 -- * MAKE ATTENDANCE ENUM TYPE CHARACTER VARYING
 ALTER TABLE Attendance
 	ALTER COLUMN attendance_status TYPE CHARACTER VARYING;
-
--- * CREATE STUDENT ID INDEX
-CREATE INDEX attendance_student_id_idx ON Attendance (student_id);
 
 -- * CREATE FINGERPRINT TABLE
 CREATE TABLE Fingerprint
