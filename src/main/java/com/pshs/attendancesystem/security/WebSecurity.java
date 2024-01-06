@@ -98,8 +98,6 @@ public class WebSecurity implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOriginPatterns("*")
-			.allowedOrigins("localhost:4200", "**", "*")
-			.allowedHeaders("Content-Type", "Authorization")
-			.allowCredentials(true).maxAge(36000);
+			.allowedHeaders("Content-Type", "Authorization");
 	}
 }
