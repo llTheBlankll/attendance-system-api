@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.codec.DecodingException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -22,12 +21,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class ControllerGlobalExceptionHandler {
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
-
-	@ExceptionHandler(AccessDeniedException.class)
-	public String handleAccessDeniedException(AccessDeniedException e) {
-		logger.error(e.getMessage(), e);
-		return "error/403";
-	}
 
 	@ExceptionHandler(NoResourceFoundException.class)
 	public String handleNoResourceFoundException(NoResourceFoundException e) {
