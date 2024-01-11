@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("${api.root}/attendance/stats/chart")
 @Tag(name = "Attendance Chart", description = "Get attendance chart data, gives List of Integers")
 @SecurityRequirement(
-	name = "JWT Authentication "
+	name = "JWT Authentication"
 )
 public class AttendanceChartController {
 
