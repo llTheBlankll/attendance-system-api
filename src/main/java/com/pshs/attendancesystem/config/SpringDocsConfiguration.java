@@ -181,7 +181,7 @@ public class SpringDocsConfiguration {
 	public GroupedOpenApi authenticationControllerGroup() {
 		return GroupedOpenApi.builder()
 			.group("Authentication")
-			.packagesToScan("com.pshs.attendancesystem.controllers.pub.auth")
+			.packagesToScan("com.pshs.attendancesystem.controllers.auth")
 			.build();
 	}
 }
