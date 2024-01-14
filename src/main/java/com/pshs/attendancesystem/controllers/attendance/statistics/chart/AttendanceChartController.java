@@ -51,7 +51,6 @@ public class AttendanceChartController {
 					attendanceService.countAttendanceInSection(section.getSectionId(), new DateRange(date, date), Status.LATE)
 				);
 
-
 				default -> countAttendances.add(0L);
 			}
 		}
