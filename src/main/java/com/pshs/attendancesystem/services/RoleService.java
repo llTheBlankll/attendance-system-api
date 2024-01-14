@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RoleService {
 
-    List<Role> getAllRoles();
+    Iterable<Role> getAllRoles();
 
     String createRole(Role role);
 

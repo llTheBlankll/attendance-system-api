@@ -20,7 +20,7 @@ public class RoleController {
 	}
 
 	@GetMapping("/roles")
-	public List<Role> getAllRoles() {
+	public Iterable<Role> getAllRoles() {
 		return roleService.getAllRoles();
 	}
 
