@@ -6,19 +6,20 @@ import java.util.List;
 
 public interface RoleService {
 
-    Iterable<Role> getAllRoles();
+	Iterable<Role> getAllRoles();
 
-    String createRole(Role role);
+	String createRole(Role role);
 
-    String deleteRole(Role role);
+	String deleteRole(Role role);
 
-    String updateRole(Role role);
+	String updateRole(Role role);
 
-    Role getRoleById(Integer id);
+	Role getRoleById(Integer id);
 
-    List<Role> searchRoleByName(String roleName);
+	List<Role> searchRoleByName(String roleName);
 
-    boolean isRoleExist(Role role);
-    boolean isRoleExistById(Integer id);
+	boolean isRoleExist(Role role);
+
+	boolean isRoleExistById(Integer id);
 
 }
