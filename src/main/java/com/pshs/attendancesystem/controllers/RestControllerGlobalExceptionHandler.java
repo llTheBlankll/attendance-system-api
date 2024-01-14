@@ -85,4 +85,12 @@ public class RestControllerGlobalExceptionHandler {
 			new ErrorDTO(500, e.getMessage())
 		);
 	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorDTO> handleException(Exception e) {
+		logger.error("Uncaught error: {}", e.getMessage());
+		return ResponseEntity.status(500).body(
+			new ErrorDTO(500, e.getMessage())
+		);
+	}
 }

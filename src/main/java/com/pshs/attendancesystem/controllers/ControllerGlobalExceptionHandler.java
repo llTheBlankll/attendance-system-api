@@ -61,13 +61,6 @@ public class ControllerGlobalExceptionHandler {
 		return "error/500";
 	}
 
-	@ExceptionHandler(Exception.class)
-	public String handleException(Exception e, Model model) {
-		model.addAttribute("message", e.getMessage());
-		Sentry.captureException(e);
-		return "error/500";
-	}
-
 	@GetMapping("/error/403")
 	public String accessDenied() {
 		return "error/forbidden";
